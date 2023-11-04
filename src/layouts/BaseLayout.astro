@@ -1,0 +1,45 @@
+---
+import "../styles/style.scss";
+import Header from "../components/Header.astro";
+import Breadcrumb from "../components/Breadcrumb.astro";
+import Footer from "../components/Footer.astro";
+const siteName = "あづみのメモ帳";
+
+interface Props {
+    title: string;
+    summaryLargeImage?: boolean;
+    ogImage?: string;
+}
+const { title, summaryLargeImage = false, ogImage = "ogImageDefault.jpg" } = Astro.props;
+const showTitle: boolean = title != siteName;
+const pageTitle = `${showTitle ? title + " – " : ""}${siteName}`;
+const hostname: string = Astro.url.hostname;
+---
+
+<!doctype html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="description" content="" />
+        <meta name="viewport" content="width=device-width" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <meta name="generator" content={Astro.generator} />
+        <meta name="twitter:card" content={summaryLargeImage ? "summary_large_image" : "summary"} />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content={new URL(ogImage, Astro.url.origin)} />
+        <meta property="og:url" content={Astro.url} />
+        <title>{pageTitle}</title>
+    </head>
+    <body>
+        <Header siteName={siteName} />
+        <div id="main">
+            <main>
+                <Breadcrumb />
+                <h1 style={showTitle ? "" : "display: none;"}>{title}</h1>
+                <slot />
+            </main>
+            <Footer />
+        </div>
+    </body>
+</html>

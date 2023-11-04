@@ -1,0 +1,76 @@
+---
+interface PathNamePair {
+    path: string;
+    name: string;
+}
+interface Tree {
+    current: PathNamePair[];
+    next?: Tree;
+}
+
+let tree: Tree | undefined = {
+    current: [
+        {
+            path: "",
+            name: "あづみのメモ帳",
+        },
+    ],
+    next: {
+        current: [
+            {
+                path: "blog",
+                name: "あづみのブログ",
+            },
+            {
+                path: "about",
+                name: "あづみについて",
+            },
+        ],
+    },
+};
+
+if (Astro.url.pathname == "/") {
+    // トップでは表示しない
+    return;
+}
+
+let path: string[] = Astro.url.pathname.replace(/\/$/, "").split("/");
+// 自分自身を除去
+path.pop();
+
+let pathNameList: PathNamePair[] = new Array();
+let absolutePath: string = "";
+for (let index = 0; index < path.length; index++) {
+    absolutePath = absolutePath + path[index] + "/";
+    let name = tree?.current.find((pathName) => pathName.path == path[index])?.name ?? path[index];
+    pathNameList.push({
+        path: absolutePath,
+        name: name,
+    });
+    tree = tree?.next;
+}
+---
+
+<nav>
+    <ul class="inline">
+        {
+            pathNameList.map((pathName) => (
+                <li>
+                    <a href={pathName.path}>{pathName.name}</a>
+                </li>
+            ))
+        }
+    </ul>
+</nav>
+<style>
+    ul {
+        padding: 0;
+    }
+    li {
+        display: inline;
+        margin-left: 0;
+        &::after {
+            content: " / " !important;
+        }
+    }
+</style>

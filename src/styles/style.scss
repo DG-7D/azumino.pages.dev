@@ -1,0 +1,210 @@
+@import url(reset.css);
+@import url(campbell.css);
+
+:root {
+    --theme-color: var(--green);
+
+    color-scheme: dark;
+    --background-color: var(--black);
+    --main-shadow: var(--bblack);
+    --main-color: var(--bwhite);
+    --sub-color: var(--white);
+    --link-color: var(--byellow);
+
+    @media (prefers-color-scheme: light) {
+        color-scheme: light;
+        --background-color: var(--bwhite);
+        --main-shadow: var(--white);
+        --main-color: var(--black);
+        --sub-color: var(--bblack);
+        --link-color: var(--blue);
+    }
+}
+
+html {
+    color: var(--main-color);
+    background: var(--background-color);
+    font-size: 100%;
+    height: 100%;
+}
+
+body {
+    min-height: 100%;
+    display: grid;
+    grid-template-rows: auto 1fr;
+
+    // ここにヘッダー
+    div#main {
+        display: grid;
+        grid-template-rows: 1fr auto;
+
+        main {
+            width: 100%;
+            max-width: 60rem;
+            margin: 0 auto;
+            padding: 0.75rem;
+            box-shadow: 0 0 1rem var(--main-shadow);
+        }
+
+        // ここにフッター
+    }
+}
+
+main {
+    * {
+        line-height: 150%;
+        overflow-wrap: anywhere;
+    }
+
+    >h1 {
+        line-height: 100%;
+        font-size: 2.5rem;
+        font-weight: bolder;
+        padding: 0.25rem 0.75rem;
+        margin: 0 -0.75rem;
+        border-style: solid;
+        border-width: 0 0 0.1rem;
+        border-color: var(--theme-color);
+    }
+
+    >time {
+        color: var(--sub-color);
+    }
+
+    >h2 {
+        line-height: 100%;
+        font-size: 1.5rem;
+        position: sticky;
+        top: var(--header-height);
+
+        background-color: var(--background-color);
+        z-index: 1645;
+        border-style: solid;
+        border-width: 0 0 0.1rem 0.5rem;
+        padding: 0.25rem 0.5rem;
+        margin: 1rem -0.5rem 0.5rem;
+    }
+
+    >h3 {
+        line-height: 100%;
+        border-style: solid double;
+        border-width: 0 0 0.1rem 0.5rem;
+        padding: 0.25rem 0.5rem;
+        margin: 0.5rem -0.5rem;
+    }
+
+    >p,
+    >pre,
+    >ul,
+    >ol,
+    >dl {
+        margin: 0.5rem 0;
+    }
+
+    >pre {
+        padding: 0.25rem;
+    }
+
+    ul:not(.inline),
+    ol,
+    dl {
+        padding-left: 1rem;
+    }
+
+    ul:not(.inline) li,
+    dl dt {
+        margin-left: -1rem;
+
+        &::before {
+            content: "–\2002";
+        }
+    }
+
+    ul.inline {
+        li {
+            display: inline;
+
+            &:has(+li)::after {
+                content: ", ";
+            }
+        }
+    }
+
+    dl.inline {
+        dt {
+            display: inline;
+
+            &::after {
+                content: ":";
+                margin: 0 0.25rem;
+            }
+        }
+
+        dd {
+            display: inline;
+
+            &:has(+dt)::after {
+                // 次にdtがくるdd
+                content: "";
+                display: block;
+            }
+
+            +dd::before {
+                content: ", ";
+            }
+
+        }
+    }
+
+    p {
+        text-indent: 1rem;
+    }
+
+    a {
+        color: var(--link-color);
+        text-decoration: underline;
+
+        &:hover {
+            text-decoration: none;
+        }
+    }
+
+    em {
+        font-size: 1.1em;
+        font-style: italic;
+    }
+
+    strong {
+        font-size: 1.1em;
+        font-weight: bold;
+    }
+
+    del {
+        color: var(--main-shadow);
+        font-size: 0.9em;
+        text-decoration: line-through 0.2em;
+    }
+
+    code,
+    code * {
+        font-size: 0.9rem;
+        font-family: monospace, sans-serif;
+    }
+
+    :not(pre) code {
+        color: var(--background-color);
+        background-color: var(--main-color);
+        border-color: var(--main-color);
+
+        margin: 0.25rem;
+        border-style: solid;
+        border-width: 0 0.25rem;
+        border-radius: 0.25rem;
+    }
+
+    pre {
+        resize: vertical;
+        max-height: 50vh;
+    }
+
+}

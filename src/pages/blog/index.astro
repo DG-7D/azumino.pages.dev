@@ -1,0 +1,18 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+const allPosts = await Astro.glob("./*.md");
+---
+
+<BaseLayout title="あづみのブログ">
+    <p>どうでもいいことを書いたり書かなかったりします。</p>
+    <h2>記事一覧</h2>
+    <ul>
+        {
+            allPosts.map((post) => (
+                <li>
+                    <a href={post.url + "/"}>{post.frontmatter.title}</a>
+                </li>
+            ))
+        }
+    </ul>
+</BaseLayout>

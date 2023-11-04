@@ -1,0 +1,64 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="あづみのメモ帳">
+    <p><span id="welcome"></span>ここは<a href="/about/">あづみ</a>が遊びで作ってる個人サイトってやつです。一生工事中です。サグラダファミリア、あるいは横浜駅。</p>
+    <h2>コンテンツ</h2>
+    <p>増えるかも。</p>
+    <ul>
+        <li><a href="/blog/">ブログ</a></li>
+        <li><a href="/about/">あづみについて</a></li>
+    </ul>
+    <h2>Tips</h2>
+    <p id="tips"><noscript>JavaScriptが有効だとここにはランダムなTipsが表示される。</noscript></p>
+    <h2>リンク集</h2>
+    <p>知り合いのサイトを……と言いたいところだけどほとんど作ってる知り合いがいないのでおすすめ集みたいな。</p>
+    <dl class="inline">
+        <dt><a href="https://yuino.dev/" target="_blank">ゆいのページ</a></dt><dd>写真研究部技術担当(大嘘)のページ。手打ちでコシのあるhtmlらしい。</dd>
+        <dt><a href="https://www.city.chofu.tokyo.jp/www/contents/1361495751275/files/wagamachichofu.mp3" target="_blank">wagamachichofu.mp3</a></dt><dd>「1645」の公式音源。<a href="https://www.city.chofu.tokyo.jp/www/contents/1361495751275/index.html">紹介ページ</a>はこっち。</dd>
+        <dt><a href="https://developer.mozilla.org/ja/" target="_blank">MDN Web Docs</a></dt><dd>聖書。公式ドキュメントを崇めよ。</dd>
+        <dt><a href="https://git-scm.com/book/ja/v2/" target="_blank">Git - Book</a></dt><dd>Gitを理解するならいかがでしたかサイトを読むより先にこれを読破しよう。公式ドキュメントを崇めよ。</dd>
+        <dt><a href="https://tailscale.com/" target="_blank">Tailscale</a></dt><dd>めちゃくちゃ手軽なのでVPNで困ったことがある人はぜひ検討してみよう。</dd>
+        <dt><a href="https://chobitool.com/unicodepoint/" target="_blank">Unicode コードポイント変換 - ちょびつーる</a></dt><dd>文字のコードポイントを確認できるWebツール。パソコンつかえないときに–と-と‐と−とを見分けたくなったりしたときに便利。</dd>
+        <!-- <dt><a href="" target="_blank"></a></dt><dd></dd> -->
+    </dl>
+</BaseLayout>
+
+<script>
+    const messages: string[] = ["やあやあ、", "ようこそ、", "ゆっくりしていってね。", "いらっしゃい。", "Hello and Welcome!! "];
+    document.getElementById("welcome")!.innerText = messages[Math.floor(Math.random() * messages.length)];
+    const tips: string[] = [
+        "窓口やモバイルのアプリでSuica/PASMOの残高が1000円を切った際のタッチ音を変更できる。<a href='https://www.pasmo.co.jp/about/service/' target='_blank'>PASMO公式サイト</a>",
+        "Windows、JISキーボード環境ではCaps Lockと書いてあるキー(英数キー)でIME切替ができる。",
+        "自転車が歩道を走行する際は車道寄りを徐行しなければならない。<a href='https://elaws.e-gov.go.jp/document?lawid=335AC0000000105#Mp-At_63_4' target='_blank'>道路交通法 第六十三条の四</a>",
+        "赤信号の意味は「止まれ」ではなく「停止位置を越えるな」であり、交差点に進入してから赤信号になっても止まる必要はない(二段階右折を除く)。<a href='https://elaws.e-gov.go.jp/document?lawid=335CO0000000270#Mp-At_2' target='_blank'>道路交通法施行令 第二条</a>",
+        "電気通信大学 D棟の間取りは基礎科学実験の教科書で確認できるが、基礎科学実験Aのもののほうが若干正確である。",
+        "Google Drive上で開かれたPDFは印刷ボタンを押すとブラウザのビューアーで直接開ける。",
+        "「Windows PCとMacってどっちがいい？」という疑問が生じた人はいまのところMacを使うべきではない。",
+        "井の頭線の急行で永福町から渋谷方面に向かうと「次は明大前」と「まもなく明大前」の放送の間がなさすぎて面白い。",
+        "調布駅から電通大多摩川グラウンドまでは京王バスが便利。",
+        "GoogleやBingなどの検索欄に数式を入れるとある程度計算してくれる。",
+        "Wikipediaにどうでもいい御託が並べられていてよく分からない項目はニコニコ大百科だと分かりやすいことがある。",
+        "「wiki」は一般名詞であり、Wikipediaのことを指して使うのは誤り。",
+        "こういう出典のないTipsを安易に信用すべきではない。",
+        "イギリスでは階数は地上階がground floor、その上(2階)がfirst floorである。0-indexedのほうが分かりやすくね？",
+        "「ゔ」はShift_JISでは表現できない。",
+        "undefined",
+        "GPSは衛星からの電波を受信するだけなのでSIMなしでも使える。ただし回線があるほうが精度と速度は向上するらしい。",
+        "ここで中央クリックするとTipsを再抽選できる。",
+        "たいていの環境ではリンクで中央クリックすると新しいタブで開ける。ここですると……？",
+        "<code>hostname.local</code>でLAN内のデバイスにアクセスできる。(mDNS)",
+        "「コンギョ」は一部の配信サイトで配信されている。<a href='https://music.apple.com/jp/album/%E6%94%BB%E6%92%83%E6%88%A6%E3%81%A0/1533246215' target='_blank'>Apple Music</a>",
+        "「マリーのアトリエ」はPlayStation(と互換のあるPS2、PS3)、セガサターン、PS4、PS5、Switch、PC、iOSでプレイ可能である(リメイク含む)。",
+    ];
+    function setTips(): void {
+        document.getElementById("tips")!.innerHTML = tips[Math.floor(Math.random() * tips.length)];
+    }
+    setTips();
+    document.getElementById("tips")!.addEventListener("mousedown", (e) => {
+        if (e.button == 1) {
+            setTips();
+        }
+    });
+</script>

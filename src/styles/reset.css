@@ -1,0 +1,16 @@
+* {
+    border-collapse: collapse;
+    box-sizing: border-box;
+    font-size: 1rem;
+    font-family: sans-serif;
+    font-weight: normal;
+    list-style: none;
+    line-height: 100%;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    text-decoration: none;
+    vertical-align: baseline;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}

@@ -1,0 +1,24 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+
+interface Props {
+    frontmatter: {
+        title: string;
+        publishDate: {
+            year: number;
+            month: number;
+            day: number;
+        };
+        summaryLargeImage?: boolean;
+        ogImage?: string;
+    };
+}
+const fm = Astro.props.frontmatter;
+const pd = fm.publishDate;
+const publishDate: string = `${pd.year}年${pd.month.toString().padStart(2, "0")}月${pd.day.toString().padStart(2, "0")}日`;
+---
+
+<BaseLayout title={fm.title} summaryLargeImage={fm.summaryLargeImage} ogImage={fm.ogImage}>
+    <time>{publishDate}</time>
+    <slot />
+</BaseLayout>
