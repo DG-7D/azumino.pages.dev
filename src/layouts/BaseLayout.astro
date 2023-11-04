@@ -3,33 +3,50 @@ import "../styles/style.scss";
 import Header from "../components/Header.astro";
 import Breadcrumb from "../components/Breadcrumb.astro";
 import Footer from "../components/Footer.astro";
+import { SEO } from "astro-seo";
 const siteName = "あづみのメモ帳";
 
 interface Props {
     title: string;
     summaryLargeImage?: boolean;
     ogImage?: string;
+    description: string;
 }
-const { title, summaryLargeImage = false, ogImage = "ogImageDefault.jpg" } = Astro.props;
+
+const title = Astro.props.title;
 const showTitle: boolean = title != siteName;
-const pageTitle = `${showTitle ? title + " – " : ""}${siteName}`;
-const hostname: string = Astro.url.hostname;
+const pageTitle: string = `${showTitle ? title + " – " : ""}${siteName}`;
+// todo: astro-seoでなんとかできる？
 ---
 
 <!doctype html>
 <html lang="ja">
     <head>
-        <meta charset="UTF-8" />
-        <meta name="description" content="" />
         <meta name="viewport" content="width=device-width" />
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <meta name="generator" content={Astro.generator} />
-        <meta name="twitter:card" content={summaryLargeImage ? "summary_large_image" : "summary"} />
-        <meta property="og:title" content={pageTitle} />
-        <meta property="og:type" content="website" />
-        <meta property="og:image" content={new URL(ogImage, Astro.url.origin)} />
-        <meta property="og:url" content={Astro.url} />
-        <title>{pageTitle}</title>
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <SEO
+            title={pageTitle}
+            description={Astro.props.description}
+            charset="UTF-8"
+            openGraph={{
+                basic: {
+                    title: pageTitle,
+                    type: "website",
+                    image: new URL(Astro.props.ogImage ?? "ogImageDefault.jpg", Astro.url.origin).toString(),
+                },
+                optional: {
+                    description: Astro.props.description,
+                    locale: "ja_JP",
+                    siteName: siteName,
+                },
+            }}
+            twitter={{
+                card: Astro.props.summaryLargeImage ? "summary_large_image" : "summary",
+                site: "@DG_7D",
+                creator: "@DG_7D",
+            }}
+        />
     </head>
     <body>
         <Header siteName={siteName} />

@@ -2,7 +2,7 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
-<BaseLayout title="あづみのメモ帳">
+<BaseLayout title="あづみのメモ帳" description="あづみが遊びで作ってる個人サイトってやつです。">
     <p><span id="welcome"></span>ここは<a href="/about/">あづみ</a>が遊びで作ってる個人サイトってやつです。一生工事中です。サグラダファミリア、あるいは横浜駅。</p>
     <h2>コンテンツ</h2>
     <p>増えるかも。</p>
@@ -26,7 +26,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 </BaseLayout>
 
 <script>
-    const messages: string[] = ["やあやあ、", "ようこそ、", "ゆっくりしていってね。", "いらっしゃい。", "Hello and Welcome!! ","へぇい、"];
+    const messages: string[] = ["やあやあ、", "ようこそ、", "ゆっくりしていってね。", "いらっしゃい。", "Hello and Welcome!! ", "へぇい、"];
     document.getElementById("welcome")!.innerText = messages[Math.floor(Math.random() * messages.length)];
     const tips: string[] = [
         "窓口やモバイルのアプリでSuica/PASMOの残高が1000円を切った際のタッチ音を変更できる。<a href='https://www.pasmo.co.jp/about/service/' target='_blank'>PASMO公式サイト</a>",
