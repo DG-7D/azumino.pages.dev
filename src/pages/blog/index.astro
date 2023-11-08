@@ -1,6 +1,8 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-const allPosts = await Astro.glob("./*.md");
+import { getCollection } from "astro:content";
+// const allPosts = await Astro.glob("./*.md");
+const allPosts = await getCollection("blog");
 ---
 
 <BaseLayout title="あづみのブログ" description="どうでもいいことを書いたり書かなかったりします。">
@@ -8,11 +10,15 @@ const allPosts = await Astro.glob("./*.md");
     <h2>記事一覧</h2>
     <ul>
         {
-            allPosts.map((post) => (
-                <li>
-                    <a href={post.url + "/"}>{post.frontmatter.title}</a>
-                </li>
-            ))
+            allPosts.map((post) => {
+                if (post.data.publish) {
+                    return (
+                        <li>
+                            <a href={"/blog/" + post.slug + "/"}>{post.data.title}</a>
+                        </li>
+                    );
+                }
+            })
         }
     </ul>
 </BaseLayout>

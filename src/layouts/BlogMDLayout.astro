@@ -4,22 +4,21 @@ import BaseLayout from "./BaseLayout.astro";
 interface Props {
     frontmatter: {
         title: string;
-        publishDate: {
-            year: number;
-            month: number;
-            day: number;
-        };
+        publishDate: string;
         summaryLargeImage?: boolean;
         ogImage?: string;
         description: string;
     };
 }
 const fm = Astro.props.frontmatter;
-const pd = fm.publishDate;
-const publishDate: string = `${pd.year}年${pd.month.toString().padStart(2, "0")}月${pd.day.toString().padStart(2, "0")}日`;
+const pd = new Date(fm.publishDate);
+function to年月日(date: Date): string {
+    const iso: string = date.toISOString();
+    return `${iso.substring(0, 4)}年${iso.substring(5, 7)}月${iso.substring(8, 10)}日`;
+}
 ---
 
 <BaseLayout title={fm.title} summaryLargeImage={fm.summaryLargeImage} ogImage={fm.ogImage} description={fm.description}>
-    <time>{publishDate}</time>
+    <time datetime={pd.toISOString().substring(0, 10)}>{to年月日(pd)}</time>
     <slot />
 </BaseLayout>
