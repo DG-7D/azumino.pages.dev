@@ -29,40 +29,46 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 </BaseLayout>
 
 <script>
-    const messages: string[] = ["やあやあ、", "ようこそ、", "ゆっくりしていってね。", "いらっしゃい。", "Hello and Welcome!! ", "へぇい、", "やっほー、", "うおおおおおお、", "どうも、", "はじめましての方ははじめまして、", "はい、というわけでね、", "えーっとね、"];
-    document.getElementById("welcome")!.innerText = messages[Math.floor(Math.random() * messages.length)];
-    const tips: string[] = [
-        "窓口やモバイルのアプリでSuica/PASMOの残高が1000円を切った際のタッチ音を変更できる。<a href='https://www.pasmo.co.jp/about/service/' target='_blank'>PASMO公式サイト</a>",
-        "Windows、JISキーボード環境ではCaps Lockと書いてあるキー(英数キー)でIME切替ができる。",
-        "自転車が歩道を走行する際は車道寄りを徐行しなければならない。<a href='https://elaws.e-gov.go.jp/document?lawid=335AC0000000105#Mp-At_63_4' target='_blank'>道路交通法 第六十三条の四</a>",
-        "過労や寝不足での運転は犯罪。自転車もだめ。<a href='https://elaws.e-gov.go.jp/document?lawid=335AC0000000105#Mp-At_66' target='_blank'>道路交通法 第六十六条</a>",
-        "赤信号の意味は「止まれ」ではなく「停止位置を越えるな」であり、交差点に進入してから赤信号になっても止まる必要はない(二段階右折を除く)。<a href='https://elaws.e-gov.go.jp/document?lawid=335CO0000000270#Mp-At_2' target='_blank'>道路交通法施行令 第二条</a>",
-        "電気通信大学 D棟の間取りは基礎科学実験の教科書で確認できるが、基礎科学実験Aのもののほうが若干正確である。",
-        "Google Drive上で開かれたPDFは印刷ボタンを押すとブラウザのビューアーで直接開ける。",
-        "「Windows PCとMacってどっちがいい？」という疑問が生じた人はいまのところMacを使うべきではない。",
-        "井の頭線の急行で永福町から渋谷方面に向かうと「次は明大前」と「まもなく明大前」の放送の間がなさすぎて面白い。",
-        "調布駅から電通大多摩川グラウンドまでは京王バスが便利。",
-        "GoogleやBingなどの検索欄に数式を入れるとある程度計算してくれる。",
-        "Wikipediaにどうでもいい御託が並べられていてよく分からない項目はニコニコ大百科だと分かりやすいことがある。",
-        "「wiki」は一般名詞であり、Wikipediaのことを指して使うのは誤り。",
-        "こういう出典のないTipsを安易に信用すべきではない。",
-        "イギリスでは階数は地上階がground floor、その上(2階)がfirst floorである。0-indexedのほうが分かりやすくね？",
-        "「ゔ」はShift_JISでは表現できない。",
-        "undefined",
-        "GPSは衛星からの電波を受信するだけなのでSIMなしでも使える。ただし回線があるほうが精度と速度は向上するらしい。",
-        "ここで中央クリックするとTipsを再抽選できる。",
-        "たいていの環境ではリンクで中央クリックすると新しいタブで開ける。ここですると……？",
-        "<code>hostname.local</code>でLAN内のデバイスにアクセスできる。(mDNS)",
-        "「コンギョ」は一部の配信サイトで配信されている。<a href='https://music.apple.com/jp/album/%E6%94%BB%E6%92%83%E6%88%A6%E3%81%A0/1533246215' target='_blank'>Apple Music</a>",
-        "「マリーのアトリエ」はPlayStation(と互換のあるPS2、PS3)、セガサターン、PS4、PS5、Switch、PC、iOSでプレイ可能である(リメイク含む)。",
-    ];
-    function setTips(): void {
-        document.getElementById("tips")!.innerHTML = tips[Math.floor(Math.random() * tips.length)];
+    function random<T>(array: T[]): T {
+        return array[Math.floor(Math.random() * array.length)];
     }
-    setTips();
-    document.getElementById("tips")!.addEventListener("mousedown", (e) => {
+
+    const messages: string[] = ["やあやあ、", "ようこそ、", "ゆっくりしていってね。", "いらっしゃい。", "Hello and Welcome!! ", "へぇい、", "やっほー、", "うおおおおおお、", "どうも、", "はじめましての方ははじめまして、", "はい、というわけでね、", "えーっとね、"];
+    document.getElementById("welcome")!.innerText = random(messages);
+
+    const tipsElement: HTMLElement = document.getElementById("tips")!;
+    function setTips(): void {
+        const tips: string[] = [
+            "窓口やモバイルのアプリでSuica/PASMOの残高が1000円を切った際のタッチ音を変更できる。<a href='https://www.pasmo.co.jp/about/service/' target='_blank'>PASMO公式サイト</a>",
+            "Windows、JISキーボード環境ではCaps Lockと書いてあるキー(英数キー)でIME切替ができる。",
+            "自転車が歩道を走行する際は車道寄りを徐行しなければならない。<a href='https://elaws.e-gov.go.jp/document?lawid=335AC0000000105#Mp-At_63_4' target='_blank'>道路交通法 第六十三条の四</a>",
+            "過労や寝不足での運転は犯罪。自転車もだめ。<a href='https://elaws.e-gov.go.jp/document?lawid=335AC0000000105#Mp-At_66' target='_blank'>道路交通法 第六十六条</a>",
+            "赤信号の意味は「止まれ」ではなく「停止位置を越えるな」であり、交差点に進入してから赤信号になっても止まる必要はない(二段階右折を除く)。<a href='https://elaws.e-gov.go.jp/document?lawid=335CO0000000270#Mp-At_2' target='_blank'>道路交通法施行令 第二条</a>",
+            "電気通信大学 D棟の間取りは基礎科学実験の教科書で確認できるが、基礎科学実験Aのもののほうが若干正確である。",
+            "Google Drive上で開かれたPDFは印刷ボタンを押すとブラウザのビューアーで直接開ける。",
+            "「Windows PCとMacってどっちがいい？」という疑問が生じた人はいまのところMacを使うべきではない。",
+            "井の頭線の急行で永福町から渋谷方面に向かうと「次は明大前」と「まもなく明大前」の放送の間がなさすぎて面白い。",
+            "調布駅から電通大多摩川グラウンドまでは京王バスが便利。",
+            "GoogleやBingなどの検索欄に数式を入れるとある程度計算してくれる。",
+            "Wikipediaにどうでもいい御託が並べられていてよく分からない項目はニコニコ大百科だと分かりやすいことがある。",
+            "「wiki」は一般名詞であり、Wikipediaのことを指して使うのは誤り。",
+            "こういう出典のないTipsを安易に信用すべきではない。",
+            "イギリスでは階数は地上階がground floor、その上(2階)がfirst floorである。0-indexedのほうが分かりやすくね？",
+            "「ゔ」はShift_JISでは表現できない。",
+            "undefined",
+            "GPSは衛星からの電波を受信するだけなのでSIMなしでも使える。ただし回線があるほうが精度と速度は向上するらしい。",
+            "ここで中央クリックするとTipsを再抽選できる。",
+            "たいていの環境ではリンクで中央クリックすると新しいタブで開ける。ここですると……？",
+            "<code>hostname.local</code>でLAN内のデバイスにアクセスできる。(mDNS)",
+            "「コンギョ」は一部の配信サイトで配信されている。<a href='https://music.apple.com/jp/album/%E6%94%BB%E6%92%83%E6%88%A6%E3%81%A0/1533246215' target='_blank'>Apple Music</a>",
+            "「マリーのアトリエ」はPlayStation(と互換のあるPS2、PS3)、セガサターン、PS4、PS5、Switch、PC、iOSでプレイ可能である(リメイク含む)。",
+        ];
+        tipsElement.innerHTML = random(tips);
+    }
+    tipsElement.addEventListener("mousedown", (e) => {
         if (e.button == 1) {
             setTips();
         }
     });
+    setTips();
 </script>
