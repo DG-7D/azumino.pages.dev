@@ -1,4 +1,5 @@
 ---
+import Changes from "../components/Changes.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
@@ -27,6 +28,9 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         <dt><a href="https://chobitool.com/unicodepoint/" target="_blank">Unicode コードポイント変換 - ちょびつーる</a></dt><dd>文字のコードポイントを確認できるWebツール。パソコンつかえないときに–と-と‐と−とを見分けたくなったりしたときに便利。</dd>
         <!-- <dt><a href="" target="_blank"></a></dt><dd></dd> -->
     </dl>
+    <h2>更新履歴</h2>
+    <p>git log垂れ流し。</p>
+    <Changes count={10} />
 </BaseLayout>
 
 <script>
