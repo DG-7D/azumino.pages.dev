@@ -1,0 +1,12 @@
+---
+import { execSync } from "child_process";
+
+interface Commits {
+    date: string;
+    message: string;
+}
+
+const git = execSync('git log --format={\\""date\\"":\\""%ad\\"",\\""message\\"":\\""%s\\""}, --date=iso --first-parent').toString();
+const json: Commits = JSON.parse(`[${git.substring(0, git.length - 2)}]`);
+console.log(json);
+---
