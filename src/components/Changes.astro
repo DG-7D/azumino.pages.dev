@@ -1,0 +1,58 @@
+---
+import { execSync } from "child_process";
+
+interface Props {
+    count: number;
+    inline?: boolean;
+}
+
+interface Commit {
+    date: string;
+    message: string;
+}
+
+const git = execSync('git log --format={\\""date\\"":\\""%ad\\"",\\""message\\"":\\""%s\\""}, --date=short --first-parent').toString();
+const commits: Commit[] = JSON.parse(`[${git.substring(0, git.length - 2)}]`);
+const history: { [date: string]: string[] } = {};
+let overflow: boolean = false;
+for (const commit of commits) {
+    if (!history[commit.date]) {
+        if (Object.keys(history).length < Astro.props.count) {
+            history[commit.date] = [commit.message];
+        } else {
+            overflow = true;
+        }
+    } else if (!history[commit.date].includes(commit.message)) {
+        history[commit.date].push(commit.message);
+    }
+}
+
+function isoTo年月日(iso: string): string {
+    return `${iso.substring(0, 4)}年${iso.substring(5, 7)}月${iso.substring(8, 10)}日`;
+}
+---
+
+<dl class={Astro.props.inline ? "inline" : ""}>
+    {
+        Object.entries(history).map(([date, messages]) => (
+            <>
+                <dt>
+                    <time datetime={date}>{isoTo年月日(date)}</time>
+                </dt>
+                {messages.map((message) => (
+                    <dd>{message}</dd>
+                ))}
+            </>
+        ))
+    }
+    {
+        overflow && (
+            <>
+                <dt>それ以降</dt>
+                <dd>
+                    <a href="/changes/">もっと見る</a>
+                </dd>
+            </>
+        )
+    }
+</dl>
