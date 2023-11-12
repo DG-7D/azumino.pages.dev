@@ -12,15 +12,7 @@ interface Commit {
     message: string;
 }
 
-let git: string;
-
-if (os.platform() == "linux") {
-    git = execSync('git log --format=\'{"date":"%ad","message":"%s"},\' --date=short --first-parent').toString();
-} else if (os.platform() == "win32") {
-    git = execSync('git log --format="{\\""date\\"":\\""%ad\\"",\\""message\\"":\\""%s\\""}," --date=short --first-parent').toString();
-} else {
-    return;
-}
+const git: string = execSync('git log --format=\'{"date":"%ad","message":"%s"},\' --date=short --first-parent',{shell:"bash"}).toString();
 const commits: Commit[] = JSON.parse(`[${git.substring(0, git.length - 2)}]`);
 const history: { [date: string]: string[] } = {};
 let overflow: boolean = false;
