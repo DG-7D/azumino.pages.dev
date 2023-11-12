@@ -1,19 +1,15 @@
 ---
 import { execSync } from "child_process";
-import * as os from "os";
 
 interface Props {
     count: number;
     inline?: boolean;
 }
 
-interface Commit {
+const commits: {
     date: string;
     message: string;
-}
-
-const git: string = execSync('git log --format=\'{"date":"%ad","message":"%s"},\' --date=short --first-parent',{shell:"bash"}).toString();
-const commits: Commit[] = JSON.parse(`[${git.substring(0, git.length - 2)}]`);
+}[] = JSON.parse(("[" + execSync('git log --format=\'{"date":"%ad","message":"%s"},\' --date=short --first-parent', { shell: "bash" }).toString() + "]").replace(",\n]", "]"));
 const history: { [date: string]: string[] } = {};
 let overflow: boolean = false;
 for (const commit of commits) {
