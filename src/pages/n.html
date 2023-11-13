@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>りだいれくと</title>
+        <script>
+            function onLoad() {
+                window.addEventListener("pageshow", (e) => {
+                    if (e.persisted || performance.navigation.type == performance.navigation.TYPE_BACK_FORWARD) {
+                        window.close();
+                    }
+                })
+                // const url = new URLSearchParams(window.location.search).get("url");
+                const url = "/r/"
+                setLink(url);
+                // history.replaceState({}, "", document.referrer);
+                history.pushState({}, "", url);
+                window.addEventListener("popstate", window.alert("popstate"));
+                // location.href = url;
+                // location.reload();
+                // location.replace(url);
+                // link.click();
+                // open(url, "_self");
+                location.assign(url);
+            }
+            function setLink(url) {
+                const link = document.getElementById("link");
+                link.setAttribute("href", url)
+                link.innerText = url;
+            }
+        </script>
+    </head>
+
+    <body onload="onLoad()">
+        <p>
+            <a id="link"></a>へ移動しようとしています。
+            自動的に遷移しない場合はURLをクリックしてください。
+        </p>
+    </body>
+
+</html>

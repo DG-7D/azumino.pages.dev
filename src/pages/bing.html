@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="referrer" content="origin-when-cross-origin">
+        <script>//<![CDATA[
+            var s = false;
+            function l() {
+                setTimeout(f, 10000);
+                if (document.referrer) {
+                    try {
+                        var pm = /(^|&|\?)px=([^&]*)(&|$)/i;
+                        var px = window.location.href.match(pm);
+                        var rs = document.referrer;
+                        if (px != null) {
+                            if (rs.match(pm))
+                                rs = rs.replace(pm, "$1px=" + px[2] + "$3");
+                            else if (rs.indexOf("?") != -1)
+                                rs = rs + "&px=" + px[2];
+                            else
+                                rs = rs + "?px=" + px[2];
+                        }
+                        history.replaceState({}, "Bing", rs);
+                        window.addEventListener("pageshow", function (e) { if (e.persisted || (typeof window.performance != "undefined" && window.performance.navigation.type === 2)) window.location.reload(); });
+                        s = true;
+                        setTimeout(r, 10);
+                        return;
+                    } catch (e) { }
+                }
+                r();
+            }
+            function r() {
+                var u = "https://web-camp.io/magazine/archives/94812";
+                if (s)
+                    window.location.href = u;
+                else
+                    window.location.replace(u);
+            }
+            function f() {
+                document.getElementById("fb").style.display = "block";
+            }
+            //]]>
+        </script>
+    </head>
+
+    <body onload="l()">
+        <div id="fb" style="display: none">
+            Please <a href="https://www.bing.com/ck/a?!&&p=fc423225a77f06d4JmltdHM9MTY5OTgzMzYwMCZpZ3VpZD0wYWQ5YjQxYy1lYjVkLTY2ZTEtMjczMi1hNjY4ZWFiNzY3MmQmaW5zaWQ9NTIwNA&ptn=3&ver=2&hsh=3&fclid=0ad9b41c-eb5d-66e1-2732-a668eab7672d&psq=%e6%96%b0%e3%81%97%e3%81%84%e3%82%bf%e3%83%96%e3%80%80%e6%88%bb%e3%82%8b%e3%83%9c%e3%82%bf%e3%83%b3&u=a1aHR0cHM6Ly93ZWItY2FtcC5pby9tYWdhemluZS9hcmNoaXZlcy85NDgxMg&ntb=F">click here</a> if the page does not redirect automatically ...
+        </div>
+    </body>
+
+</html>
