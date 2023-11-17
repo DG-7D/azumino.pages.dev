@@ -43,7 +43,7 @@ body {
             max-width: 60rem;
             margin: 0 auto;
             padding: 0.75rem;
-            box-shadow: 0 0 1rem var(--main-shadow);
+            box-shadow: 0 0 0.5rem 0.25rem var(--main-shadow);
         }
 
         // ここにフッター
@@ -65,6 +65,7 @@ main {
         border-style: solid;
         border-width: 0 0 0.1rem;
         border-color: var(--theme-color);
+
         +div.publishDate {
             color: var(--sub-color);
         }
@@ -123,35 +124,41 @@ main {
         li {
             display: inline;
 
-            &:has(+li)::after {
+            // &:has(+li)::after {
+            // }
+            +li::before {
                 content: ", ";
             }
         }
     }
 
     dl.inline {
-        dt {
-            display: inline;
+        @supports selector(:has(+ *)) {
 
-            &::after {
-                content: ":";
-                margin: 0 0.25rem;
+            dt {
+                display: inline;
+
+                &::after {
+                    content: ":";
+                    margin: 0 0.25rem;
+                }
+            }
+
+            dd {
+
+                &:has(+dt)::after {
+                    content: "";
+                    display: block;
+                }
             }
         }
 
         dd {
             display: inline;
 
-            &:has(+dt)::after {
-                // 次にdtがくるdd
-                content: "";
-                display: block;
-            }
-
             +dd::before {
                 content: ", ";
             }
-
         }
     }
 
