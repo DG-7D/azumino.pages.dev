@@ -9,9 +9,17 @@ const { siteName } = Astro.props;
 ---
 
 <header>
+    <!-- <div></div> -->
     <a href="/">
         {siteName}
     </a>
+    <nav>
+        <ul>
+            <li><a href="/">トップ</a></li>
+            <li><a href="/blog/">ブログ</a></li>
+            <li><a href="/about/">自己紹介</a></li>
+        </ul>
+    </nav>
     <!-- <button style="width: 1rem; height: 1rem;"></button> -->
 </header>
 <style lang="scss">
@@ -26,15 +34,38 @@ const { siteName } = Astro.props;
         z-index: 1645;
         padding: $padding;
         display: flex;
-        justify-content: center;
-        align-items: center;
+        justify-content: space-evenly;
+        align-items: flex-end;
         background-color: var(--theme-color);
         box-shadow: 0 0 0.5rem 0.25rem var(--background-color);
-        a {
+        // > * {
+        //     flex: 1 1 0;
+        // }
+        // > div {
+        //     @media (width < 650px) {
+        //         display: none;
+        //     }
+        // }
+        > a {
             color: var(--bwhite);
             font-size: $font-size;
+            text-align: center;
         }
-        button {
+        > nav {
+            ul {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                li {
+                    padding: 0.25rem;
+                    margin: 0;
+                    a {
+                        color: var(--bwhite);
+                    }
+                }
+            }
+        }
+        > button {
             position: absolute;
             right: 1rem;
         }
