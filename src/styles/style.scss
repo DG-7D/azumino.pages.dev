@@ -127,7 +127,7 @@ main {
             // &:has(+li)::after {
             // }
             +li::before {
-                content: ", ";
+                content: "、";
             }
         }
     }
@@ -147,8 +147,8 @@ main {
             dd {
 
                 &:has(+dt)::after {
-                    content: "";
-                    display: block;
+                    content: "\A";
+                    white-space: pre;
                 }
             }
         }
@@ -157,7 +157,7 @@ main {
             display: inline;
 
             +dd::before {
-                content: ", ";
+                content: "、";
             }
         }
     }
