@@ -2,26 +2,23 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 ---
 
-<BaseLayout title="ゴヴィッショヌ揃え" description="">
-    <p><a href="http://checoole.s1009.xrea.com/govissionu/make_govissionu.php" target="_blank">ゴヴィッショヌ揃え</a>をJavaScriptで実装してみた。遅すぎて一生終わらない。</p>
-    <div id="govOut"></div>
-    <div id="govCount">0</div>
+<BaseLayout title="ゴヴィッショヌ揃え" description="JavaScript版ゴヴィッショヌ揃え。">
+    <p><a href="http://checoole.s1009.xrea.com/govissionu/make_govissionu.php" target="_blank">ゴヴィッショヌ揃え</a>をJavaScriptで実装してみた。本家より速いけど<a href="https://yuino.dev/works/govissionu/" target="_blank">これ</a>よりはおそいとおもう。</p>
+    <div id="govBox"><span id="govOut"></span><a id="govEnd"></a></div>
+    <p id="govResult">ごゔぃっしょにんぐ……</p>
     <script>
         function random<T>(array: T[]): T {
             return array[Math.floor(Math.random() * array.length)];
         }
         function makeGov() {
             const govs = ["(", "´", "･", "_", "･", "`", ")"];
-            const govOut = document.getElementById("govOut");
-            const govCount = document.getElementById("govCount");
+            const govOut = document.getElementById("govOut")!;
+            const govResult = document.getElementById("govResult")!;
             let nextLetter = 0;
-            let letterCount = 0;
-
-            function addGov() {
+            let govText = "";
+            while (true) {
                 const newLetter = random(govs);
-                govOut!.innerText += newLetter;
-                letterCount++;
-                govCount!.innerText = letterCount.toString();
+                govText += newLetter;
                 if (newLetter == govs[nextLetter]) {
                     nextLetter++;
                     if (nextLetter == govs.length) {
@@ -31,15 +28,19 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
                 } else {
                     nextLetter = 0;
                 }
-                setTimeout(addGov, 0);
             }
             function finishGov() {
-                govCount!.innerText += "文字目でｺﾞｳﾞｨｯｼｮﾇが完成しました！";
-                govCount!.scrollIntoView();
+                govOut.innerText = govText;
+                govResult.innerHTML = `${govText.length}文字目でｺﾞｳﾞｨｯｼｮﾇが完成しました! <a href="${encodeURI("https://twitter.com/intent/tweet?text=" + govText.length + "文字目でｺﾞｳﾞｨｯｼｮﾇが完成しました(´･_･`)&url=" + location.href)}" target="_blank">ツイート</a>`;
+                document.getElementById("govEnd")!.scrollIntoView();
             }
-
-            addGov();
         }
         makeGov();
     </script>
+    <style>
+        #govBox {
+            max-height: 50vh;
+            overflow-y: scroll;
+        }
+    </style>
 </BaseLayout>
