@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config';
+import rehypeExternalLinks from 'rehype-external-links';
 
 // https://astro.build/config
 export default defineConfig({
@@ -8,6 +9,9 @@ export default defineConfig({
             theme: "github-dark",
             // theme: "css-variables",
             wrap: true,
-        }
+        },
+        rehypePlugins: [
+            [rehypeExternalLinks, { target: "_blank", rel: [] }]
+        ]
     }
 });
