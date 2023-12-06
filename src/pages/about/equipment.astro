@@ -22,7 +22,7 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
         <dt>35-105mm</dt><dd>ハードオフのジャンク箱で拾った。初期型。ズームなのに簡易マクロでの解像力が驚異的。初期型とNewとでまったく性能が違うので注意。カタログスペックが同じなので検索で分けられないのが厄介。ボケがいい。</dd>
         <dt>70-210mm F4</dt><dd>ハードオフで2000円。いわゆる茶筒。インナーズームで扱いやすい。焦点距離が微妙なのであんま使わない。ボケがいい。</dd>
         <dt>75-300mm</dt><dd>ヤフオクかどっかで付属品完備1000円。よくハードオフのジャンク箱に入ってるのと同じカタログスペックだけど、それはIIとかNewとか(D)とか。これは初期型でデカ重な代わりに写りがいい。ボケはまあいい。</dd>
-        <dt>20mm F2.8</dt><dd>がさばるし汎用性はまったくないしで防湿庫の肥やし。広角はスマホでいいじゃん……。ボケ味を気にするほどボケない。</dd>
+        <dt><del>20mm F2.8</del></dt><dd>使いどころがなさすぎてハードオフ稲城矢野口店行きになった。</dd>
         <dt>50mm F1.7 New</dt><dd>ハードオフで2000円。単焦点らしく解放からバキバキ解像する。特に前ボケがめっちゃいい。</dd>
         <dt>MACRO 50mm F2.8</dt><dd>ヤフオクで3000円。便利。ボケがまあいい。</dd>
         <dt>MACRO 100mm F2.8</dt><dd>若干離れたものでもバチクソデカく撮れる中望遠マクロ。使いどころがむずかしい。所有レンズ中一番の解像力。ボケもいい。</dd>
@@ -41,28 +41,28 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
     <h2>パソコン</h2>
     <dl>
         <dt>メイン機</dt>
-        <dd>ﾊﾟｯﾊﾟがメルカリで拾ってくれたまあまあ安い他作PC。ケースがださいので変えたい。メモリは足りてなくはないけど令和に16GBは最低限ってかんじでダサいので盛ってもいいかも。グラボはめちゃつよではないけどWar ThunderでSSAA使える程度はあるのでいいかな。</dd>
+        <dd>ﾊﾟｯﾊﾟがメルカリで拾ってくれたまあまあ安い他作PC。ケースがださいので変えたい。メモリは足りてなくはないけど令和に16GBは最低限ってかんじでダサいので盛ってもいいかも。グラボはめちゃつよではないけどWar ThunderでSSAA使える程度はあるのでいいかな。チップセットは対応してるはずなのにUSB Type-AがGen2じゃなくておしまい。</dd>
         <dd>
             <dl class="inline">
                 <dt>OS</dt><dd>Windows 11 Pro</dd>
                 <dt>CPU</dt><dd>Core i5-12600K</dd>
-                <dt>GPU</dt><dd>RTX 3060</dd>
+                <dt>GPU</dt><dd>GeForce RTX 3060</dd>
                 <dt>RAM</dt><dd>16GB DDR4</dd>
-                <dt>SSD</dt><dd>1TB NVMe</dd>
+                <dt>SSD</dt><dd>1TB NVMe (KIOXIA EXCERIA G2)</dd>
                 <dt>M/B</dt><dd>MSI Z690-P</dd>
                 <dt>Bluetooth</dt><dd>Intel AX200</dd>
             </dl>
         </dd>
         <dt>EPSON Endeavor Pro7500</dt>
-        <dd>ﾊﾟｯﾊﾟのお下がり。今でいうi9に相当するCPUが載ってて当時最強だけど処分セールで10万しなかったらしい。メイン機にHDDが載らないのでファイルサーバとして使ってる。</dd>
+        <dd>ﾊﾟｯﾊﾟのお下がり。今でいうi9に相当するCPUが載ってて当時最強だけど処分セールで10万しなかったらしい。メイン機にHDDが載らないのでファイルサーバとして使ってる。大げさすぎるのでミニPCとかで置き換えたい(HDDのUSB接続ってどうなんだろ)。</dd>
         <dd>
             <dl class="inline">
                 <dt>OS</dt><dd>Windows 11 Pro (サポート対象外)</dd>
                 <dt>CPU</dt><dd>Core i7-3930K (Sandy Bridge !!!)</dd>
-                <dt>GPU</dt><dd>GT 710</dd>
+                <dt>GPU</dt><dd>GeForce GT 710</dd>
                 <dt>RAM</dt><dd>16GB DDR3</dd>
-                <dt>SSD</dt><dd>120GB SATA</dd>
-                <dt>HDD</dt><dd>2x2TB(MD04ACA200), 2x8TB(WD80EAZZ)</dd>
+                <dt>SSD</dt><dd>120GB SATA (SanDisk SSD Plus)</dd>
+                <dt>HDD</dt><dd>2x2TB (MD04ACA200)</dd><dd>2x8TB (WD80EAZZ)</dd>
             </dl>
         </dd>
         <dt>VAIO SX14 (VJS142)</dt>
@@ -72,40 +72,20 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
                 <dt>OS</dt><dd>Windows 10 Pro</dd>
                 <dt>CPU</dt><dd>Core i7-10710U</dd>
                 <dt>RAM</dt><dd>16GB</dd>
-                <dt>SSD</dt><dd>512GB NVMe</dd>
+                <dt>SSD</dt><dd>512GB NVMe (Samsung PM981)</dd>
             </dl>
         </dd>
         <dt>SONY VAIO Pro 13 (SVP132)</dt>
-        <dd>ふるいノートPC。SONY時代のVAIO。どっかで中古で拾った。TailscaleとWoLの踏み台として常時起動中。一回BIOS飛ばして無理矢理焼き直したせいで変なことになってる。</dd>
+        <dd>ふるいノートPC。SONY時代のVAIO。どっかで中古で拾った。スペックは終わってるけど見た目とか物理的な細かい使い心地はSX14同様よい。TailscaleとWoLの踏み台として常時起動中。一回BIOS飛ばして無理矢理焼き直したせいで変なことになってる。</dd>
         <dd>
             <dl class="inline">
                 <dt>OS</dt><dd>Windows 10 Pro</dd>
                 <dt>CPU</dt><dd>Core i7-4500U</dd>
                 <dt>RAM</dt><dd>8GB</dd>
-                <dt>SSD</dt><dd>256GB PCIe直付けAHCI(????)</dd>
+                <dt>SSD</dt><dd>256GB PCIe直付けAHCI(????) (Samsung XP941)</dd>
+                <dt>Wi-Fi</dt><dd>Intel Wireless-AC 7260</dd>
+                <dt>有線LAN</dt><dd>なし🥺</dd>
             </dl>
-        </dd>
-        <dt>iMac</dt>
-        <dd>ディスプレイとして使えるかと思って親からもらってみたけど対応してなかった。macOS Catalinaまでしか上げられない。いらない。邪魔。</dd>
-        <dt>SONY VAIO type R master</dt>
-        <dd>SONYの名作機。PCIeをぶっといケーブルで外部ユニットに引っ張ってたりマザボがmicroBTXだったりと変態。Core 2 Quad対応のとそうでないの2台ある。愛着はあるけど邪魔。</dd>
-        <dt>余ってる部品</dt>
-        <dd>
-            <ul class="inline">
-                <li>Core 2 Quad Q6600</li>
-                <li>Core 2 Duo E6600</li>
-                <li>Core 2 Duo E8400</li>
-                <li>7600GS</li>
-                <li>9600GT (壊れてる)</li>
-                <li>GT 330</li>
-                <li>GTS 450</li>
-                <li>GTX 1050 Ti (グラボはよく壊れるので予備として温存)</li>
-                <li>SATA SSD 数枚</li>
-                <li>SeagateのおしまいHDD</li>
-                <li>SATA BDドライブ 2台</li>
-                <li>Intel Wireless-AC 9260</li>
-                <li>Win11Proのライセンス</li>
-            </ul>
         </dd>
     </dl>
     <h3>周辺機器</h3>
@@ -123,18 +103,59 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
         <dt>Ainex U32AC-MFAD</dt>
         <dd>USB Type-A<abbr title="メス、レセプタクル">凹</abbr>からType-C凹に変換する<strong>規格違反</strong>アダプタ。使用法を間違えると危険なのでどうダメなのか分からない人は絶対に使ってはいけない。後述するイヤホンのドングルをPCにつけるのに使ってる。</dd>
         <dt>LG W2361VG</dt>
-        <dd>23×25.4mmモニタ。どっかのハードオフで拾ってきた。メイン。素晴らしくはないがふつうに使える。光沢なのが気に入らない。</dd>
+        <dd>23×25.4mmモニタ。<del>どっかのハードオフ</del>トレファク三鷹店で拾ってきた。メイン。素晴らしくはないがふつうに使える。光沢なのが気に入らない。</dd>
         <dt>MITSUBISHI RDT234WLM</dt>
-        <dd>23×25.4mmモニタ。ﾊﾟｯﾊﾟのお下がり。サブで縦置き。ちょっとでも正面から外れるとおしまいの色になる。とてもメインで使える代物ではない。VESA対応してるのに最近気づいたけど……。もう一枚あって押し付けられそうになったけど拒否した。</dd>
+        <dd>23×25.4mmモニタ。ﾊﾟｯﾊﾟのお下がり。サブで縦置き。足をもぎ取って立てかけてる。ちょっとでも正面から外れるとおしまいの色になる。とてもメインで使える代物ではない。VESA対応してるのに最近気づいたけど……。もう一枚あって押し付けられそうになったけど拒否した。</dd>
         <dt>BUFFALO LSW3-GT-5NS</dt>
-        <dd>5ポートギガビットスイッチングハブ。トレファクで拾った激安品。ちゃんと理論値出るし金属筐体だし磁石でくっつけられるしで有能。</dd>
+        <dd>5ポートギガビットスイッチングハブ。トレファクで拾った激安品。ちゃんと実測1Gbps出るし金属筐体だし磁石でくっつけられるしで有能。</dd>
         <dt>LANケーブル</dt>
         <dd>出所不明のCat 6がいくつかある。壁通ってるやつはCat 5eだわツメ折れてるわでおしまい。でも1Gbps出る。</dd>
         <dt>Aterm BL1000HW</dt>
         <dd>auひかりの貸出ONU兼ルータ。WAN側10Gbps。LAN側も1つ10Gbpsあるけど対応する接続先がない……。回線は実測で1Gbpsギリギリまで出る。</dd>
     </dl>
-    <p>4Kモニタほしいなぁ。狙撃がしやすくなりそう(?)</p>
-    <h2>オーディオ</h2>
+    <p>モニタがひどすぎる。4Kモニタほしいなぁ。狙撃がしやすくなりそう(?) 机の形状的にふつうのモニタアームが使えないのもしんどい。</p>
+    <h3>使ってない奴ら</h3>
+    <dl>
+        <dt>SONY VAIO type R master</dt>
+        <dd>SONYの名作機。PCIeをぶっといケーブルで外部ユニットに引っ張ってたりマザボがmicroBTXだったりと変態。Core 2 Quad対応のとそうでないの2台ある。もう使うことはないだろうけど面白さと愛着があるので捨てにくい。</dd>
+        <dt>iMac (21.5, Late 2012)</dt>
+        <dd>ディスプレイとして使えるかと思って親からもらってみたけどDP入力に対応してなかった(Thunderboltのみ)。macOS Catalinaまでしか上げられない。いらない。邪魔。誰かもらって。</dd>
+        <dd>
+            <dl class="inline">
+                <dt>CPU</dt><dd>Core i5-3335S</dd>
+                <dt>RAM</dt><dd>8GB</dd>
+                <dt>HDD</dt><dd>1TB</dd>
+            </dl>
+        </dd>
+        <dt>余ってる部品</dt>
+        <dd>
+            <ul class="inline">
+                <li>Core 2 Quad Q6600</li>
+                <li>Core 2 Duo E6600</li>
+                <li>Core 2 Duo E8400</li>
+                <li>7600GS</li>
+                <li>9600GT (壊れてる)</li>
+                <li>GT 330</li>
+                <li>GTS 450</li>
+                <li>GTX 1050 Ti (グラボはよく壊れるので予備として温存)</li>
+                <li>SATA SSD 数枚</li>
+                <li>SeagateのおしまいHDD</li>
+                <li>SATA BDドライブ 2台</li>
+                <li>Intel Wireless-AC 9260</li>
+                <li>Win11Pro, Educationのライセンス</li>
+            </ul>
+        </dd>
+        <dt>LG L204WT</dt>
+        <dd>20×25.4mmモニタ。1680×1050。昔けっこう長いこと使ってた。三菱ほどじゃないけど色が怪しい。足が壊れてて分解撤去されている。一応VESA対応？</dd>
+        <dt>Logicool K380</dt>
+        <dd>ワイヤレスキーボード。iMac用。いらない。</dd>
+        <dt>Logicool M350</dt>
+        <dd>ワイヤレスマウス。iMac用。いらない。</dd>
+        <dt>Microsoft Designer Bluetooth Mouse</dt>
+        <dd>ワイヤレスマウス。VAIO Pro 13で使ってた。ちょっと挙動が怪しい。いらない。</dd>
+    </dl>
+
+    <h2>音響</h2>
     <p>有線だと紐が重くて首がもげるのでTWSしか使わない。</p>
     <dl>
         <dt>NUARL NT01AX</dt>
@@ -143,14 +164,35 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
         <dd>専用ドングルを使う低遅延なTWS。音質はカス。ノイキャンもついてるけど役立たず。ゲーム用。Bluetoothより接続が確実なので家以外で遠隔講義受けるときも使う。</dd>
         <dt>Apple EarPods</dt>
         <dd>紐付きだけど万が一のときのためにノートPCケースに常備してある。素晴らしい音ではないけど、どんな音源でも無難な音で鳴ってくれるのである意味優秀。3.5mmジャックなのでiPhoneでは使えない。</dd>
+        <dt>なぞのサラウンド環境</dt>
+        <dd>ﾊﾟｯﾊﾟがリビングに構築してる4.1ch(?)環境。耳をすませばのブルーレイとか流すとかなりいい。これで戦車ｹﾞｰやってみたいけどリビングにPCないからなぁ。</dd>
     </dl>
     <h2>携帯端末</h2>
     <dl>
         <dt>iPhone SE (第3世代)</dt>
-        <dd>たぶん最後になってしまわれた画面が変な形にエグれてないまともなiPhone。SE2よりかなり改善されたけどちょーーっと電池持ちが悪いかもしれない。10シリーズがXperiaみたいな形になってくれれば移行できるんだけど……。</dd>
+        <dd>たぶん最後になってしまわれた画面が変な形にエグれてないまともなiPhone。SE2よりかなり改善されたけどちょーーっと電池持ちが物足りないかもしれない。10シリーズがXperiaみたいな形になってくれれば移行できるんだけど……。</dd>
         <dt>iPhone SE (第2世代)</dt>
-        <dd>まさかまともなiPhoneの後継が出るとは思わず発売直後にXSを投げ捨てて買った。今はサブ機としてひたすら一眼カメラに位置情報を飛ばしている。</dd>
+        <dd>まさかまともなiPhoneの後継が出るとは思わず発売直後にXSを投げ捨てて買った。今はサブ機としてひたすらα7 IVに位置情報を飛ばしている。</dd>
         <dt>iPad (第8世代)</dt>
-        <dd>謎の一年間の途中からノート取るのに導入。もう紙には戻れない。Lightningなのはいいとして(よくない)PD非対応なのが最悪。</dd>
+        <dd>謎の一年間の途中からノート取るのに導入。もう紙には戻れない。Lightningなのはいいとして(よくない)PD非対応なのが最悪。10世代に置き換えられ売り払われた。</dd>
+        <dt>iPad (第10世代)</dt>
+        <dd>第8世代に代わり2023年11月に生えてきた。Apple Pencil(第1世代)の接続方法がバカな以外はまとも。ちょっとTouch IDの位置が慣れない。</dd>
+    </dl>
+    <h3>周辺機器</h3>
+    <dl>
+        <dt>BLUEDOT BMB-PD101</dt><dd>PD対応10000mAhモバイルバッテリ。Micro-B端子がついちゃったりしてる古めのだけどまあ使える。会社が吹き飛んでるっぽい()</dd>
+        <dt>BLUEDOT BAC-PD60W</dt><dd>PD充電器(60W)。家でのﾉﾊﾟｿ、iPad充電用。</dd>
+        <dt>Apple MHJA3AM</dt><dd>PD充電器(20W)。iPadの付属品。家でのiPhone充電用。</dd>
+        <dt>AUKEY PA-D5</dt><dd>PD充電器(60W or 45W+18W)。ちゃんさぶさんからもらった。鞄に常備(クソ便利)。</dd>
+        <dt>USB Type-Cケーブル</dt>
+        <dd>iPad付属のやつ(布巻き!、USB2.0)</dd>
+        <dd>ハードオフ稲城矢野口店で300円で拾ってきたやつ(布(?)巻き、USB2.0)</dd>
+        <dd>ﾓﾊﾞﾌﾞ付属のやつ(充電だけ)</dd>
+        <dd>全結線のやつはない🥺</dd>
+        <dt>Type-C to Lightningケーブル</dt>
+        <dd>iPhone付属のやつ(すぐ壊れそうなので箱から出してすらいない)</dd>
+        <dd>K123 Keytechとかいうとこのやつ(布巻き!)</dd>
+        <dd>多摩電子のやつ(布巻き!)</dd>
+        <dd>はやくLightning滅ぼしたいけどSE3の後継が出なさそうで望み薄。</dd>
     </dl>
 </BaseLayout>
