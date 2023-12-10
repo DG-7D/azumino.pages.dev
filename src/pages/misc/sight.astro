@@ -68,11 +68,20 @@ const pageTitle: string = `${showTitle ? title + " – " : ""}${siteName}`;
             };
 
             function activateLiveView() {
-                navigator.mediaDevices.getUserMedia({ audio: false, video: { facingMode: "environment" } }).then((stream) => {
-                    console.log(stream.getVideoTracks()[0].getSettings());
-                    liveView.srcObject = stream;
-                    liveView.play();
-                });
+                navigator.mediaDevices
+                    .getUserMedia({
+                        audio: false,
+                        video: {
+                            facingMode: { ideal: "environment" },
+                            width: { ideal: 1920 },
+                            height: { ideal: 1080 },
+                        },
+                    })
+                    .then((stream) => {
+                        console.log(stream.getVideoTracks()[0].getSettings());
+                        liveView.srcObject = stream;
+                        liveView.play();
+                    });
             }
 
             function initSettings() {
@@ -123,11 +132,11 @@ const pageTitle: string = `${showTitle ? title + " – " : ""}${siteName}`;
             body {
                 overflow: hidden;
                 color: var(--main-color);
+                width: fit-content;
+                height: fit-content;
             }
             video#liveView {
                 position: static;
-                top: 0;
-                left: 0;
                 max-width: 100vw;
                 max-height: 100vh;
             }
