@@ -142,10 +142,12 @@ const pageTitle: string = `${showTitle ? title + " – " : ""}${siteName}`;
                 z-index: 2;
                 top: 0;
                 left: 0;
-                background: rgba(127, 127, 127, 0.5);
                 // display: none;
                 * {
                     margin: 0.25em;
+                }
+                label {
+                    text-shadow: 0 0 2px var(--background-color);
                 }
                 input[type="number"] {
                     width: 3em;
