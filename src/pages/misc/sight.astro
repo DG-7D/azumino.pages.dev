@@ -41,7 +41,7 @@ const pageTitle: string = `${showTitle ? title + " – " : ""}${siteName}`;
         />
     </head>
     <body>
-        <video id="liveView"> </video>
+        <video id="liveView" muted playsinline> </video>
         <div id="sight"></div>
         <div id="settings">
             <label for="focalLV">カメラ焦点距離</label><input type="number" inputmode="numeric" id="focalLV" value="24" />
