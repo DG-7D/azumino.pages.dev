@@ -16,7 +16,7 @@ const defaultConstraints: string = `
     <textarea id="inputConstraints">{defaultConstraints}</textarea>
     <button id="buttonConstraints">適用</button>
     <video id="liveView" muted playsinline> </video>
-    <textarea id="log"></textarea>
+    <textarea id="log" readonly></textarea>
 </BaseLayout>
 <script>
     const liveView = document.getElementById("liveView")! as HTMLVideoElement;

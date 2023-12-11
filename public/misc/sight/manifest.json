@@ -4,9 +4,11 @@
     "icons": [
         {
             "src": "/favicon.svg",
+            "sizes": "any",
             "type": "image/svg+xml"
         }
     ],
     "name": "Webカメラ照準器 – あづみのメモ帳",
+    "orientation": "landscape",
     "short_name": "Web照準器"
 }
