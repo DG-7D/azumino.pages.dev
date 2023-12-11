@@ -81,9 +81,7 @@ const pageTitle: string = `${showTitle ? title + " – " : ""}${siteName}`;
                         audio: false,
                         video: {
                             resizeMode: "none",
-                            aspectRatio: { ideal: 1.5 },
                             facingMode: { ideal: "environment" },
-                            height: { max: 1080 },
                         },
                     })
                     .then((stream) => {
