@@ -47,25 +47,21 @@ const pageTitle: string = `${showTitle ? title + " – " : ""}${siteName}`;
             <span>画角/換算mm</span>
             <label for="focalLV">表示</label><input type="number" inputmode="numeric" id="focalLV" value="28" />
             <label for="focalSight">照準</label><input type="number" inputmode="numeric" id="focalSight" value="100" />
-            <label for="distance">撮影距離/m (0:無限遠)</label><input type="number" inputmode="numeric" id="distance" value="0" />
+            <label for="ratioSight">縦横比</label><input type="number" inputmode="decimal" id="ratioSight" value="1.5" />
+            <label for="distance">撮影距離/m (0:無限遠)</label><input type="number" inputmode="decimal" id="distance" value="0" />
             <span>視差/mm</span>
             <label for="parallaxX">右</label><input type="number" inputmode="numeric" id="parallaxX" value="0" />
             <label for="parallaxY">上</label><input type="number" inputmode="numeric" id="parallaxY" value="0" />
         </div>
         <script>
-            const liveView = document.getElementById("liveView")! as HTMLVideoElement;
-            const sight = document.getElementById("sight")!;
-
-            const getInputElementById = (id: string) => document.getElementById(id)! as HTMLInputElement;
-            const focalLV = getInputElementById("focalLV");
-            const focalSight = getInputElementById("focalSight");
-            const distance = getInputElementById("distance");
-            const parallaxX = getInputElementById("parallaxX");
-            const parallaxY = getInputElementById("parallaxY");
-            const inputs = [focalLV, focalSight, distance, parallaxX, parallaxY];
-
-            let ratioLV = 16 / 9;
-
+            function getFullframeFovMilimeter(focalMilimeter: number, aspectRatio: number, distanceMeter: number): { x: number; y: number } {
+                const diagonalMilimeter = (Math.sqrt((24 ^ 2) + (36 ^ 2)) * distanceMeter * 1000) / focalMilimeter;
+                const diagonalRadian = Math.atan2(1, aspectRatio);
+                return {
+                    x: diagonalMilimeter * Math.cos(diagonalRadian),
+                    y: diagonalMilimeter * Math.sin(diagonalRadian),
+                };
+            }
             const localStorageNumber = {
                 setItem: function (key: string, value: number): void {
                     localStorage.setItem(key, value.toString());
@@ -75,22 +71,31 @@ const pageTitle: string = `${showTitle ? title + " – " : ""}${siteName}`;
                 },
             };
 
-            function activateLiveView() {
-                navigator.mediaDevices
-                    .getUserMedia({
-                        audio: false,
-                        video: {
-                            resizeMode: "none",
-                            facingMode: { ideal: "environment" },
-                        },
-                    })
-                    .then((stream) => {
-                        console.log(stream.getVideoTracks()[0].getCapabilities());
-                        console.log(stream.getVideoTracks()[0].getSettings());
-                        ratioLV = stream.getVideoTracks()[0].getSettings().aspectRatio ?? ratioLV;
-                        liveView.srcObject = stream;
-                        liveView.play();
-                    });
+            let ratioLV: number;
+
+            const liveView = document.getElementById("liveView")! as HTMLVideoElement;
+            const sight = document.getElementById("sight")!;
+
+            const getInputElementById = (id: string) => document.getElementById(id)! as HTMLInputElement;
+            const focalLV = getInputElementById("focalLV");
+            const focalSight = getInputElementById("focalSight");
+            const ratioSight = getInputElementById("ratioSight");
+            const distance = getInputElementById("distance");
+            const parallaxX = getInputElementById("parallaxX");
+            const parallaxY = getInputElementById("parallaxY");
+            const inputs = [focalLV, focalSight, ratioSight, distance, parallaxX, parallaxY];
+
+            async function activateLiveView() {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    audio: false,
+                    video: {
+                        facingMode: { ideal: "environment" },
+                        height: 1080,
+                    },
+                });
+                ratioLV = stream.getVideoTracks()[0].getSettings().aspectRatio ?? 16 / 9;
+                liveView.srcObject = stream;
+                liveView.play();
             }
 
             function initSettings() {
@@ -102,29 +107,40 @@ const pageTitle: string = `${showTitle ? title + " – " : ""}${siteName}`;
                     }
                 });
             }
+
             function applySettings() {
-                const focalLVNumber = Math.max(1, localStorageNumber.getItem("focalLV"));
-                const focalSightNumber = Math.max(focalLVNumber, localStorageNumber.getItem("focalSight"));
-                const sightInsetPercent = ((1 - focalLVNumber / focalSightNumber) / 2) * 100;
+                const focalLVMilimeter = Math.max(1, localStorageNumber.getItem("focalLV"));
+                const focalSightMilimeter = Math.max(focalLVMilimeter, localStorageNumber.getItem("focalSight"));
+                const ratioSight = localStorageNumber.getItem("ratioSight");
+                const distanceMeter = Math.max(0, localStorageNumber.getItem("distance"));
+                const fovLV = getFullframeFovMilimeter(focalLVMilimeter, ratioLV, distanceMeter);
+                const fovSight = getFullframeFovMilimeter(focalSightMilimeter, ratioSight, distanceMeter);
 
-                const distanceNumber = Math.max(0, localStorageNumber.getItem("distance"));
-                if (distanceNumber == 0) {
-                    sight.style.inset = sightInsetPercent.toString() + "%";
-                    return;
-                }
+                const margin = {
+                    x: (fovLV.x - fovSight.x) / 2,
+                    y: (fovLV.y - fovSight.y) / 2,
+                };
+                console.log(ratioLV);
+                const parallax = {
+                    x: localStorageNumber.getItem("parallaxX"),
+                    y: localStorageNumber.getItem("parallaxY"),
+                };
 
-                const parallaxXNumber = localStorageNumber.getItem("parallaxX");
-                const sightOffsetXPercent = (parallaxXNumber / ((36 * distanceNumber * 1000) / focalLVNumber)) * 100;
-                sight.style.left = (sightInsetPercent - sightOffsetXPercent).toString() + "%";
-                sight.style.right = (sightInsetPercent + sightOffsetXPercent).toString() + "%";
-                sight.style.top = sightInsetPercent.toString() + "%";
-                sight.style.bottom = sightInsetPercent.toString() + "%";
+                sight.style.left = toStringPercent((margin.x - parallax.x) / fovLV.x);
+                sight.style.right = toStringPercent((margin.x + parallax.x) / fovLV.x);
+                sight.style.bottom = toStringPercent((margin.y - parallax.y) / fovLV.y);
+                sight.style.top = toStringPercent((margin.y + parallax.y) / fovLV.y);
+            }
+
+            function toStringPercent(number: number) {
+                return (number * 100).toString() + "%";
             }
 
             addEventListener("load", () => {
-                initSettings();
-                applySettings();
-                activateLiveView();
+                activateLiveView().then(() => {
+                    initSettings();
+                    applySettings();
+                });
             });
             inputs.forEach((input) => {
                 input.addEventListener("input", () => {
@@ -171,7 +187,7 @@ const pageTitle: string = `${showTitle ? title + " – " : ""}${siteName}`;
             div#settings {
                 position: absolute;
                 z-index: 2;
-                top: 0;
+                bottom: 0;
                 left: 0;
                 // display: none;
                 * {
