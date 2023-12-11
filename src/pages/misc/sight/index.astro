@@ -1,6 +1,6 @@
 ---
-import "../../styles/reset.css";
-import "../..//styles/campbell.css";
+import "../../../styles/reset.css";
+import "../../../styles/campbell.css";
 import { SEO } from "astro-seo";
 const siteName = "あづみのメモ帳";
 
@@ -17,6 +17,7 @@ const pageTitle: string = `${showTitle ? title + " – " : ""}${siteName}`;
         <meta name="viewport" content="width=device-width" />
         <meta name="generator" content={Astro.generator} />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="manifest" href="manifest.json" />
         <SEO
             title={pageTitle}
             description={Astro.props.description}
