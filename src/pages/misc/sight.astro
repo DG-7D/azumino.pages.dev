@@ -44,19 +44,27 @@ const pageTitle: string = `${showTitle ? title + " – " : ""}${siteName}`;
         <video id="liveView" muted playsinline> </video>
         <div id="sight"></div>
         <div id="settings">
-            <label for="focalLV">カメラ焦点距離</label><input type="number" inputmode="numeric" id="focalLV" value="24" />
-            <label for="focalSight">照準焦点距離</label><input type="number" inputmode="numeric" id="focalSight" value="50" />
-            <!-- <label for="distance">撮影距離(0:無限遠)</label><input type="number" inputmode="numeric" id="distance" value="0" />
-            <label for="parallaxX">視差(右)</label><input type="number" inputmode="numeric" id="parallaxX" value="0" />
-            <label for="parallaxY">視差(上)</label><input type="number" inputmode="numeric" id="parallaxY" value="0" /> -->
+            <span>画角/換算mm</span>
+            <label for="focalLV">表示</label><input type="number" inputmode="numeric" id="focalLV" value="28" />
+            <label for="focalSight">照準</label><input type="number" inputmode="numeric" id="focalSight" value="100" />
+            <label for="distance">撮影距離/m (0:無限遠)</label><input type="number" inputmode="numeric" id="distance" value="0" />
+            <span>視差/mm</span>
+            <label for="parallaxX">右</label><input type="number" inputmode="numeric" id="parallaxX" value="0" />
+            <label for="parallaxY">上</label><input type="number" inputmode="numeric" id="parallaxY" value="0" />
         </div>
         <script>
             const liveView = document.getElementById("liveView")! as HTMLVideoElement;
             const sight = document.getElementById("sight")!;
-            const focalLV = document.getElementById("focalLV")! as HTMLInputElement;
-            const focalSight = document.getElementById("focalSight")! as HTMLInputElement;
-            const inputs = [focalLV, focalSight];
-            const settings = document.getElementById("settings")!;
+
+            const getInputElementById = (id: string) => document.getElementById(id)! as HTMLInputElement;
+            const focalLV = getInputElementById("focalLV");
+            const focalSight = getInputElementById("focalSight");
+            const distance = getInputElementById("distance");
+            const parallaxX = getInputElementById("parallaxX");
+            const parallaxY = getInputElementById("parallaxY");
+            const inputs = [focalLV, focalSight, distance, parallaxX, parallaxY];
+
+            let ratioLV = 16 / 9;
 
             const localStorageNumber = {
                 setItem: function (key: string, value: number): void {
@@ -72,13 +80,16 @@ const pageTitle: string = `${showTitle ? title + " – " : ""}${siteName}`;
                     .getUserMedia({
                         audio: false,
                         video: {
+                            resizeMode: "none",
+                            aspectRatio: { ideal: 1.5 },
                             facingMode: { ideal: "environment" },
-                            width: { ideal: 1920 },
-                            height: { ideal: 1080 },
+                            height: { max: 1080 },
                         },
                     })
                     .then((stream) => {
+                        console.log(stream.getVideoTracks()[0].getCapabilities());
                         console.log(stream.getVideoTracks()[0].getSettings());
+                        ratioLV = stream.getVideoTracks()[0].getSettings().aspectRatio ?? ratioLV;
                         liveView.srcObject = stream;
                         liveView.play();
                     });
@@ -96,7 +107,20 @@ const pageTitle: string = `${showTitle ? title + " – " : ""}${siteName}`;
             function applySettings() {
                 const focalLVNumber = Math.max(1, localStorageNumber.getItem("focalLV"));
                 const focalSightNumber = Math.max(focalLVNumber, localStorageNumber.getItem("focalSight"));
-                sight.style.inset = ((1 - focalLVNumber / focalSightNumber) / 2) * 100 + "%";
+                const sightInsetPercent = ((1 - focalLVNumber / focalSightNumber) / 2) * 100;
+
+                const distanceNumber = Math.max(0, localStorageNumber.getItem("distance"));
+                if (distanceNumber == 0) {
+                    sight.style.inset = sightInsetPercent.toString() + "%";
+                    return;
+                }
+
+                const parallaxXNumber = localStorageNumber.getItem("parallaxX");
+                const sightOffsetXPercent = (parallaxXNumber / ((36 * distanceNumber * 1000) / focalLVNumber)) * 100;
+                sight.style.left = (sightInsetPercent - sightOffsetXPercent).toString() + "%";
+                sight.style.right = (sightInsetPercent + sightOffsetXPercent).toString() + "%";
+                sight.style.top = sightInsetPercent.toString() + "%";
+                sight.style.bottom = sightInsetPercent.toString() + "%";
             }
 
             addEventListener("load", () => {
