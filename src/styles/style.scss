@@ -98,7 +98,8 @@ main {
     >pre,
     >ul,
     >ol,
-    >dl {
+    >dl,
+    >div {
         margin: 0.5rem 0;
     }
 
@@ -215,4 +216,16 @@ main {
         max-height: 50vh;
     }
 
+    table {
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+        thead, tbody {
+            border: 0.1rem solid var(--main-color);
+            border-style: solid none;
+        }
+        th, td {
+            padding: 0 0.25em;
+        }
+    }
 }
