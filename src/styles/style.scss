@@ -69,6 +69,7 @@ main {
 
         +div.publishDate {
             color: var(--sub-color);
+            margin:0;
         }
     }
 
@@ -100,13 +101,15 @@ main {
     >ul,
     >ol,
     >dl,
-    >div {
+    >div,
+    >table {
         margin: 0.5rem 0;
     }
 
     >pre {
         padding: 0.25rem;
         border: 0.1rem solid var(--main-shadow);
+
         @supports (text-autospace: no-autospace) {
             text-autospace: no-autospace;
         }
@@ -227,11 +230,15 @@ main {
         text-align: center;
         margin-left: auto;
         margin-right: auto;
-        thead, tbody {
+
+        thead,
+        tbody {
             border: 0.1rem solid var(--main-color);
             border-style: solid none;
         }
-        th, td {
+
+        th,
+        td {
             padding: 0 0.25em;
         }
     }
