@@ -102,11 +102,13 @@ main {
     >ol,
     >dl,
     >div,
-    >table {
+    >table,
+    >textarea {
         margin: 0.5rem 0;
     }
 
-    >pre {
+    >pre,
+    >textarea {
         padding: 0.25rem;
         border: 0.1rem solid var(--main-shadow);
 
