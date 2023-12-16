@@ -70,6 +70,7 @@ main {
 
         +div.publishDate {
             color: var(--sub-color);
+            margin:0;
         }
     }
 
@@ -100,11 +101,15 @@ main {
     >pre,
     >ul,
     >ol,
-    >dl {
+    >dl,
+    >div,
+    >table,
+    >textarea {
         margin: 0.5rem 0;
     }
 
-    >pre {
+    >pre,
+    >textarea {
         padding: 0.25rem;
         border: 0.1rem solid var(--main-shadow);
 
@@ -224,4 +229,20 @@ main {
         max-height: 50vh;
     }
 
+    table {
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+
+        thead,
+        tbody {
+            border: 0.1rem solid var(--main-color);
+            border-style: solid none;
+        }
+
+        th,
+        td {
+            padding: 0 0.25em;
+        }
+    }
 }

@@ -51,8 +51,8 @@ const pageTitle: string = `${showTitle ? title + " – " : ""}${siteName}`;
             <label for="ratioSight">縦横比</label><input type="number" inputmode="decimal" id="ratioSight" value="1.5" />
             <label for="distance">撮影距離/m (0:無限遠)</label><input type="number" inputmode="decimal" id="distance" value="0" />
             <span>視差/mm</span>
-            <label for="parallaxX">右</label><input type="number" inputmode="numeric" id="parallaxX" value="0" />
-            <label for="parallaxY">上</label><input type="number" inputmode="numeric" id="parallaxY" value="0" />
+            <label for="parallaxX">右</label><input type="number" inputmode="text" id="parallaxX" value="0" />
+            <label for="parallaxY">上</label><input type="number" inputmode="text" id="parallaxY" value="0" />
         </div>
         <script>
             function getFullframeFovMilimeter(focalMilimeter: number, aspectRatio: number, distanceMeter: number): { x: number; y: number } {
@@ -90,7 +90,8 @@ const pageTitle: string = `${showTitle ? title + " – " : ""}${siteName}`;
                 const stream = await navigator.mediaDevices.getUserMedia({
                     audio: false,
                     video: {
-                        facingMode: { ideal: "environment" },
+                        aspectRatio: 16 / 9,
+                        facingMode: "environment",
                         height: 1080,
                     },
                 });
@@ -121,7 +122,6 @@ const pageTitle: string = `${showTitle ? title + " – " : ""}${siteName}`;
                     x: (fovLV.x - fovSight.x) / 2,
                     y: (fovLV.y - fovSight.y) / 2,
                 };
-                console.log(ratioLV);
                 const parallax = {
                     x: localStorageNumber.getItem("parallaxX"),
                     y: localStorageNumber.getItem("parallaxY"),
