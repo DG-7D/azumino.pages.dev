@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@astrojs/mdx": "^1.1.5",
+    "@astrojs/sitemap": "^3.0.3",
     "astro": "^3.4.0",
     "astro-seo": "^0.8.0",
     "rehype-external-links": "^3.0.0"
