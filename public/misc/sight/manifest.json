@@ -4,11 +4,12 @@
     "icons": [
         {
             "src": "/favicon.svg",
-            "sizes": "any",
+            "sizes": "48x48 72x72 96x96 128x128 256x256",
             "type": "image/svg+xml"
         }
     ],
     "name": "Webカメラ照準器 – あづみのメモ帳",
     "orientation": "landscape",
-    "short_name": "Web照準器"
+    "short_name": "Web照準器",
+    "start_url": "./"
 }
