@@ -1,0 +1,46 @@
+---
+import { JSDOM } from "jsdom";
+
+interface Props {
+    url: string;
+}
+
+type ogpProperty = "title" | "image" | "description";
+
+const url = Astro.props.url;
+
+let ogpProperties: { [key: string]: string } = {};
+try {
+    const responseText = await (await fetch(url)).text();
+    const doc = new JSDOM(responseText).window.document;
+    Object.entries(doc.getElementsByTagName("meta")).forEach(([_, metaTag]) => {
+        const property = metaTag.getAttribute("property");
+        const content = metaTag.getAttribute("content");
+        if (property?.startsWith("og:") && content) {
+            ogpProperties[property.substring(3)] = content;
+        }
+    });
+} catch (error) {
+    console.log(error);
+}
+---
+
+<a href={url}>
+    {ogpProperties["image"] && <img src={ogpProperties["image"]} alt="" />}
+    <div>
+        {ogpProperties["title"] && <div>{ogpProperties["title"]}</div>}
+        {ogpProperties["description"] && <div>{ogpProperties["description"]}</div>}
+    </div>
+</a>
+
+<style>
+    a {
+        display: flex;
+        flex-direction: row;
+        height: 10rem;
+        div {
+            display: flex;
+            flex-direction: column;
+        }
+    }
+</style>
