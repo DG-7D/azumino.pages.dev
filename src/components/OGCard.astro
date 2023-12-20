@@ -9,7 +9,7 @@ type ogpProperty = "title" | "image" | "description";
 
 const url = Astro.props.url;
 
-let ogpProperties: { [key: string]: string } = {};
+let ogpProperties: { [key: string]: string | undefined } = {};
 try {
     const responseText = await (await fetch(url)).text();
     const doc = new JSDOM(responseText).window.document;
@@ -20,6 +20,8 @@ try {
             ogpProperties[property.substring(3)] = content;
         }
     });
+    ogpProperties["title"] ??= doc.getElementsByTagName("title")[0].textContent ?? undefined;
+    ogpProperties["description"] ??= doc.getElementsByName("description")[0].getAttribute("content") ?? undefined;
 } catch (error) {
     console.log(error);
 }
@@ -28,7 +30,7 @@ try {
 <a href={url}>
     {ogpProperties["image"] && <img src={ogpProperties["image"]} alt="" />}
     <div>
-        {ogpProperties["title"] && <div>{ogpProperties["title"]}</div>}
+        <div>{ogpProperties["title"]}</div>
         {ogpProperties["description"] && <div>{ogpProperties["description"]}</div>}
     </div>
 </a>
@@ -37,7 +39,9 @@ try {
     a {
         display: flex;
         flex-direction: row;
-        height: 10rem;
+        img {
+            max-height: 10rem;
+        }
         div {
             display: flex;
             flex-direction: column;
