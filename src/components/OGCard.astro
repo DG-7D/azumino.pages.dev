@@ -30,11 +30,11 @@ try {
 <div class="ogCard">
     <a href={url}>
         {ogpProperties["image"] && <img src={ogpProperties["image"]} alt="" />}
-        <div class="text">
+        <div class="detail">
             <div class="title">{ogpProperties["title"]}</div>
             {ogpProperties["description"] && <div class="description">{ogpProperties["description"]}</div>}
-            <div class="domain">{url}</div>
         </div>
+        <div class="domain">{new URL(url).hostname}</div>
     </a>
 </div>
 
@@ -42,9 +42,15 @@ try {
     div.ogCard {
     }
     a {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
+        display: grid;
+        grid-template-areas:
+            "img padl padt padr"
+            "img padl detail padr"
+            "img padl padc padr"
+            "img padl domain padr"
+            "img padl padb padr";
+        grid-template-columns: 7rem 1fr auto 1fr;
+        grid-template-rows: 1fr auto 1fr auto 1fr;
         max-width: 30rem;
         margin: 0 auto;
         border: 0.1rem solid var(--main-shadow);
@@ -52,18 +58,33 @@ try {
         color: inherit;
 
         > img {
+            grid-area: img;
+            width:7rem;
             height: 7rem;
-            width: 7rem;
-            /* min-width: 7rem; */
             object-fit: cover;
         }
-        > div.text {
-            display: flex;
-            flex-direction: column;
-            padding: 0.5rem;
+        > div {
+            padding: 0 0.5rem;
+            text-overflow: ellipsis;
+        }
+        > div.detail {
+            grid-area: detail;
             .title {
                 font-size: 1.25rem;
+                height: 1.875rem;
+                overflow: hidden;
             }
+            .description {
+                overflow: hidden;
+                max-height: 3rem;
+            }
+        }
+        > div.domain {
+            grid-area: domain;
+            font-family: monospace, sans-serif;
+            font-size: 0.9rem;
+            height: 1.35rem;
+            overflow: hidden;
         }
     }
 </style>
