@@ -27,24 +27,43 @@ try {
 }
 ---
 
-<a href={url}>
-    {ogpProperties["image"] && <img src={ogpProperties["image"]} alt="" />}
-    <div>
-        <div>{ogpProperties["title"]}</div>
-        {ogpProperties["description"] && <div>{ogpProperties["description"]}</div>}
-    </div>
-</a>
+<div class="ogCard">
+    <a href={url}>
+        {ogpProperties["image"] && <img src={ogpProperties["image"]} alt="" />}
+        <div class="text">
+            <div class="title">{ogpProperties["title"]}</div>
+            {ogpProperties["description"] && <div class="description">{ogpProperties["description"]}</div>}
+            <div class="domain">{url}</div>
+        </div>
+    </a>
+</div>
 
 <style>
+    div.ogCard {
+    }
     a {
         display: flex;
         flex-direction: row;
-        img {
-            max-height: 10rem;
+        align-items: center;
+        max-width: 30rem;
+        margin: 0 auto;
+        border: 0.1rem solid var(--main-shadow);
+        text-decoration: inherit;
+        color: inherit;
+
+        > img {
+            height: 7rem;
+            width: 7rem;
+            /* min-width: 7rem; */
+            object-fit: cover;
         }
-        div {
+        > div.text {
             display: flex;
             flex-direction: column;
+            padding: 0.5rem;
+            .title {
+                font-size: 1.25rem;
+            }
         }
     }
 </style>
