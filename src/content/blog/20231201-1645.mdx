@@ -5,6 +5,12 @@ publishDate: 2023-12-01
 description: "「1645」でおなじみの調布市の防災無線メロディ「わが町調布」の音源を実際の放送のように加工したり、音源の変遷について調査してみたりした。"
 ---
 
+import OGPCard from "@/components/OGPCard.astro";
+import TweetInit from "@/components/TweetInit.astro";
+import Tweet from "@/components/Tweet.astro";
+
+<TweetInit />
+
 「1645」の音源を実際の放送のように加工したり、音源の変遷について調査してみたりした。
 
 ## 「1645」とは
@@ -13,9 +19,13 @@ description: "「1645」でおなじみの調布市の防災無線メロディ�
 
 この「わが町調布」、調布市公式サイトで[歌の音源](https://www.city.chofu.tokyo.jp/www/contents/1450671006552/index.html)だけでなく[防災無線バージョンの音源](https://www.city.chofu.tokyo.jp/www/contents/1361495751275/index.html)まで公開されている。
 
+<OGPCard url="https://www.city.chofu.tokyo.jp/www/contents/1361495751275/index.html"/>
+
 ## 音割れ1645
 
 音源とは異なり、実際に防災無線子局から流れる「1645」では、一部の音が強烈にでかく聞こえる。[この動画](https://www.youtube.com/watch?v=XrGAv7bUnyE)は極端な例である。これはアナログ無線時代のものだが、デジタル化された現在でも似たような傾向がある。全体的に音割れしているというよりは、特定周波数で共振を起こしていると推測される。今回はこの動画のような音の再現を試みた。
+
+<OGPCard url="https://www.youtube.com/watch?v=XrGAv7bUnyE" />
 
 まずは共振が起こる周波数を特定する。絶対音感は持ち合わせていないので、[WaveTone](https://ackiesound.ifdef.jp/download.html#wt)にぶちこんで周波数を確認する。1200Hzと800Hzあたりが怪しい。400Hzの倍音? みたいなやつ?(なんもわからん)
 
@@ -47,7 +57,10 @@ ffplay -i 'https://www.city.chofu.tokyo.jp/www/contents/1361495751275/files/waga
 
 短縮前は[2021年5月13日](https://www.youtube.com/watch?v=06I6gvmeToo)、復活後は[2023年10月5日](https://twitter.com/raygo_math/status/1709837381283803294)時点で使用されていた。
 
-前奏から始まり1番の終わりまで入っている。復活後の音量はコロナ前よりはちょっと小さいかも? 4限終了は1610で鳴る前に脱調しているので気づくのが遅れたが、16日に帰宅が遅れて聞くことができ、けっこう[興奮した](https://twitter.com/DG_7D/status/1713823726679273501?s=20)。少し遅れて公式音源も[復活した](https://twitter.com/DG_7D/status/1715278137859486046)。
+前奏から始まり1番の終わりまで入っている。復活後の音量はコロナ前よりはちょっと小さいかも? 4限終了は1610で鳴る前に脱調しているので気づくのが遅れたが、16日に帰宅が遅れて聞くことができ、けっこう驚いた。少し遅れて公式音源も復活した。
+
+<Tweet id="1713823726679273501" />
+<Tweet id="1715278137859486046" hideThread/>
 
 ## そのほかの防災行政無線チャイム
 
@@ -57,7 +70,9 @@ ffplay -i 'https://www.city.chofu.tokyo.jp/www/contents/1361495751275/files/waga
 
 ### 川崎市
 
-調布市と狛江市のお隣。鳴動時刻は17時で、曲は[年3回変わる](https://www.city.kawasaki.jp/templates/faq/601/0000011700.html)。音量は馬鹿でかい。時刻が同じなので多摩川河川敷のちょうどいい場所(覚えてない)に立っていると狛江市と混ざって愉快なことになる。多摩水道橋で[試した](https://twitter.com/DG_7D/status/1714238839810846785)ら狛江市側がよわすぎた🥺
+調布市と狛江市のお隣。鳴動時刻は17時で、曲は[年3回変わる](https://www.city.kawasaki.jp/templates/faq/601/0000011700.html)。音量は馬鹿でかい。時刻が同じなので多摩川河川敷のちょうどいい場所(覚えてない)に立っていると狛江市と混ざって愉快なことになる。多摩水道橋で試したら狛江市側がよわすぎた🥺
+
+<Tweet id="1714238839810846785" />
 
 時報ではないが、川崎市にも川崎市民の歌「好きです かわさき 愛の街」があり、ゴミ収集車のチャイムとして有名。残念ながら公式音源配布はないが、代わりに(?)[DAMに収録](https://www.clubdam.com/karaokesearch/songleaf.html?requestNo=1810-19)されている。わが町調布と水と緑のまちも欲しいな。
 
@@ -69,4 +84,8 @@ ffplay -i 'https://www.city.chofu.tokyo.jp/www/contents/1361495751275/files/waga
 
 12時と16時に鳴る。こちらは常に「富士の山」だったはずが、いつの間にか(16時だけ?)市歌になってたらしい。
 
+## あとがき
+
 いかがだっただろうか。電通大っぽいといえばぽい話題だったかもしれない。あやふやな情報源だがある程度のまとめにはなってると思う。ちなみに、[UEC 2 Advent Calendar 2023](https://adventar.org/calendars/8704)が12月1日朝の時点では埋まっていなかったので、書き上げるまでに空いていればそこにぶち込もうと思ってたが、幸い(?)別の人が埋めてくれた。
+
+<OGPCard url="https://adventar.org/calendars/8704" />

@@ -26,6 +26,7 @@ html {
     background: var(--background-color);
     font-size: 100%;
     height: 100%;
+    overflow-y: scroll;
 }
 
 body {
@@ -66,9 +67,11 @@ main {
         border-style: solid;
         border-width: 0 0 0.1rem;
         border-color: var(--theme-color);
+        word-break: auto-phrase;
 
         +div.publishDate {
             color: var(--sub-color);
+            margin: 0;
         }
     }
 
@@ -99,13 +102,18 @@ main {
     >pre,
     >ul,
     >ol,
-    >dl {
+    >dl,
+    >div,
+    >table,
+    >textarea {
         margin: 0.5rem 0;
     }
 
-    >pre {
+    >pre,
+    >textarea {
         padding: 0.25rem;
         border: 0.1rem solid var(--main-shadow);
+
         @supports (text-autospace: no-autospace) {
             text-autospace: no-autospace;
         }
@@ -222,4 +230,20 @@ main {
         max-height: 50vh;
     }
 
+    table {
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+
+        thead,
+        tbody {
+            border: 0.1rem solid var(--main-color);
+            border-style: solid none;
+        }
+
+        th,
+        td {
+            padding: 0 0.25em;
+        }
+    }
 }
