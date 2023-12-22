@@ -1,6 +1,6 @@
 ---
-import Changes from "../components/Changes.astro";
-import BaseLayout from "../layouts/BaseLayout.astro";
+import Changes from "@/components/Changes.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
 ---
 
 <BaseLayout title="あづみのメモ帳" description="あづみが遊びで作ってる個人サイトってやつです。">
@@ -11,6 +11,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     <ul>
         <li><a href="/blog/">ブログ</a></li>
         <li><a href="/about/">あづみについて</a></li>
+        <li><a href="/misc/">その他</a></li>
     </ul>
     <h2>Tips</h2>
     <p id="tips">JavaScriptが有効だとここにはランダムなTipsが表示される。</p>
@@ -20,8 +21,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         <dt><a href="https://www.city.chofu.tokyo.jp/www/contents/1361495751275/files/wagamachichofu.mp3" target="_blank">wagamachichofu.mp3</a></dt><dd>「1645」の公式音源。<a href="https://www.city.chofu.tokyo.jp/www/contents/1361495751275/index.html" target="_blank">紹介ページ</a></dd>
         <dt><a href="https://www.city.komae.tokyo.jp/index.cfm/46,63352,c,html/63352/chaimuon.mp3" target="_blank">chaimuon.mp3</a></dt><dd>狛江市の17時の時報の公式音源。<a href="https://www.city.komae.tokyo.jp/index.cfm/46,63352,353,2696,html" target="_blank">紹介ページ</a></dd>
         <dt><a href="https://yuino.dev/" target="_blank">ゆいのページ</a></dt><dd>写真研究部技術担当(大嘘)のページ。手打ちでコシのあるhtmlらしい。</dd>
-        <dt><a href="https://akitoshi-lab.vercel.app/" target="_blank">Akitoshi Lab.</a></dt><dd>写真研究部PENTAX担当(???)のページ。引っ越しで破壊して仮復旧らしい。</dd>
-        <!-- <dt><a href="https://akitoshi-lab.com/" target="_blank">Akitoshi Lab.</a></dt><dd>写真研究部PENTAX担当(???)のページ。</dd> -->
+        <dt><a href="https://akitoshi-lab.com/" target="_blank">Akitoshi Lab.</a></dt><dd>写真研究部PENTAX担当(???)のページ。</dd>
         <dt><a href="https://www.sushichan.live/" target="_blank">すしのへや</a></dt><dd>写研ではない電通大生のページ。つよい人がAstroを使うとこうなるらしい。</dd>
         <dt><a href="https://developer.mozilla.org/ja/" target="_blank">MDN Web Docs</a></dt><dd>聖書。公式ドキュメントを崇めよ。</dd>
         <dt><a href="https://git-scm.com/book/ja/v2/" target="_blank">Git - Book</a></dt><dd>Gitを理解するならいかがでしたかサイトを読むより先にこれを読破しよう。公式ドキュメントを崇めよ。</dd>
@@ -49,7 +49,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
             "Windows、JISキーボード環境ではCaps Lockと書いてあるキー(英数キー)でIME切替ができる。",
             "自転車が歩道を走行する際は車道寄りを徐行しなければならない。<a href='https://elaws.e-gov.go.jp/document?lawid=335AC0000000105#Mp-At_63_4' target='_blank'>道路交通法 第六十三条の四</a>",
             "過労や寝不足での運転は犯罪。自転車もだめ。<a href='https://elaws.e-gov.go.jp/document?lawid=335AC0000000105#Mp-At_66' target='_blank'>道路交通法 第六十六条</a>",
-            "赤信号の意味は「止まれ」ではなく「停止位置を越えるな」であり、交差点に進入してから赤信号になっても止まる必要はない(二段階右折を除く)。<a href='https://elaws.e-gov.go.jp/document?lawid=335CO0000000270#Mp-At_2' target='_blank'>道路交通法施行令 第二条</a>",
+            "赤信号の意味は「止まれ」ではなく「停止位置を越えるな」であり、交差点に進入してから赤信号になっても止まる必要はなく(二段階右折を除く)、むしろ速やかに交差点を脱出すべきである。<a href='https://elaws.e-gov.go.jp/document?lawid=335CO0000000270#Mp-At_2' target='_blank'>道路交通法施行令 第二条</a>",
             "電気通信大学 D棟の間取りは基礎科学実験の教科書で確認できるが、基礎科学実験Aのもののほうが若干正確である。",
             "Google Drive上で開かれたPDFは印刷ボタンを押すとブラウザのビューアーで直接開ける。",
             "「Windows PCとMacってどっちがいい？」という疑問が生じた人はいまのところMacを使うべきではない。",

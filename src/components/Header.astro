@@ -1,5 +1,5 @@
 ---
-import "../styles/style.scss";
+import "@/styles/style.scss";
 
 interface Props {
     siteName: string;
@@ -29,6 +29,7 @@ const { siteName } = Astro.props;
         justify-content: center;
         align-items: center;
         background-color: var(--theme-color);
+        box-shadow: 0 0 0.5rem 0.25rem var(--background-color);
         a {
             color: var(--bwhite);
             font-size: $font-size;

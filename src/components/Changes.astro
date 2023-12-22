@@ -13,6 +13,9 @@ const commits: {
 const history: { [date: string]: string[] } = {};
 let overflow: boolean = false;
 for (const commit of commits) {
+    if (commit.message.startsWith("_")) {
+        continue;
+    }
     if (!history[commit.date]) {
         if (Object.keys(history).length < Astro.props.count) {
             history[commit.date] = [commit.message];
@@ -20,7 +23,7 @@ for (const commit of commits) {
             overflow = true;
         }
     } else if (!history[commit.date].includes(commit.message)) {
-        history[commit.date].push(commit.message);
+        history[commit.date].unshift(commit.message);
     }
 }
 

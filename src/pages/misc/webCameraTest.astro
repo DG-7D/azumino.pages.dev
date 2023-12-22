@@ -1,0 +1,57 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+const defaultConstraints: string = `
+{
+    "audio": false,
+    "video": {
+        "aspectRatio": 1.777777778,
+        "facingMode": "environment",
+        "height": 1080
+    }
+}
+`;
+---
+
+<BaseLayout title="Webカメラテストページ" description="Webカメラ映像取得のパラメータをいろいろいじるページです。">
+    <textarea id="inputConstraints">{defaultConstraints}</textarea>
+    <button id="buttonConstraints">適用</button>
+    <div>
+        <video id="liveView" muted playsinline> </video>
+    </div>
+    <textarea id="log"></textarea>
+</BaseLayout>
+<script>
+    const liveView = document.getElementById("liveView")! as HTMLVideoElement;
+    const inputConstraints = document.getElementById("inputConstraints")! as HTMLTextAreaElement;
+    const buttonConstraints = document.getElementById("buttonConstraints")! as HTMLButtonElement;
+    const log = document.getElementById("log")!;
+
+    function activateLiveView() {
+        console.log(JSON.parse(inputConstraints.value));
+        navigator.mediaDevices.getUserMedia(JSON.parse(inputConstraints.value)).then((stream) => {
+            if (liveView.srcObject == null) {
+                log.innerHTML += "---- Capabilities ----\n";
+                log.innerHTML += JSON.stringify(stream.getVideoTracks()[0].getCapabilities(), undefined, 2) + "\n\n---- Settings ----\n";
+            } else {
+                liveView.pause();
+            }
+            log.innerHTML += JSON.stringify(stream.getVideoTracks()[0].getSettings(), undefined, 2) + "\n\n";
+            liveView.srcObject = stream;
+            liveView.play();
+        });
+    }
+
+    buttonConstraints.addEventListener("click", activateLiveView);
+    addEventListener("load", () => activateLiveView);
+</script>
+<style lang="scss">
+    textarea {
+        display: block;
+        width: 100%;
+        height: 20rem;
+    }
+    video {
+        display: block;
+        max-width: 100%;
+    }
+</style>

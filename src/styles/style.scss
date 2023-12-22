@@ -26,6 +26,7 @@ html {
     background: var(--background-color);
     font-size: 100%;
     height: 100%;
+    overflow-y: scroll;
 }
 
 body {
@@ -43,7 +44,7 @@ body {
             max-width: 60rem;
             margin: 0 auto;
             padding: 0.75rem;
-            box-shadow: 0 0 1rem var(--main-shadow);
+            box-shadow: 0 0 0.5rem 0.25rem var(--main-shadow);
         }
 
         // ここにフッター
@@ -54,6 +55,7 @@ main {
     * {
         line-height: 150%;
         overflow-wrap: anywhere;
+        // word-break: auto-phrase;
     }
 
     >h1 {
@@ -65,8 +67,11 @@ main {
         border-style: solid;
         border-width: 0 0 0.1rem;
         border-color: var(--theme-color);
+        word-break: auto-phrase;
+
         +div.publishDate {
             color: var(--sub-color);
+            margin: 0;
         }
     }
 
@@ -93,15 +98,25 @@ main {
     }
 
     >p,
+    >figure,
     >pre,
     >ul,
     >ol,
-    >dl {
+    >dl,
+    >div,
+    >table,
+    >textarea {
         margin: 0.5rem 0;
     }
 
-    >pre {
+    >pre,
+    >textarea {
         padding: 0.25rem;
+        border: 0.1rem solid var(--main-shadow);
+
+        @supports (text-autospace: no-autospace) {
+            text-autospace: no-autospace;
+        }
     }
 
     ul:not(.inline),
@@ -123,43 +138,52 @@ main {
         li {
             display: inline;
 
-            &:has(+li)::after {
-                content: ", ";
+            // &:has(+li)::after {
+            // }
+            +li::before {
+                content: "、";
             }
         }
     }
 
     dl.inline {
-        dt {
-            display: inline;
+        @supports selector(:has(+ *)) {
 
-            &::after {
-                content: ":";
-                margin: 0 0.25rem;
+            dt {
+                display: inline;
+
+                &::after {
+                    content: ":";
+                    margin: 0 0.25rem;
+                }
+            }
+
+            dd {
+
+                &:has(+dt)::after {
+                    content: "\A";
+                    white-space: pre;
+                }
             }
         }
 
         dd {
             display: inline;
 
-            &:has(+dt)::after {
-                // 次にdtがくるdd
-                content: "";
-                display: block;
-            }
-
             +dd::before {
-                content: ", ";
+                content: "、";
             }
-
         }
     }
 
     p {
         text-indent: 1rem;
+        text-align: justify;
     }
 
-    a {
+    a,
+    button {
+        cursor: pointer;
         color: var(--link-color);
         text-decoration: underline;
 
@@ -206,4 +230,20 @@ main {
         max-height: 50vh;
     }
 
+    table {
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+
+        thead,
+        tbody {
+            border: 0.1rem solid var(--main-color);
+            border-style: solid none;
+        }
+
+        th,
+        td {
+            padding: 0 0.25em;
+        }
+    }
 }
