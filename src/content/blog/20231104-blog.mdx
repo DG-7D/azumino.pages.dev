@@ -4,8 +4,12 @@ title: "Astroで個人サイト作ってみた"
 publishDate: 2023-11-04
 description: "ひさびさに個人サイト作ってみたいなと思ったのでAstroで作ってみた話。"
 ---
-import Img from "../../components/Img.astro";
-import OGPCard from "../../components/OGPCard.astro";
+import Img from "@/components/Img.astro";
+import OGPCard from "@/components/OGPCard.astro";
+import TweetInit from "@/components/TweetInit.astro";
+import Tweet from "@/components/Tweet.astro";
+
+<TweetInit />
 
 写研部員の[ゆいのページ](https://yuino.dev/)を見ていたらひさびさに個人サイト作ってみたいなと思ったので作ってみた。おじさんも昔はYahoo!ジオシティーズでブイブイ言わせてたんじゃ……。とりあえずブログと[自己紹介](/about/)と[機材紹介](/about/equipment/)(ここが一番情報量ある)だけ。
 
@@ -14,7 +18,9 @@ import OGPCard from "../../components/OGPCard.astro";
 
 ## Astroを使う
 
-慣れ親しんでるのは手打ちでコシのあるhtmlだけど、共通部分とか全部手書きはしんどいので静的サイトジェネレータみたいなの使ってみたい(ゆいのページはジェネレータも自作らしい。つよい)。でもJekyllとかHugoとかはちょっと違う(未知の言語でテーマを書かなきゃいけない？)、とか思っていたところ、写研部員(PENTAXのヲタク)から[Astro](https://astro.build)なるものの存在を[教えてもらった](https://twitter.com/konoe_akitoshi/status/1713115971240726838)。
+慣れ親しんでるのは手打ちでコシのあるhtmlだけど、共通部分とか全部手書きはしんどいので静的サイトジェネレータみたいなの使ってみたい(ゆいのページはジェネレータも自作らしい。つよい)。でもJekyllとかHugoとかはちょっと違う(未知の言語でテーマを書かなきゃいけない？)、とか思っていたところ、写研部員(PENTAXのヲタク)から[Astro](https://astro.build)なるものの存在を教えてもらった。
+
+<Tweet id="1713115971240726838" />
 
 ざっと調べたらまさに求めていたものっぽいので使ってみた。htmlと若干のJavaScriptさえ分かってれば部品を手書きと同じノリで作ってがっちゃんことかできる。ブログ部分はMarkdownで書いて、ほかの部分はhtmlをゴリゴリ書くとかもできる。だけどふれーむわーく？　みたいなのを使えるポテンシャルもあるらしく、つよつよ系の人が未知の技術で遊んでるのを目にする。
 

@@ -1,0 +1,21 @@
+---
+interface Props {
+    id: string;
+    hideThread?: boolean;
+    hideMedia?: boolean;
+}
+---
+
+<div>
+    <blockquote class="twitter-tweet" data-dnt="true" data-theme="dark" data-conversation={Astro.props.hideThread && "none"} data-cards={Astro.props.hideMedia && "hidden"}>
+        <a href={"https://twitter.com/i/status/" + Astro.props.id.toString()} target="_blank">ツイート読込中</a>
+    </blockquote>
+</div>
+<style>
+    :global(.twitter-tweet-rendered) {
+        max-width: 30rem !important;
+        margin: 0 auto !important;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+</style>

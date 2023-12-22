@@ -5,7 +5,11 @@ publishDate: 2023-12-01
 description: "「1645」でおなじみの調布市の防災無線メロディ「わが町調布」の音源を実際の放送のように加工したり、音源の変遷について調査してみたりした。"
 ---
 
-import OGPCard from "../../components/OGPCard.astro";
+import OGPCard from "@/components/OGPCard.astro";
+import TweetInit from "@/components/TweetInit.astro";
+import Tweet from "@/components/Tweet.astro";
+
+<TweetInit />
 
 「1645」の音源を実際の放送のように加工したり、音源の変遷について調査してみたりした。
 
@@ -53,7 +57,10 @@ ffplay -i 'https://www.city.chofu.tokyo.jp/www/contents/1361495751275/files/waga
 
 短縮前は[2021年5月13日](https://www.youtube.com/watch?v=06I6gvmeToo)、復活後は[2023年10月5日](https://twitter.com/raygo_math/status/1709837381283803294)時点で使用されていた。
 
-前奏から始まり1番の終わりまで入っている。復活後の音量はコロナ前よりはちょっと小さいかも? 4限終了は1610で鳴る前に脱調しているので気づくのが遅れたが、16日に帰宅が遅れて聞くことができ、けっこう[興奮した](https://twitter.com/DG_7D/status/1713823726679273501?s=20)。少し遅れて公式音源も[復活した](https://twitter.com/DG_7D/status/1715278137859486046)。
+前奏から始まり1番の終わりまで入っている。復活後の音量はコロナ前よりはちょっと小さいかも? 4限終了は1610で鳴る前に脱調しているので気づくのが遅れたが、16日に帰宅が遅れて聞くことができ、けっこう驚いた。少し遅れて公式音源も復活した。
+
+<Tweet id="1713823726679273501" />
+<Tweet id="1715278137859486046" hideThread/>
 
 ## そのほかの防災行政無線チャイム
 
@@ -63,7 +70,9 @@ ffplay -i 'https://www.city.chofu.tokyo.jp/www/contents/1361495751275/files/waga
 
 ### 川崎市
 
-調布市と狛江市のお隣。鳴動時刻は17時で、曲は[年3回変わる](https://www.city.kawasaki.jp/templates/faq/601/0000011700.html)。音量は馬鹿でかい。時刻が同じなので多摩川河川敷のちょうどいい場所(覚えてない)に立っていると狛江市と混ざって愉快なことになる。多摩水道橋で[試した](https://twitter.com/DG_7D/status/1714238839810846785)ら狛江市側がよわすぎた🥺
+調布市と狛江市のお隣。鳴動時刻は17時で、曲は[年3回変わる](https://www.city.kawasaki.jp/templates/faq/601/0000011700.html)。音量は馬鹿でかい。時刻が同じなので多摩川河川敷のちょうどいい場所(覚えてない)に立っていると狛江市と混ざって愉快なことになる。多摩水道橋で試したら狛江市側がよわすぎた🥺
+
+<Tweet id="1714238839810846785" />
 
 時報ではないが、川崎市にも川崎市民の歌「好きです かわさき 愛の街」があり、ゴミ収集車のチャイムとして有名。残念ながら公式音源配布はないが、代わりに(?)[DAMに収録](https://www.clubdam.com/karaokesearch/songleaf.html?requestNo=1810-19)されている。わが町調布と水と緑のまちも欲しいな。
 
