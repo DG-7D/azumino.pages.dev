@@ -5,8 +5,12 @@ publishDate: 2023-11-04
 description: "ひさびさに個人サイト作ってみたいなと思ったのでAstroで作ってみた話。"
 ---
 import Img from "../../components/Img.astro";
+import OGPCard from "../../components/OGPCard.astro";
 
 写研部員の[ゆいのページ](https://yuino.dev/)を見ていたらひさびさに個人サイト作ってみたいなと思ったので作ってみた。おじさんも昔はYahoo!ジオシティーズでブイブイ言わせてたんじゃ……。とりあえずブログと[自己紹介](/about/)と[機材紹介](/about/equipment/)(ここが一番情報量ある)だけ。
+
+<OGPCard url="https://azumino.pages.dev/" />
+<OGPCard url="https://yuino.dev/" />
 
 ## Astroを使う
 
@@ -15,6 +19,8 @@ import Img from "../../components/Img.astro";
 ざっと調べたらまさに求めていたものっぽいので使ってみた。htmlと若干のJavaScriptさえ分かってれば部品を手書きと同じノリで作ってがっちゃんことかできる。ブログ部分はMarkdownで書いて、ほかの部分はhtmlをゴリゴリ書くとかもできる。だけどふれーむわーく？　みたいなのを使えるポテンシャルもあるらしく、つよつよ系の人が未知の技術で遊んでるのを目にする。
 
 とりあえずだいたい[公式チュートリアル](https://docs.astro.build/ja/tutorial/0-introduction/)の通りに作った。公式ドキュメントがしっかりしてるうえ日本語もあるのは素晴らしい。ちなみにNode.jsのインストールってめんどくさいのかなと思ってたのに`winget install CoreyButler.NVMforWindows` `nvm install lts` `nvm use lts`だけで終わった。
+
+<OGPCard url="https://docs.astro.build/ja/tutorial/0-introduction/" />
 
 ## デコる
 

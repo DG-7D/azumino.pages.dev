@@ -5,7 +5,7 @@ interface Props {
     url: string;
 }
 
-const url = Astro.props.url;
+const url = new URL(Astro.props.url);
 
 let ogpProperties: { [key: string]: string | undefined } = {};
 try {
@@ -25,14 +25,14 @@ try {
 }
 ---
 
-<div class="ogCard">
-    <a href={url}>
+<div class="OGPCard">
+    <a href={url.toString()} target={url.hostname == Astro.site?.hostname ? "" : "_blank"}>
         {ogpProperties["image"] && <img src={ogpProperties["image"]} alt="" />}
         <div class="detail">
             <div class="title">{ogpProperties["title"]}</div>
             {ogpProperties["description"] && <div class="description">{ogpProperties["description"]}</div>}
         </div>
-        <div class="domain">{new URL(url).hostname}</div>
+        <div class="domain">{url.hostname}</div>
     </a>
 </div>
 
