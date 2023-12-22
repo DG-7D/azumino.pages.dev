@@ -1,6 +1,10 @@
 * {
+    appearance: none;
+    background: none;
+    border: none;
     border-collapse: collapse;
     box-sizing: border-box;
+    color: unset;
     font-size: 1rem;
     font-family: sans-serif;
     font-weight: normal;
