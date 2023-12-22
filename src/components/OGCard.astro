@@ -5,8 +5,6 @@ interface Props {
     url: string;
 }
 
-type ogpProperty = "title" | "image" | "description";
-
 const url = Astro.props.url;
 
 let ogpProperties: { [key: string]: string | undefined } = {};
@@ -38,9 +36,10 @@ try {
     </a>
 </div>
 
-<style>
-    div.ogCard {
-    }
+<style lang="scss">
+    $height: 7rem;
+    $line-height: 1.5;
+
     a {
         display: grid;
         grid-template-areas:
@@ -56,35 +55,42 @@ try {
         border: 0.1rem solid var(--main-shadow);
         text-decoration: inherit;
         color: inherit;
+        text-overflow: ellipsis;
 
         > img {
             grid-area: img;
-            width:7rem;
-            height: 7rem;
+            width: $height;
+            height: $height;
             object-fit: cover;
         }
         > div {
             padding: 0 0.5rem;
-            text-overflow: ellipsis;
-        }
-        > div.detail {
             grid-area: detail;
-            .title {
+            div.title {
                 font-size: 1.25rem;
-                height: 1.875rem;
                 overflow: hidden;
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 1;
+                height: 1 * 1.25rem * $line-height;
             }
-            .description {
+            div.description {
                 overflow: hidden;
-                max-height: 3rem;
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 2;
+                max-height: 2 * 1rem * $line-height;
             }
         }
         > div.domain {
             grid-area: domain;
-            font-family: monospace, sans-serif;
             font-size: 0.9rem;
-            height: 1.35rem;
+            font-family: monospace, sans-serif;
             overflow: hidden;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 1;
+            height: 1 * 0.9rem * $line-height;
         }
     }
 </style>
