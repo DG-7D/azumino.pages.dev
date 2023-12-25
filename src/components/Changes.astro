@@ -36,9 +36,7 @@ function isoTo年月日(iso: string): string {
     {
         Object.entries(history).map(([date, messages]) => (
             <>
-                <dt>
-                    <time datetime={date}>{isoTo年月日(date)}</time>
-                </dt>
+                <dt><time datetime={date}>{isoTo年月日(date)}</time></dt>{}
                 {messages.map((message) => (
                     <dd>{message}</dd>
                 ))}
@@ -48,10 +46,7 @@ function isoTo年月日(iso: string): string {
     {
         overflow && (
             <>
-                <dt>それ以降</dt>
-                <dd>
-                    <a href="/changes/">もっと見る</a>
-                </dd>
+                <dt>それ以降</dt><dd><a href="/changes/">もっと見る</a></dd>{}
             </>
         )
     }
