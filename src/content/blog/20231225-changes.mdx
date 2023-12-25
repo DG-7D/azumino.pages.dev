@@ -1,0 +1,162 @@
+---
+publish: true
+title: "Astroで更新履歴を自動生成してみた"
+publishDate: 2023-12-25
+description: "Astroでサイトの更新履歴をGitのコミット履歴から自動生成してみた話。"
+---
+
+import Img from "@/components/Img.astro"
+import TweetInit from "@/components/TweetInit.astro";
+import Tweet from "@/components/Tweet.astro";
+
+<TweetInit />
+
+個人サイトあるあるに「更新履歴」なる項目がある。html直書きとか別ファイルに整理したものから生成するとかのバリエーションはあるものの、たいていの場合、これは更新にともない手動で追加されている。しかし、更新時にいちいちチェックリストを読み上げている人はいないだろうし、人間が毎回忘れずに更新履歴を更新してくれるとは期待できない。実際忘れている人を目にすることはしばしばある。であれば、自動化してしまおうというのが今回の趣旨。
+
+## Gitのコミットを取得する
+
+サイトの内容は当然(?)Gitで管理しているので、細かい更新履歴はコミット履歴としてすでに存在している。しかし、さすがに全コミットのメッセージをそのまま表示したのではカオスになってしまう。幸運なことに、普段から主ブランチへのマージはfast-forwordせずにまとめる習慣がついており、また、十分説明として成立するメッセージをつけてあったため、マージコミットのメッセージだけ表示すればいい感じになりそう。~~いにしゃるこみっと~~
+
+Gitのログは`git log`で表示することができ、`--first-parent`をつけることで、ちょうどマージコミットのみを表示することができる。また、`--format`を使うことでほしい情報、今回は日付とコミットメッセージだけを抽出することができる。
+
+```bash
+> git log --first-parent --format='%ad %s'
+Mon Dec 25 20:48:39 2023 +0900 _更新履歴の変な空白を除去
+Mon Dec 25 20:25:43 2023 +0900 _Astroをv4に
+Sun Dec 24 21:44:07 2023 +0900 ヘッダーロゴを実装
+Sun Dec 24 19:50:57 2023 +0900 _Safariに対応
+Fri Dec 22 21:11:46 2023 +0900 Twitter埋込を実装
+Fri Dec 22 16:24:11 2023 +0900 OGPのカード表示を実装、ブログに追加
+(中略)
+Sat Nov 4 22:05:58 2023 +0900 諸修正
+Sat Nov 4 18:02:22 2023 +0900 PC周辺機器を加筆
+Sat Nov 4 17:25:29 2023 +0900 諸修正
+Sat Nov 4 15:01:11 2023 +0900 微修正
+Sat Nov 4 12:52:00 2023 +0900 とりあえず見られるようにした
+Sat Nov 4 12:51:44 2023 +0900 いにしゃるこみっと
+
+```
+
+Astroはビルド時にNode.jsでJavaScriptを実行して静的なhtmlを生成するわけだが、Node.jsでは`child_process`とかいうやつでローカルのコマンドを実行することができる。つまり、`git log`を実行することができる。このような実行結果(文字列)をオブジェクトとしてJavaScriptに渡すには、JSONの形にするのが手っ取り早い。
+
+```ts
+import { execSync } from "child_process";
+const commits: {
+    date: string;
+    message: string;
+}[] = JSON.parse(("[" + execSync('git log --format=\'{"date":"%ad","message":"%s"},\' --date=short --first-parent', { shell: "bash" }).toString() + "]").replace(",\n]", "]"));
+```
+
+……手っ取り早いかこれ???　末尾のカンマくらい許してくれ。
+
+シェルに`bash`を明示することで、WindowsでもWSLを使わせるようにして解決したが、コマンドラインの挙動の違いも気持ち悪かった。PowerShellとbashとで`'`と`"`の挙動は異ならないはずなので同じまま行けると思いきや、PowerShellとは別にWindows側のコマンドライン引数の挙動というのがあるらしくそううまくはいかなかった。なお、Windowsでの`execSync`での既定シェルはPowerShellではなくコマンドプロンプトだったので、行き当たりばったりで動くように作った時はもっとカオスだった。
+
+<Tweet id="1723333252092764502" hideThread />
+
+ここでは`--date=short`として日付部分を`yyyy-MM-dd`で出力してもらい、そのまま文字列として扱っているが、デプロイ環境のタイムゾーンをJSTにしておかないと0000-0900の更新が前日扱いになってしまったりすると思われる。
+
+## 整理する
+
+このままメッセージを連ねるのではおもしろくないので、日付ごとにまとめたりしてみる。日付の文字列をキー、文字列の配列を値とするオブジェクト(?)を作り、いいかんじにぶち込んでいく。コンポーネントの引数で表示日数を指定できるようにしたり(トップページで使ってる)、`_`から始まるメッセージは無視したり、重複するメッセージがあれば飛ばしたりなどもした。
+
+```typescript
+const history: { [date: string]: string[] } = {};
+let overflow: boolean = false;
+for (const commit of commits) {
+    if (commit.message.startsWith("_")) {
+        continue;
+    }
+    if (!history[commit.date]) {
+        if (Object.keys(history).length < Astro.props.count) {
+            history[commit.date] = [commit.message];
+        } else {
+            overflow = true;
+        }
+    } else if (!history[commit.date].includes(commit.message)) {
+        history[commit.date].unshift(commit.message);
+    }
+}
+```
+
+## 描画する
+
+AstroのJSXライクな構文とやらでは1つの式(?)しか書けなかったり、オブジェクトだと直接`map()`が使えなかったりして手間取ったが、ChatGPTに聞いたところ`Object.entries()`なるものを教えてもらったので使った。`map()`もよくわからない使い方してる。
+
+また、いつだかのバージョンから改行がビルド時に空白として残ってしまうようになり、変な隙間が空くようになってしまったため、`{}`を行末につけるとなぜかフォーマッタが改行しなくなる現象を利用している。
+
+```astro
+<dl class={Astro.props.inline ? "inline" : ""}>
+    {
+        Object.entries(history).map(([date, messages]) => (
+            <>
+                <dt><time datetime={date}>{isoTo年月日(date)}</time></dt>{}
+                {messages.map((message) => (
+                    <dd>{message}</dd>
+                ))}
+            </>
+        ))
+    }
+    {
+        overflow && (
+            <>
+                <dt>それ以降</dt><dd><a href="/changes/">もっと見る</a></dd>{}
+            </>
+        )
+    }
+</dl>
+```
+
+<Tweet id="1739214733759357375" />
+
+ちなみに`isoTo年月日()`とかいう馬鹿な名前の関数は、`yyyy-MM-dd`を文字数決め打ちで`yyyy年MM月dd日`に変換するだけのものである。万が一`undefined`が渡ると`unde年in月d日`になる。
+
+<Tweet id="1723580260854428062" />
+
+## 罠
+
+ローカルでちゃんと動いたのでこのままデプロイしてみると、なぜか最新のメッセージしか表示されなかった。これはCloudflare Pagesではshallow cloneなる機能を用い、最新のコミットのみを取得しているためであるっぽい。解決策としては、ビルド時の処理で`npm run build`の前に`git fetch --unshallow`を追加することで、完全な履歴を取得させることができる。
+
+<Img src={import("./20231225-changes-buildConfig.png")} alt="ビルド コマンド: git fetch --unshallow && npm run build" caption="Cloudflare Pagesのビルド構成" />
+
+なお、Cloudflare Pagesのプレビューブランチ参照機能がなぜか`ERR_SSL_VERSION_OR_CIPHER_MISMATCH`とかいうエラーが出て使えないので、本番環境にぶち込んで試してロールバックするなどして動作確認していた。クソ不便。なにか間違ってるんだろうか🤔
+
+## 課題
+
+あくまでコミットメッセージを表示しているだけなので、更新されたページへのリンクを張るとかはできていない。これも更新されたファイルを`git diff --name-only`とかして列挙できそうなので、そのへんごにょごにょすればなんとかなるのかもしれない。
+
+## 最終更新も表示する
+
+`git log ファイルパス`で特定のファイルに関するコミットを表示できるのを使えば、同じようにブログ記事に最終更新日時を書ける。こちらではフロントマターの公開日時と合わせるため`Date`オブジェクトとして読み込んでいる。時刻情報はいらないので吹き飛ばすことで、日付が異なるかどうかを単純に比較できるようにしている。タイムゾーンを保持できない`Date`を許さない。
+
+```typescript
+const publish: Date = entry.data.publishDate;
+const lastUpdate: Date = new Date(execSync(`git log -1 --format="%ad" --date="iso" ./src/content/${entry.collection}/${entry.id}`).toString());
+
+publish.setHours(9);
+publish.setMinutes(0);
+publish.setSeconds(0);
+lastUpdate.setHours(9);
+lastUpdate.setMinutes(0);
+lastUpdate.setSeconds(0);
+```
+
+```astro
+<time datetime={publish.toISOString().substring(0, 10)}>{to年月日(publish)}</time>
+{
+    publish < lastUpdate && (
+        <>
+            (最終更新: <time datetime={lastUpdate.toISOString().substring(0, 10)}>{to年月日(lastUpdate)}</time>)
+        </>
+    )
+}
+```
+
+## あとがき
+
+ゴリ押しもできるAstroくん最高!!(?)
+
+## 参考
+
+- [Git - git-log Documentation](https://git-scm.com/docs/git-log)
+- [Windowsのコマンドライン引数でのクォートの話 #Windows - Qiita](https://qiita.com/igrep/items/d4251d12e85cfc0a00df)
+- [Cloudflare Pagesでビルド環境のタイムゾーンを変更 - Pixelog](https://pixelog.net/post/2022/04/04/180306/)
