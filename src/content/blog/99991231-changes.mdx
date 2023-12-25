@@ -5,6 +5,11 @@ publishDate: 2023-12-01
 description: "Astroでサイトの更新履歴をGitのコミット履歴から自動生成してみた話。"
 ---
 
+import TweetInit from "@/components/TweetInit.astro";
+import Tweet from "@/components/Tweet.astro";
+
+<TweetInit />
+
 個人サイトあるあるに「更新履歴」なる項目がある。たいていの場合、これは更新にともない手動で追加されている。しかし、更新時にいちいちチェックリストを読み上げているわけでもなく、人間が毎回忘れずに更新履歴を更新してくれるとは期待できない。実際忘れている人を目にすることはしばしばある。であれば、自動化してしまおうというのが今回の趣旨。
 
 ## Gitのコミットを取得する
@@ -78,7 +83,7 @@ for (const commit of commits) {
 
 ## 描画する
 
-AstroのJSXライクな構文とやらでは1つの式(?)しか書けなかったり、オブジェクトだと直接`map()`が使えなかったりして手間取ったが、ChatGPTに聞いたところ`Object.entries()`なるものを教えてもらったので使った。`map()`もよくわからない使い方してる。後で知ったけど即時関数なるものを使えば普通にfor文を回せるらしい。ちなみに`isoTo年月日()`とかいう馬鹿な名前の関数は、`yyyy-MM-dd`を文字数決め打ちで`yyyy年MM月dd日`に変換するだけのものである。万が一`undefined`が渡ると[`unde年in月d日`になる](https://twitter.com/DG_7D/status/1723580260854428062)。
+AstroのJSXライクな構文とやらでは1つの式(?)しか書けなかったり、オブジェクトだと直接`map()`が使えなかったりして手間取ったが、ChatGPTに聞いたところ`Object.entries()`なるものを教えてもらったので使った。`map()`もよくわからない使い方してる。後で知ったけど即時関数なるものを使えば普通にfor文を回せるらしい。
 
 ```astro
 <dl class={Astro.props.inline ? "inline" : ""}>
@@ -106,6 +111,10 @@ AstroのJSXライクな構文とやらでは1つの式(?)しか書けなかっ�
     }
 </dl>
 ```
+
+ちなみに`isoTo年月日()`とかいう馬鹿な名前の関数は、`yyyy-MM-dd`を文字数決め打ちで`yyyy年MM月dd日`に変換するだけのものである。万が一`undefined`が渡ると`unde年in月d日`になる。
+
+<Tweet id="1723580260854428062" />
 
 ## 罠
 
@@ -143,6 +152,8 @@ lastUpdate.setSeconds(0);
     )
 }
 ```
+
+## あとがき
 
 ゴリ押しもできるAstroくん最高!!(?)
 
