@@ -118,7 +118,7 @@ AstroのJSXライクな構文とやらでは1つの式(?)しか書けなかっ�
 
 <Img src={import("./20231225-changes-buildConfig.png")} alt="ビルド コマンド: git fetch --unshallow && npm run build" caption="Cloudflare Pagesのビルド構成" />
 
-なお、Cloudflare Pagesのプレビューブランチ参照機能がなぜか`ERR_SSL_VERSION_OR_CIPHER_MISMATCH`とかいうエラーが出て使えないので、本番環境にぶち込んで試してロールバックするなどして動作確認していた。クソ不便。なにか間違ってるんだろうか🤔
+なお、Cloudflare Pagesのプレビューブランチ参照機能がなぜか`ERR_SSL_VERSION_OR_CIPHER_MISMATCH`とかいうエラーが出て使えないので、本番環境にぶち込んで試してロールバックするなどして動作確認していた。~~クソ不便。なにか間違ってるんだろうか🤔~~プロジェクトを消して(サブドメインはすぐに解放される)作り直したら特になにも設定することなく使えるようになった。作った時ちょうど障害発生中だったから処理がちゃんとされなかったのかな……。
 
 ## 課題
 
@@ -153,7 +153,7 @@ lastUpdate.setSeconds(0);
 
 ## あとがき
 
-ゴリ押しもできるAstroくん最高!!(?)
+難しいこと考えずにゴリ押しもできるAstroくん最高!!(?)
 
 ## 参考
 
