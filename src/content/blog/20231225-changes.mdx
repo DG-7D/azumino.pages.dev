@@ -82,15 +82,16 @@ for (const commit of commits) {
 
 AstroのJSXライクな構文とやらでは1つの式(?)しか書けなかったり、オブジェクトだと直接`map()`が使えなかったりして手間取ったが、ChatGPTに聞いたところ`Object.entries()`なるものを教えてもらったので使った。`map()`もよくわからない使い方してる。
 
-また、いつだかのバージョンから改行がビルド時に空白として残ってしまうようになり、変な隙間が空くようになってしまったため、`{}`を行末につけるとなぜかフォーマッタが改行しなくなる現象を利用している。
+また、いつだかのバージョンから改行がビルド時に空白として残ってしまうようになり、変な隙間が空くようになってしまったため、~~`{}`を行末につけるとなぜかフォーマッタが改行しなくなる現象を利用している~~`<!-- display: inline -->`なるおまじないを唱えてフォーマットしないようにさせている。
 
 ```astro
 <dl class={Astro.props.inline ? "inline" : ""}>
     {
         Object.entries(history).map(([date, messages]) => (
             <>
-                <dt><time datetime={date}>{isoTo年月日(date)}</time></dt>{}
-                {messages.map((message) => (
+                <!-- display: inline -->
+                <dt><time datetime={date}>{isoTo年月日(date)}</time></dt
+                >{messages.map(message => (
                     <dd>{message}</dd>
                 ))}
             </>
@@ -99,7 +100,8 @@ AstroのJSXライクな構文とやらでは1つの式(?)しか書けなかっ�
     {
         overflow && (
             <>
-                <dt>それ以降</dt><dd><a href="/changes/">もっと見る</a></dd>{}
+                <dt>それ以前</dt
+                ><dd><a href="/changes/">もっと見る</a></dd>
             </>
         )
     }

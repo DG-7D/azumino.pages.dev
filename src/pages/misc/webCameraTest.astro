@@ -28,7 +28,7 @@ const defaultConstraints: string = `
 
     function activateLiveView() {
         console.log(JSON.parse(inputConstraints.value));
-        navigator.mediaDevices.getUserMedia(JSON.parse(inputConstraints.value)).then((stream) => {
+        navigator.mediaDevices.getUserMedia(JSON.parse(inputConstraints.value)).then(stream => {
             if (liveView.srcObject == null) {
                 log.innerHTML += "---- Capabilities ----\n";
                 log.innerHTML += JSON.stringify(stream.getVideoTracks()[0].getCapabilities(), undefined, 2) + "\n\n---- Settings ----\n";

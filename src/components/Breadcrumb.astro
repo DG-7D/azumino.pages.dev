@@ -46,7 +46,7 @@ let pathNameList: PathNamePair[] = new Array();
 let absolutePath: string = "";
 for (let index = 0; index < path.length; index++) {
     absolutePath = absolutePath + path[index] + "/";
-    let name = tree?.current.find((pathName) => pathName.path == path[index])?.name ?? path[index];
+    let name = tree?.current.find(pathName => pathName.path == path[index])?.name ?? path[index];
     pathNameList.push({
         path: absolutePath,
         name: name,
@@ -58,7 +58,7 @@ for (let index = 0; index < path.length; index++) {
 <nav>
     <ul class="inline">
         {
-            pathNameList.map((pathName) => (
+            pathNameList.map(pathName => (
                 <li>
                     <a href={pathName.path}>{pathName.name}</a>
                 </li>
