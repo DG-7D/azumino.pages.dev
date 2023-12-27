@@ -101,7 +101,7 @@ const pageTitle: string = `${showTitle ? title + " – " : ""}${siteName}`;
             }
 
             function initSettings() {
-                inputs.forEach((input) => {
+                inputs.forEach(input => {
                     if (localStorage.getItem(input.id)) {
                         input.value = localStorage.getItem(input.id)!;
                     } else {
@@ -114,7 +114,7 @@ const pageTitle: string = `${showTitle ? title + " – " : ""}${siteName}`;
                 const focalLVMilimeter = Math.max(1, localStorageNumber.getItem("focalLV"));
                 const focalSightMilimeter = Math.max(focalLVMilimeter, localStorageNumber.getItem("focalSight"));
                 const ratioSight = localStorageNumber.getItem("ratioSight");
-                const distanceMeter = localStorageNumber.getItem("distance") > 0 ? localStorageNumber.getItem("distance") : Number.MAX_SAFE_INTEGER ;
+                const distanceMeter = localStorageNumber.getItem("distance") > 0 ? localStorageNumber.getItem("distance") : Number.MAX_SAFE_INTEGER;
                 const fovLV = getFullframeFovMilimeter(focalLVMilimeter, ratioLV, distanceMeter);
                 const fovSight = getFullframeFovMilimeter(focalSightMilimeter, ratioSight, distanceMeter);
 
@@ -143,7 +143,7 @@ const pageTitle: string = `${showTitle ? title + " – " : ""}${siteName}`;
                     applySettings();
                 });
             });
-            inputs.forEach((input) => {
+            inputs.forEach(input => {
                 input.addEventListener("input", () => {
                     localStorage.setItem(input.id, input.value);
                     applySettings();

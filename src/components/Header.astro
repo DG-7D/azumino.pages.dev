@@ -1,5 +1,6 @@
 ---
 import "@/styles/style.scss";
+import HeaderLogo from "./HeaderLogo.astro";
 
 interface Props {
     siteName: string;
@@ -11,7 +12,7 @@ const { siteName } = Astro.props;
 <header>
     <!-- <div></div> -->
     <a href="/">
-        {siteName}
+        <HeaderLogo />
     </a>
     <nav>
         <ul>
@@ -23,10 +24,10 @@ const { siteName } = Astro.props;
     <!-- <button style="width: 1rem; height: 1rem;"></button> -->
 </header>
 <style lang="scss">
-    $font-size: 2rem;
+    $logo-height: 2rem;
     $padding: 0.25rem;
     :root {
-        --header-height: #{$font-size + 2 * $padding};
+        --header-height: #{$logo-height + 2 * $padding};
     }
     header {
         position: sticky;
@@ -38,17 +39,12 @@ const { siteName } = Astro.props;
         align-items: flex-end;
         background-color: var(--theme-color);
         box-shadow: 0 0 0.5rem 0.25rem var(--background-color);
-        // > * {
-        //     flex: 1 1 0;
-        // }
-        // > div {
-        //     @media (width < 650px) {
-        //         display: none;
-        //     }
-        // }
-        > a {
+        a {
+            line-height: 0;
             color: var(--bwhite);
-            font-size: $font-size;
+            :global(svg) {
+                height: $logo-height;
+            }
             text-align: center;
         }
         > nav {
