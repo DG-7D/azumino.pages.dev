@@ -59,9 +59,8 @@ for (let index = 0; index < path.length; index++) {
     <ul class="inline">
         {
             pathNameList.map(pathName => (
-                <li>
-                    <a href={pathName.path}>{pathName.name}</a>
-                </li>
+                <!-- display: inline -->
+                <li><a href={pathName.path}>{pathName.name}</a></li>
             ))
         }
     </ul>
