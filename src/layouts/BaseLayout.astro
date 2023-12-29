@@ -13,25 +13,24 @@ interface Props {
     description: string;
 }
 
-const title = Astro.props.title;
-const showTitle: boolean = title != siteName;
-const pageTitle: string = `${showTitle ? title + " – " : ""}${siteName}`;
-// todo: astro-seoでなんとかできる？
+const title = Astro.props.title == "" ? undefined : Astro.props.title;
 ---
 
 <!doctype html>
 <html lang="ja">
     <head>
-        <meta name="viewport" content="width=device-width, minimum-scale=0.1" />
+        <meta name="viewport" content="width=device-width" />
         <meta name="generator" content={Astro.generator} />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <SEO
-            title={pageTitle}
+            title={title}
+            titleTemplate={`%s  – ${siteName}`}
+            titleDefault={siteName}
             description={Astro.props.description}
             charset="UTF-8"
             openGraph={{
                 basic: {
-                    title: pageTitle,
+                    title: title ?? siteName,
                     type: "website",
                     image: new URL(Astro.props.ogImage ?? "ogImageDefault.jpg", Astro.url.origin).toString(),
                 },
@@ -53,7 +52,7 @@ const pageTitle: string = `${showTitle ? title + " – " : ""}${siteName}`;
         <div id="main">
             <main>
                 <Breadcrumb />
-                <h1 style={showTitle ? "" : "display: none;"}>{title}</h1>
+                <h1 style={title ? "" : "display: none;"}>{title ?? siteName}</h1>
                 <slot />
             </main>
             <Footer />
