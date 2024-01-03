@@ -27,7 +27,7 @@ try {
 
 <div class="OGPCard">
     <a href={url.toString()} target={url.hostname == Astro.site?.hostname ? "" : "_blank"}>
-        {ogpProperties["image"] && <img src={ogpProperties["image"]} alt="" />}
+        {ogpProperties["image"] && <img src={ogpProperties["image"]} alt="" decoding="async" loading="lazy" />}
         <div class="detail">
             <div class="title">{ogpProperties["title"]}</div>
             {ogpProperties["description"] && <div class="description">{ogpProperties["description"]}</div>}
