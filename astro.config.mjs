@@ -12,12 +12,15 @@ export default defineConfig({
     shikiConfig: {
       theme: "github-dark",
       // theme: "css-variables",
-      wrap: true
+      wrap: true,
     },
     rehypePlugins: [[rehypeExternalLinks, {
       target: "_blank",
-      rel: []
+      rel: [],
     }]]
   },
-  integrations: [mdx(), sitemap(), robotsTxt()]
+  integrations: [mdx(), sitemap(), robotsTxt()],
+  prefetch: {
+    prefetchAll: true,
+  },
 });
