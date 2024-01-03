@@ -27,6 +27,7 @@ html {
     font-size: 100%;
     height: 100%;
     overflow-y: scroll;
+    scroll-padding-top: var(--header-height);
 }
 
 body {
