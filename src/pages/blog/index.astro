@@ -1,7 +1,6 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
-// const allPosts = await Astro.glob("./*.md");
 const allPosts = await getCollection("blog");
 ---
 
@@ -10,11 +9,11 @@ const allPosts = await getCollection("blog");
     <h2>記事一覧</h2>
     <ul>
         {
-            allPosts.map((post) => {
-                if (post.data.publish) {
+            allPosts.map(post => {
+                if (import.meta.env.DEV || (post.data.publish && post.data.publishDate < new Date())) {
                     return (
                         <li>
-                            <a href={"/blog/" + post.slug + "/"}>{post.data.title}</a>
+                            <a href={"/blog/" + post.slug + "/"}>{!post.data.publish && "非公開: "}{post.data.title}</a>
                         </li>
                     );
                 }
