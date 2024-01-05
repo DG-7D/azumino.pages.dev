@@ -4,6 +4,8 @@ import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 
 import robotsTxt from "astro-robots-txt";
+import AutoImport from 'astro-auto-import';
+
 
 // https://astro.build/config
 export default defineConfig({
@@ -19,7 +21,19 @@ export default defineConfig({
       rel: [],
     }]]
   },
-  integrations: [mdx(), sitemap(), robotsTxt()],
+  integrations: [
+    AutoImport({
+      imports: [
+        "@/components/Img.astro",
+        "@/components/OGPCard.astro",
+        "@/components/TweetInit.astro",
+        "@/components/Tweet.astro",
+      ]
+    }),
+    mdx(),
+    sitemap(),
+    robotsTxt(),
+  ],
   prefetch: {
     prefetchAll: true,
   },
