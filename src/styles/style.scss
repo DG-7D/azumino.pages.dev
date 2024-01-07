@@ -3,8 +3,8 @@
 
 :root {
     --theme-color: var(--green);
+    color-scheme: light dark;
 
-    color-scheme: dark;
     --background-color: var(--black);
     --main-shadow: var(--bblack);
     --main-color: var(--bwhite);
@@ -12,7 +12,6 @@
     --link-color: var(--byellow);
 
     @media (prefers-color-scheme: light) {
-        color-scheme: light;
         --background-color: var(--bwhite);
         --main-shadow: var(--white);
         --main-color: var(--black);
