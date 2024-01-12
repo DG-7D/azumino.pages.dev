@@ -4,13 +4,14 @@ import { Image } from "astro:assets";
 interface Props {
     src: ImageMetadata;
     alt: string;
+    widths?: number[];
     caption?: string;
 }
-const { src, alt, caption, ...attrs } = Astro.props;
+const { src, alt, widths, caption, ...attrs } = Astro.props;
 ---
 
 <figure>
-    <Image src={src} alt={alt} {...attrs} />
+    <Image src={src} alt={alt} widths={widths ?? [1920]} {...attrs} />
     {caption && <figcaption>{caption}</figcaption>}
 </figure>
 <style lang="scss">
