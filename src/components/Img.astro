@@ -4,20 +4,20 @@ import { getImage } from "astro:assets";
 interface Props {
     src: ImageMetadata;
     alt: string;
-    widths?: number[];
+    width?: number;
     caption?: string;
 }
 
 const optimizedImage = await getImage({
     src: Astro.props.src,
     alt: Astro.props.alt,
-    widths: Astro.props.widths ?? [1920, 960],
+    width: Astro.props.width ?? 1920,
 });
 ---
 
 <figure>
     <a href={optimizedImage.src} target="_blank">
-        <img src={optimizedImage.src} srcset={optimizedImage.srcSet.attribute} {...optimizedImage.attributes} />
+        <img src={optimizedImage.src} {...optimizedImage.attributes} />
     </a>
     {Astro.props.caption && <figcaption>{Astro.props.caption}</figcaption>}
 </figure>
