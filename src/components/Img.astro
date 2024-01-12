@@ -11,13 +11,13 @@ interface Props {
 const optimizedImage = await getImage({
     src: Astro.props.src,
     alt: Astro.props.alt,
-    width: Astro.props.width ?? 1920,
+    widths: [Astro.props.width ?? 1920],
 });
 ---
 
 <figure>
     <a href={optimizedImage.src} target="_blank">
-        <img src={optimizedImage.src} {...optimizedImage.attributes} />
+        <img src={optimizedImage.srcSet.values[0].url} {...optimizedImage.attributes} />
     </a>
     {Astro.props.caption && <figcaption>{Astro.props.caption}</figcaption>}
 </figure>
