@@ -56,6 +56,11 @@ try {
         color: inherit;
         text-overflow: ellipsis;
 
+        &:hover {
+            border-color: var(--main-color);
+            background-color: var(--main-shadow);
+        }
+
         > img {
             grid-area: img;
             width: $height;
