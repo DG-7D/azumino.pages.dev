@@ -13,6 +13,7 @@ const defaultConstraints: string = `
 ---
 
 <BaseLayout title="Webカメラテストページ" description="Webカメラ映像取得のパラメータをいろいろいじるページです。">
+    <p>以下の入力欄に<code>getUserMedia()</code>へ渡すMediaStreamConstraintsオブジェクトをJSON形式で入力して「適用」を押してください。映像の下に<code>getCapabilities()</code>(初回のみ)と<code>getSettings()</code>(更新のたび)の結果が表示されます。</p>
     <textarea id="inputConstraints">{defaultConstraints}</textarea>
     <button id="buttonConstraints">適用</button>
     <div>
@@ -31,18 +32,17 @@ const defaultConstraints: string = `
         navigator.mediaDevices.getUserMedia(JSON.parse(inputConstraints.value)).then(stream => {
             if (liveView.srcObject == null) {
                 log.innerHTML += "---- Capabilities ----\n";
-                log.innerHTML += JSON.stringify(stream.getVideoTracks()[0].getCapabilities(), undefined, 2) + "\n\n---- Settings ----\n";
+                log.innerHTML += JSON.stringify(stream.getVideoTracks()[0].getCapabilities(), undefined, 4) + "\n\n---- Settings ----\n";
             } else {
                 liveView.pause();
             }
-            log.innerHTML += JSON.stringify(stream.getVideoTracks()[0].getSettings(), undefined, 2) + "\n\n";
+            log.innerHTML += JSON.stringify(stream.getVideoTracks()[0].getSettings(), undefined, 4) + "\n\n";
             liveView.srcObject = stream;
             liveView.play();
         });
     }
 
     buttonConstraints.addEventListener("click", activateLiveView);
-    addEventListener("load", () => activateLiveView);
 </script>
 <style lang="scss">
     textarea {
