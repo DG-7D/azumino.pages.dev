@@ -9,6 +9,7 @@ Astro.props.description = "スマホなどを照準器にできるWebアプリ�
 const title = Astro.props.title;
 const showTitle: boolean = title != siteName;
 const pageTitle: string = `${showTitle ? title + " – " : ""}${siteName}`;
+// TODO: iOSでまともに動くようにする
 ---
 
 <!doctype html>
