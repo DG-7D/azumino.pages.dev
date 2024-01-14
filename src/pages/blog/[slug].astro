@@ -4,7 +4,7 @@ import { getCollection, getEntry } from "astro:content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 export async function getStaticPaths() {
     const blogEntries = await getCollection("blog", ({ data }) => {
-        return data.publish;
+        return import.meta.env.DEV || data.publish && data.publishDate < new Date();
     });
     return blogEntries.map(entry => ({
         params: { slug: entry.slug },
@@ -17,9 +17,6 @@ const { Content } = await entry.render();
 
 const publish: Date = entry.data.publishDate;
 const lastUpdate: Date = new Date(execSync(`git log -1 --format="%ad" --date="iso" ./src/content/${entry.collection}/${entry.id}`).toString());
-
-// console.log(publish);
-// console.log(lastUpdate);
 
 publish.setHours(9);
 publish.setMinutes(0);
