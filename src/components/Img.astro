@@ -1,17 +1,25 @@
 ---
-import { Image } from "astro:assets";
+import { getImage } from "astro:assets";
 
 interface Props {
     src: ImageMetadata;
     alt: string;
+    width?: number;
     caption?: string;
 }
-const { src, alt, caption, ...attrs } = Astro.props;
+
+const optimizedImage = await getImage({
+    src: Astro.props.src,
+    alt: Astro.props.alt,
+    widths: [Astro.props.width ?? 1920],
+});
 ---
 
 <figure>
-    <Image src={src} alt={alt} {...attrs} />
-    {caption && <figcaption>{caption}</figcaption>}
+    <a href={optimizedImage.src} target="_blank">
+        <img src={optimizedImage.srcSet.values[0].url} {...optimizedImage.attributes} />
+    </a>
+    {Astro.props.caption && <figcaption>{Astro.props.caption}</figcaption>}
 </figure>
 <style lang="scss">
     figure {
@@ -21,13 +29,19 @@ const { src, alt, caption, ...attrs } = Astro.props;
         align-items: center;
         gap: 0.5em;
 
+        a {
+            display: block;
+            border: 0.1rem solid var(--main-shadow);
+            &:hover {
+                border-color: var(--main-color);
+            }
+        }
         img {
             display: block;
             width: auto;
             height: auto;
             max-width: 100%;
             max-height: 50vh;
-            border: 0.1rem solid var(--main-shadow);
         }
         figcaption {
             display: block;
