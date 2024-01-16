@@ -13,9 +13,9 @@ description: "iPhoneのブラウザ上で取得できるカメラ映像の画角
 
 Webカメラは、`getUserMedia()`を実行することで使えるようになる。このとき、引数に適当な制約を書いた`MediaTrackConstraints`オブジェクト(?)を渡してやると、その制約を満たすよう努力してくれる。たとえば、カメラの向き(前面or背面)、縦横比、縦横解像度などを指定することができる。
 
-ところで、Webカメラはlocalhostかhttpsでしか使用できない。つまり、ローカルでサーバを立てられない(こともないだろうけどめんどい)iPhone上でテストしたければ、いったんサイトにデプロイするか、ローカルでhttpsできるようにしないといけない。パラメータを検証するためにいちいちデプロイし直すのはめんどいので、制約をJSON形式で自由に入力することができる[Webカメラテストページ](/misc/webCameraTest/)を作った。`getCapabilities()`や`getSettings()`の出力も雑に確認できるようにしてある。
+ところで、Webカメラはlocalhostかhttpsでしか使用できない。つまり、ローカルでサーバを立てられない(こともないだろうけどめんどい)iPhone上でテストしたければ、いったんサイトにデプロイするか、ローカルでhttpsできるようにしないといけない。パラメータを検証するためにいちいちデプロイし直すのはめんどいので、制約をJSON形式で自由に入力することができる[Webカメラテストページ](/misc/web-camera-test/)を作った。`getCapabilities()`や`getSettings()`の出力も雑に確認できるようにしてある。
 
-<OGPCard url="https://azumino.pages.dev/misc/webCameraTest/" />
+<OGPCard url="https://azumino.pages.dev/misc/web-camera-test/" />
 
 ## 画角を比較してみる
 
