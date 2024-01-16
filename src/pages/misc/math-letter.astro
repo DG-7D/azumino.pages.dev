@@ -35,10 +35,10 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
                     base = codePointOf("𝐚") - codePointOf("a");
                     break;
                 default:
-                    base = undefined;
+                    base = 0;
                     break;
             }
-            serifBold.value += base ? String.fromCodePoint(base + codePoint) : "";
+            serifBold.value += String.fromCodePoint(base + codePoint);
         }
     });
     function range(codePoint: number): "number" | "capital" | "small" | undefined {
