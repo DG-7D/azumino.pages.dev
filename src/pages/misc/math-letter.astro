@@ -1,0 +1,57 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="" description="通常のASCII英数字から数学用英数字記号を生成するツールです。">
+    <textarea id="input"></textarea>
+    <textarea id="serifBold"></textarea>
+    <textarea id="serifItalic"></textarea>
+    <textarea id="serifBoldItalic"></textarea>
+    <textarea id="sansSerif"></textarea>
+    <textarea id="sansSerifBold"></textarea>
+    <textarea id="sansSerifItalic"></textarea>
+    <textarea id="sansSerifBoldItalic"></textarea>
+    <h2>解説</h2>
+    <p>数学において、文字の立体と斜体、細字と太字は異なる意味を持つ。一部のASCIIしか使えなかった時代の産廃システムは、こういった文字を同じASCII文字のフォント違いとして表現している。表示に特定のフォントを強制することも、意味が違うものを同じ文字とすることも、まったくもって不適切である。</p>
+    <p>Microsoft Wordの数式入力システムなどはUnicode Mathという方式を採用している。</p>
+    <p>逆に、同じ文字の書式違いを違う文字とすることも不適切であるため、ここで生成した文字を使うのはSNS等のみに留めるべきともいえる。</p>
+</BaseLayout>
+<script>
+    const input = document.getElementById("input")! as HTMLTextAreaElement;
+    const serifBold = document.getElementById("serifBold")! as HTMLTextAreaElement;
+    input.addEventListener("input", () => {
+        serifBold.value = "";
+        for (let index = 0; index < input.value.length; index++) {
+            const codePoint = input.value.codePointAt(index)!;
+            let base: number | undefined;
+            switch (range(codePoint)) {
+                case "number":
+                    base = codePointOf("𝟎") - codePointOf("0");
+                    break;
+                case "capital":
+                    base = codePointOf("𝐀") - codePointOf("A");
+                    break;
+                case "small":
+                    base = codePointOf("𝐚") - codePointOf("a");
+                    break;
+                default:
+                    base = undefined;
+                    break;
+            }
+            serifBold.value += base ? String.fromCodePoint(base + codePoint) : "";
+        }
+    });
+    function range(codePoint: number): "number" | "capital" | "small" | undefined {
+        if ("0".codePointAt(0)! <= codePoint && codePoint <= "9".codePointAt(0)!) {
+            return "number";
+        } else if ("A".codePointAt(0)! <= codePoint && codePoint <= "Z".codePointAt(0)!) {
+            return "capital";
+        } else if ("a".codePointAt(0)! <= codePoint && codePoint <= "z".codePointAt(0)!) {
+            return "small";
+        }
+        return undefined;
+    }
+    function codePointOf(char: string): number {
+        return char.codePointAt(0)!;
+    }
+</script>
