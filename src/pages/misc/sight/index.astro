@@ -27,7 +27,7 @@ const pageTitle: string = `${showTitle ? title + " – " : ""}${siteName}`;
                 basic: {
                     title: pageTitle,
                     type: "website",
-                    image: new URL(Astro.props.ogImage ?? "ogImageDefault.jpg", Astro.url.origin).toString(),
+                    image: new URL(Astro.props.ogImage ?? "ogp-default.jpg", Astro.url.origin).toString(),
                 },
                 optional: {
                     description: Astro.props.description,
