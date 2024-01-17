@@ -2,56 +2,231 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 ---
 
-<BaseLayout title="" description="通常のASCII英数字から数学用英数字記号を生成するツールです。">
-    <textarea id="input"></textarea>
-    <textarea id="serifBold"></textarea>
-    <textarea id="serifItalic"></textarea>
-    <textarea id="serifBoldItalic"></textarea>
-    <textarea id="sansSerif"></textarea>
-    <textarea id="sansSerifBold"></textarea>
-    <textarea id="sansSerifItalic"></textarea>
-    <textarea id="sansSerifBoldItalic"></textarea>
-    <h2>解説</h2>
-    <p>数学において、文字の立体と斜体、細字と太字は異なる意味を持つ。一部のASCIIしか使えなかった時代の産廃システムは、こういった文字を同じASCII文字のフォント違いとして表現している。表示に特定のフォントを強制することも、意味が違うものを同じ文字とすることも、まったくもって不適切である。</p>
-    <p>Microsoft Wordの数式入力システムなどはUnicode Mathという方式を採用している。</p>
-    <p>逆に、同じ文字の書式違いを違う文字とすることも不適切であるため、ここで生成した文字を使うのはSNS等のみに留めるべきともいえる。</p>
+<BaseLayout title="数学用英数字記号変換器" description="通常のASCII英数字列から数学用英数字記号を生成するツールです。">
+    <p>入力欄に文字列を入力すると各種<a href="https://ja.wikipedia.org/wiki/%E6%95%B0%E5%AD%A6%E7%94%A8%E8%8B%B1%E6%95%B0%E5%AD%97%E8%A8%98%E5%8F%B7" target="_blank">数学用英数字記号</a>に変換された結果が表示されます。数字の斜体とフラクトゥールはありません。英数以外はそのままになります。</p>
+    <textarea id="input" autocomplete="off" autofocus placeholder="ここに文字列を入力">0123456789 abcdefghijklmnopqrstuvwzyz ABCDEFGHIJKLMNOPQRSTUVWXYZ</textarea>
+    <dl id="output"></dl>
+    {
+        /*         
+         <h2>解説</h2>
+         <p>数学において、文字の立体と斜体、細字と太字は異なる意味を持つ。一部のASCIIしか使えなかった時代の産廃システムは、こういった文字を同じASCII文字のフォント違いとして表現している。表示に特定のフォントを強制することも、意味が違うものを同じ文字とすることも、まったくもって不適切である。</p>
+         <p>Microsoft Wordの数式入力システムなどはUnicode Mathという方式を採用している。</p>
+         <p>逆に、同じ文字の書式違いを違う文字とすることも不適切であるため、ここで生成した文字を使うのはSNS等のみに留めるべきともいえる。</p>
+        */
+    }
 </BaseLayout>
 <script>
+    function codePointOf(char: string): number {
+        return char.codePointAt(0)!;
+    }
+
+    const formats = [
+        // セリフ
+        {
+            id: "serifBold",
+            friendlyName: "セリフ太字",
+            codePoint: {
+                number: codePointOf("𝟎") - codePointOf("0"),
+                capital: codePointOf("𝐀") - codePointOf("A"),
+                small: codePointOf("𝐚") - codePointOf("a"),
+            },
+            exceptions: [],
+        },
+        {
+            id: "serifItalic",
+            friendlyName: "セリフ斜体",
+            codePoint: {
+                number: 0,
+                capital: codePointOf("𝐴") - codePointOf("A"),
+                small: codePointOf("𝑎") - codePointOf("a"),
+            },
+            exceptions: [{ from: codePointOf("h"), to: codePointOf("ℎ") }],
+        },
+        {
+            id: "serifBoldItalic",
+            friendlyName: "セリフ太字斜体",
+            codePoint: {
+                number: codePointOf("𝟎") - codePointOf("0"),
+                capital: codePointOf("𝑨") - codePointOf("A"),
+                small: codePointOf("𝒂") - codePointOf("a"),
+            },
+            exceptions: [],
+        },
+
+        // サンセリフ
+        {
+            id: "sansSerif",
+            friendlyName: "サンセリフ",
+            codePoint: {
+                number: codePointOf("𝟢") - codePointOf("0"),
+                capital: codePointOf("𝖠") - codePointOf("A"),
+                small: codePointOf("𝖺") - codePointOf("a"),
+            },
+            exceptions: [],
+        },
+        {
+            id: "sansSerifBold",
+            friendlyName: "サンセリフ太字",
+            codePoint: {
+                number: codePointOf("𝟬") - codePointOf("0"),
+                capital: codePointOf("𝗔") - codePointOf("A"),
+                small: codePointOf("𝗮") - codePointOf("a"),
+            },
+            exceptions: [],
+        },
+        {
+            id: "sansSerifItalic",
+            friendlyName: "サンセリフ斜体",
+            codePoint: {
+                number: codePointOf("𝟢") - codePointOf("0"),
+                capital: codePointOf("𝘈") - codePointOf("A"),
+                small: codePointOf("𝘢") - codePointOf("a"),
+            },
+            exceptions: [],
+        },
+        {
+            id: "sansSerifBoldItalic",
+            friendlyName: "サンセリフ太字斜体",
+            codePoint: {
+                number: codePointOf("𝟬") - codePointOf("0"),
+                capital: codePointOf("𝘼") - codePointOf("A"),
+                small: codePointOf("𝙖") - codePointOf("a"),
+            },
+            exceptions: [],
+        },
+
+        // 筆記体
+        {
+            id: "script",
+            friendlyName: "筆記体",
+            codePoint: {
+                number: 0,
+                capital: codePointOf("𝒜") - codePointOf("A"),
+                small: codePointOf("𝒶") - codePointOf("a"),
+            },
+            exceptions: [
+                { from: codePointOf("B"), to: codePointOf("ℬ") },
+                { from: codePointOf("E"), to: codePointOf("ℰ") },
+                { from: codePointOf("F"), to: codePointOf("ℱ") },
+                { from: codePointOf("H"), to: codePointOf("ℋ") },
+                { from: codePointOf("I"), to: codePointOf("ℐ") },
+                { from: codePointOf("L"), to: codePointOf("ℒ") },
+                { from: codePointOf("M"), to: codePointOf("ℳ") },
+                { from: codePointOf("R"), to: codePointOf("ℛ") },
+                { from: codePointOf("e"), to: codePointOf("ℯ") },
+                { from: codePointOf("g"), to: codePointOf("ℊ") },
+                { from: codePointOf("o"), to: codePointOf("ℴ") },
+            ],
+        },
+        {
+            id: "scriptBold",
+            friendlyName: "筆記体太字",
+            codePoint: {
+                number: codePointOf("𝟎") - codePointOf("0"),
+                capital: codePointOf("𝓐") - codePointOf("A"),
+                small: codePointOf("𝓪") - codePointOf("a"),
+            },
+            exceptions: [],
+        },
+
+        // 黒板太字
+        {
+            id: "blackboardBold",
+            friendlyName: "黒板太字",
+            codePoint: {
+                number: codePointOf("𝟘") - codePointOf("0"),
+                capital: codePointOf("𝔸") - codePointOf("A"),
+                small: codePointOf("𝕒") - codePointOf("a"),
+            },
+            exceptions: [
+                { from: codePointOf("C"), to: codePointOf("ℂ") },
+                { from: codePointOf("H"), to: codePointOf("ℍ") },
+                { from: codePointOf("N"), to: codePointOf("ℕ") },
+                { from: codePointOf("P"), to: codePointOf("ℙ") },
+                { from: codePointOf("Q"), to: codePointOf("ℚ") },
+                { from: codePointOf("R"), to: codePointOf("ℝ") },
+                { from: codePointOf("Z"), to: codePointOf("ℤ") },
+            ],
+        },
+
+        // 等幅
+        {
+            id: "monoSpace",
+            friendlyName: "等幅",
+            codePoint: {
+                number: codePointOf("𝟶") - codePointOf("0"),
+                capital: codePointOf("𝙰") - codePointOf("A"),
+                small: codePointOf("𝚊") - codePointOf("a"),
+            },
+            exceptions: [],
+        },
+
+        // フラクトゥール
+        {
+            id: "fraktur",
+            friendlyName: "フラクトゥール",
+            codePoint: {
+                number: 0,
+                capital: codePointOf("𝔄") - codePointOf("A"),
+                small: codePointOf("𝔞") - codePointOf("a"),
+            },
+            exceptions: [
+                { from: codePointOf("C"), to: codePointOf("ℭ") },
+                { from: codePointOf("H"), to: codePointOf("ℌ") },
+                { from: codePointOf("I"), to: codePointOf("ℑ") },
+                { from: codePointOf("R"), to: codePointOf("ℜ") },
+                { from: codePointOf("Z"), to: codePointOf("ℨ") },
+            ],
+        },
+        {
+            id: "frakturBold",
+            friendlyName: "フラクトゥール太字",
+            codePoint: {
+                number: codePointOf("𝟎") - codePointOf("0"),
+                capital: codePointOf("𝕬") - codePointOf("A"),
+                small: codePointOf("𝖆") - codePointOf("a"),
+            },
+            exceptions: [],
+        },
+    ];
+
     const input = document.getElementById("input")! as HTMLTextAreaElement;
-    const serifBold = document.getElementById("serifBold")! as HTMLTextAreaElement;
-    input.addEventListener("input", () => {
-        serifBold.value = "";
-        for (let index = 0; index < input.value.length; index++) {
-            const codePoint = input.value.codePointAt(index)!;
-            let base: number | undefined;
-            switch (range(codePoint)) {
-                case "number":
-                    base = codePointOf("𝟎") - codePointOf("0");
-                    break;
-                case "capital":
-                    base = codePointOf("𝐀") - codePointOf("A");
-                    break;
-                case "small":
-                    base = codePointOf("𝐚") - codePointOf("a");
-                    break;
-                default:
-                    base = 0;
-                    break;
+    const output = document.getElementById("output")! as HTMLDataListElement;
+    input.addEventListener("input", onInput);
+    function onInput() {
+        output.innerHTML = "";
+        for (const format of formats) {
+            output.innerHTML += `<dt>${format.friendlyName}</dt><dd>`;
+            for (let index = 0; index < input.value.length; index++) {
+                const codePoint = input.value.codePointAt(index)!;
+                const exception = format.exceptions.find(exception => exception.from == codePoint);
+                if (exception) {
+                    output.innerHTML += String.fromCodePoint(exception.to);
+                } else {
+                    let base = range(codePoint) ? format.codePoint[range(codePoint)!] : 0;
+                    output.innerHTML += String.fromCodePoint(base + codePoint);
+                }
             }
-            serifBold.value += String.fromCodePoint(base + codePoint);
+            output.innerHTML += "</dd>";
         }
-    });
+    }
     function range(codePoint: number): "number" | "capital" | "small" | undefined {
-        if ("0".codePointAt(0)! <= codePoint && codePoint <= "9".codePointAt(0)!) {
+        if (codePointOf("0") <= codePoint && codePoint <= codePointOf("9")) {
             return "number";
-        } else if ("A".codePointAt(0)! <= codePoint && codePoint <= "Z".codePointAt(0)!) {
+        } else if (codePointOf("A") <= codePoint && codePoint <= codePointOf("Z")) {
             return "capital";
-        } else if ("a".codePointAt(0)! <= codePoint && codePoint <= "z".codePointAt(0)!) {
+        } else if (codePointOf("a") <= codePoint && codePoint <= codePointOf("z")) {
             return "small";
         }
         return undefined;
     }
-    function codePointOf(char: string): number {
-        return char.codePointAt(0)!;
-    }
+
+    onInput();
 </script>
+
+<style>
+    textarea {
+        font-family: math;
+        height: calc(1lh + 0.5rem);
+    }
+</style>
