@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import OGPCard from "@/components/OGPCard.astro";
 ---
 
 <BaseLayout title="機材紹介" description="あづみのカメラやパソコンなどいろいろな所有物を列挙するページです。">
@@ -7,7 +8,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
     <h2>カメラ</h2>
     <h3>本体</h3>
     <dl>
-        <dt>SONY α7 IV</dt><dd>最強なのでほぼこれしか使ってない。LA-EA5対応。ボタンを押すだけでいぬの写真が撮れる。</dd>
+        <dt><a href="https://www.sony.jp/ichigan/products/ILCE-7M4/" target="_blank">SONY α7 IV</a></dt><dd>最強なのでほぼこれしか使ってない。LA-EA5対応。ボタンを押すだけでいぬの写真が撮れる。</dd>
         <dt>KONICA MINOLTA α-7 DIGITAL</dt><dd>型番DG-7D。ついったとかのIDの由来。ファインダーとJPEGの色がいい。</dd>
         <dt>SONY α900</dt><dd>Aマウントデジタル一眼レフ唯一のフルサイズ。めちゃくちゃファインダーが見やすい。α7 IVがきてからはあんまつかってない。</dd>
         <dt>SONY α700</dt><dd>α900のしょぼい版。完全下位互換なのでいらない。</dd>
@@ -35,10 +36,13 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
         <dd>Eマウント機でAマウントレンズを爆速精密な像面位相差AFで使えるアダプタ。新しい機種でしか使えない。</dd>
         <dt>Re:CLEAN RC-80L</dt>
         <dd>防湿庫。湿度が上がるのが嫌で蓋を開けるのを躊躇いがちな防湿ケースと違って、気軽にカメラを出し入れ出来てたのしいのでおすすめ。</dd>
-        <dt>ハクバ HK-834B</dt>
+        <dt><a href="https://www.biccamera.com/bc/item/3043524/" target="_blank">ハクバ HK-834B</a></dt>
         <dd>川崎のビックカメラで買った新品だけど激安三脚。背高いし軽いししっかりしてるし足の先端が地形に追従してくれるしで優秀。なお雲台がカスなのに交換できるようになってないのでだいなし。</dd>
+        <dt>ベルボン D25-D + PH-346</dt>
+        <dd>三脚+雲台。親がくれた。HK-834B比で若干コンパクトだが頼りない。雲台はまあまあまとも。</dd>
     </dl>
     <h2>パソコン</h2>
+    <h3>PC本体</h3>
     <dl>
         <dt>メイン機</dt>
         <dd>ﾊﾟｯﾊﾟがメルカリで拾ってくれたまあまあ安い他作PC。ケースがださいので変えたい。メモリは足りてなくはないけど令和に16GBは最低限ってかんじでダサいので盛ってもいいかも。グラボはめちゃつよではないけどWar Thunderでまあまあの設定で4Kを楽しめる程度はあるのでいいかな。チップセットは対応してるはずなのにUSB Type-AがGen2じゃなくておしまい。</dd>
@@ -88,24 +92,27 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
             </dl>
         </dd>
     </dl>
+    <div style="width: max-content; margin:0 auto;">↓紛争を開始↓</div>
+    <OGPCard url="https://www.cpubenchmark.net/compare/4603vs902vs1038vs3567vs1937/" />
+    <OGPCard url="https://www.videocardbenchmark.net/compare/4345vs3595vs2910vs3950vs2643/" />
     <h3>周辺機器</h3>
     <dl>
-        <dt>Logicool K855</dt>
+        <dt><a href="https://www.logicool.co.jp/ja-jp/products/keyboards/k855-signature-wireless-mechanical-tkl.920-011080.html" target="_blank">Logicool K855</a></dt>
         <dd>ドングル(Logi Bolt)接続ワイヤレスメカニカルキーボード。赤軸。最近「N」の反応が怪しいけどホットスワップ非対応なのでスイッチだけ交換とかはできない、ざんねん。</dd>
         <dt>Logicool M750</dt>
         <dd>ワイヤレス静音マウス。K855と同じドングルで一度に接続できる。M590の保証交換できたけどM590のほうがよかった。</dd>
+        <dt><a href="https://www.lg.com/jp/monitors/4k-5k-monitors/32un500-w/" target="_blank">LG 32UN500-W</a></dt>
+        <dd>80cm 4Kモニタ。メイン。でかい。デフォで150%スケーリングでしっくりきたからそのまま使ってる。付属の脚が前後方向にでかいのでモニタアームにつけたい。</dd>
+        <dt>MITSUBISHI RDT234WLM</dt>
+        <dd>23×25.4mmモニタ。ﾊﾟｯﾊﾟのお下がり。サブ。足をもぎ取って拾ったモニタスタンドの上とVESA穴の下を2箇所で固定して無理矢理縦置きしてる。ちょっとでも正面から外れるとおしまいの色になる。とてもメインで使える代物ではない。もう一枚あって押し付けられそうになったけど拒否した。</dd>
         <dt>ELECOM TK-TDP019</dt>
         <dd>専用ドングル接続のワイヤレステンキー。メカニカルではない。</dd>
-        <dt>変換名人 MB-USB2</dt>
+        <dt><a href="https://www.yodobashi.com/product/100000001004005572/" target="_blank">変換名人 MB-USB2</a></dt>
         <dd>マザボのUSBヘッダから直接内部にUSB端子を生やせるやつ。これで内部にLogi Blotのドングルとテンキーのドングルを埋め込んでる。</dd>
         <dt>Ainex BZ-01</dt>
         <dd>マザボのブザー。前使ってたPCが起動時に「ﾋﾟｯ」と鳴るのに慣れていたので新しいのにもつけた。そしたら「ﾋﾟｰｯ」だった。うるさいのでテープでふさいでちょっとやわらかくしてる。</dd>
         <dt>Ainex U32AC-MFAD</dt>
         <dd>USB Type-A<abbr title="メス、レセプタクル">凹</abbr>からType-C凹に変換する<strong>規格違反</strong>アダプタ。使用法を間違えると危険なのでどうダメなのか分からない人は絶対に使ってはいけない。後述するイヤホンのドングルをPCにつけるのに使ってる。</dd>
-        <dt>LG 32UN500-W</dt>
-        <dd>80cm 4Kモニタ。メイン。でかい。デフォで150%スケーリングでしっくりきたからそのまま使ってる。付属の脚が前後方向にでかいのでモニタアームにつけたい。</dd>
-        <dt>MITSUBISHI RDT234WLM</dt>
-        <dd>23×25.4mmモニタ。ﾊﾟｯﾊﾟのお下がり。サブ。足をもぎ取って拾ったモニタスタンドの上とVESA穴の下を2箇所で固定して無理矢理縦置きしてる。ちょっとでも正面から外れるとおしまいの色になる。とてもメインで使える代物ではない。もう一枚あって押し付けられそうになったけど拒否した。</dd>
         <dt>BUFFALO LSW3-GT-5NS</dt>
         <dd>5ポートギガビットスイッチングハブ。トレファクで拾った激安品。ちゃんと実測1Gbps出るし金属筐体だし磁石でくっつけられるしで有能。</dd>
         <dt>LANケーブル</dt>
@@ -114,7 +121,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
         <dd>auひかりの貸出ONU兼ルータ。WAN側10Gbps。LAN側も1つ10Gbpsあるけど対応する接続先がない……。回線は実測で1Gbpsギリギリまで出る。</dd>
     </dl>
     <p>モニタをもっといいかんじに置きたいけど、机の形状的にふつうのモニタアームが使えないのがしんどい。</p>
-    <h3>使ってない奴ら</h3>
+    <h3>使ってないPC</h3>
     <dl>
         <dt>SONY VAIO type R master</dt>
         <dd>SONYの名作機。PCIeをぶっといケーブルで外部ユニットに引っ張ってたりマザボがmicroBTXだったりと変態。Core 2 Quad対応のとそうでないの2台ある。もう使うことはないだろうけど面白さと愛着があるので捨てにくい。</dd>
@@ -133,6 +140,9 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
                 <li>Core 2 Quad Q6600</li><li>Core 2 Duo E6600</li><li>Core 2 Duo E8400</li><li>7600GS</li><li>9600GT (壊れてる)</li><li>GT 330</li><li>GTS 450</li><li>GTX 1050 Ti (グラボはよく壊れるので予備として温存)</li><li>SATA SSD 数枚</li><li>SeagateのおしまいHDD</li><li>SATA BDドライブ 2台</li><li>Intel Wireless-AC 9260</li><li>Win11Pro, Educationのライセンス</li>
             </ul>
         </dd>
+    </dl>
+    <h3>使ってない周辺機器</h3>
+    <dl>
         <dt>LG W2361VG</dt>
         <dd>23×25.4mmモニタ。トレファク三鷹店で拾ってきた。素晴らしくはないがふつうに使えてた。光沢なのが気に入らない。非光沢ならサブに回してた。</dd>
         <dt>LG L204WT</dt>
@@ -175,7 +185,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
         <dt>Apple MHJA3AM</dt><dd>PD充電器(20W)。iPadの付属品。家でのiPhone充電用。</dd>
         <dt>AUKEY PA-D5</dt><dd>PD充電器(60W or 45W+18W)。ちゃんさぶさんからもらった。鞄に常備(クソ便利)。</dd>
         <dt>USB Type-Cケーブル</dt>
-        <dd>アリエクの怪しいやつ(布巻き、Gen2x2)(初回割引で72円、平時でも900円、2x2対応機器がないので本当に20Gbps出るかは知らんw)</dd>
+        <dd><a href="https://ja.aliexpress.com/item/1005006128932643.html" target="_blank">アリエクの怪しいやつ</a>(布巻き、Gen2x2)(初回割引で72円、平時でも900円、2x2対応機器がないので本当に20Gbps出るかは知らんw)</dd>
         <dd>ダイソーで200円のやつ(布巻きで根本がつよそう、USB2.0)(黒いのと白いのがあるけど白いののほうが圧倒的に品質がいい(1敗))</dd>
         <dd>iPad付属のやつ(布巻きだけど根本はよわそう🥺 USB2.0)</dd>
         <dd>ハードオフ稲城矢野口店で300円で拾ってきたやつ(布(?)巻き、USB2.0)</dd>
