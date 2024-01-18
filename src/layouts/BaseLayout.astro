@@ -1,9 +1,9 @@
 ---
 import "@/styles/style.scss";
+import Head from "@/components/Head.astro";
 import Header from "@/components/Header.astro";
 import Breadcrumb from "@/components/Breadcrumb.astro";
 import Footer from "@/components/Footer.astro";
-import { SEO } from "astro-seo";
 const siteName = "あづみのメモ帳";
 
 interface Props {
@@ -18,38 +18,9 @@ const title = Astro.props.title == "" ? undefined : Astro.props.title;
 
 <!doctype html>
 <html lang="ja">
-    <head>
-        <meta name="viewport" content="width=device-width" />
-        <meta name="generator" content={Astro.generator} />
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        {/* TODO: エラーを何とかする */}
-        <SEO
-            title={title}
-            titleTemplate={`%s  – ${siteName}`}
-            titleDefault={siteName}
-            description={Astro.props.description}
-            charset="UTF-8"
-            openGraph={{
-                basic: {
-                    title: title ?? siteName,
-                    type: "website",
-                    image: new URL(Astro.props.ogImage ?? "ogp-default.jpg", Astro.url.origin).toString(),
-                },
-                optional: {
-                    description: Astro.props.description,
-                    locale: "ja_JP",
-                    siteName: siteName,
-                },
-            }}
-            twitter={{
-                card: Astro.props.summaryLargeImage ? "summary_large_image" : "summary",
-                site: "@DG_7D",
-                creator: "@DG_7D",
-            }}
-        />
-    </head>
+    <Head {...Astro.props} />
     <body>
-        <Header siteName={siteName} />
+        <Header />
         <div id="main">
             <main>
                 <Breadcrumb />
