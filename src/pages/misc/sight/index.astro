@@ -96,7 +96,7 @@ const pageTitle: string = `${showTitle ? title + " – " : ""}${siteName}`;
                         height: 1080,
                     },
                 });
-                ratioLV = stream.getVideoTracks()[0].getSettings().aspectRatio ?? 16 / 9;
+                ratioLV = stream.getVideoTracks()[0]?.getSettings().aspectRatio ?? 16 / 9;
                 liveView.srcObject = stream;
                 liveView.play();
             }

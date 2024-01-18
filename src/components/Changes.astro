@@ -16,14 +16,14 @@ for (const commit of commits) {
     if (commit.message.startsWith("_")) {
         continue;
     }
-    if (!history[commit.date]) {
+    if (history[commit.date] === undefined) {
         if (Object.keys(history).length < Astro.props.count) {
             history[commit.date] = [commit.message];
         } else {
             overflow = true;
         }
-    } else if (!history[commit.date].includes(commit.message)) {
-        history[commit.date].unshift(commit.message);
+    } else if (!history[commit.date]!.includes(commit.message)) {
+        history[commit.date]!.unshift(commit.message);
     }
 }
 

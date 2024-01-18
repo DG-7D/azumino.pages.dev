@@ -17,7 +17,7 @@ const optimizedImage = await getImage({
 
 <figure>
     <a href={optimizedImage.src} target="_blank">
-        <img src={optimizedImage.srcSet.values[0].url} {...optimizedImage.attributes} />
+        <img src={optimizedImage.srcSet.values[0]?.url} {...optimizedImage.attributes} />
     </a>
     {Astro.props.caption && <figcaption>{Astro.props.caption}</figcaption>}
 </figure>

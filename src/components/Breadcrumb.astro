@@ -38,15 +38,15 @@ if (Astro.url.pathname == "/") {
     return;
 }
 
-let path: string[] = Astro.url.pathname.replace(/\/$/, "").split("/");
+let paths: string[] = Astro.url.pathname.replace(/\/$/, "").split("/");
 // 自分自身を除去
-path.pop();
+paths.pop();
 
 let pathNameList: PathNamePair[] = new Array();
 let absolutePath: string = "";
-for (let index = 0; index < path.length; index++) {
-    absolutePath = absolutePath + path[index] + "/";
-    let name = tree?.current.find(pathName => pathName.path == path[index])?.name ?? path[index];
+for (const path of paths) {
+    absolutePath = absolutePath + path + "/";
+    let name = tree?.current.find(pathName => pathName.path == path)?.name ?? path;
     pathNameList.push({
         path: absolutePath,
         name: name,
