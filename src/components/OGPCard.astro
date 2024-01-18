@@ -18,8 +18,8 @@ try {
             ogpProperties[property.substring(3)] = content;
         }
     });
-    ogpProperties["title"] ??= doc.getElementsByTagName("title")[0].textContent ?? undefined;
-    ogpProperties["description"] ??= doc.getElementsByName("description")[0].getAttribute("content") ?? undefined;
+    ogpProperties["title"] ??= doc.getElementsByTagName("title")[0]?.textContent ?? undefined;
+    ogpProperties["description"] ??= doc.getElementsByName("description")[0]?.getAttribute("content") ?? undefined;
 } catch (error) {
     console.log(error);
 }

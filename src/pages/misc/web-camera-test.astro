@@ -32,11 +32,11 @@ const defaultConstraints: string = `
         navigator.mediaDevices.getUserMedia(JSON.parse(inputConstraints.value)).then(stream => {
             if (liveView.srcObject == null) {
                 log.innerHTML += "---- Capabilities ----\n";
-                log.innerHTML += JSON.stringify(stream.getVideoTracks()[0].getCapabilities(), undefined, 4) + "\n\n---- Settings ----\n";
+                log.innerHTML += JSON.stringify(stream.getVideoTracks()[0]?.getCapabilities(), undefined, 4) + "\n\n---- Settings ----\n";
             } else {
                 liveView.pause();
             }
-            log.innerHTML += JSON.stringify(stream.getVideoTracks()[0].getSettings(), undefined, 4) + "\n\n";
+            log.innerHTML += JSON.stringify(stream.getVideoTracks()[0]?.getSettings(), undefined, 4) + "\n\n";
             liveView.srcObject = stream;
             liveView.play();
         });
