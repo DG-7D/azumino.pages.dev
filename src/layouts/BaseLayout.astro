@@ -22,6 +22,7 @@ const title = Astro.props.title == "" ? undefined : Astro.props.title;
         <meta name="viewport" content="width=device-width" />
         <meta name="generator" content={Astro.generator} />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        {/* TODO: エラーを何とかする */}
         <SEO
             title={title}
             titleTemplate={`%s  – ${siteName}`}
@@ -32,7 +33,7 @@ const title = Astro.props.title == "" ? undefined : Astro.props.title;
                 basic: {
                     title: title ?? siteName,
                     type: "website",
-                    image: new URL(Astro.props.ogImage ?? "ogImageDefault.jpg", Astro.url.origin).toString(),
+                    image: new URL(Astro.props.ogImage ?? "ogp-default.jpg", Astro.url.origin).toString(),
                 },
                 optional: {
                     description: Astro.props.description,

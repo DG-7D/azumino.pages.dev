@@ -8,7 +8,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
     <p id="govResult">ごゔぃっしょにんぐ……</p>
     <script>
         function random<T>(array: T[]): T {
-            return array[Math.floor(Math.random() * array.length)];
+            return array[Math.floor(Math.random() * array.length)]!;
         }
         function makeGov() {
             const govs = ["(", "´", "･", "_", "･", "`", ")"];

@@ -27,7 +27,7 @@ const pageTitle: string = `${showTitle ? title + " – " : ""}${siteName}`;
                 basic: {
                     title: pageTitle,
                     type: "website",
-                    image: new URL(Astro.props.ogImage ?? "ogImageDefault.jpg", Astro.url.origin).toString(),
+                    image: new URL(Astro.props.ogImage ?? "ogp-default.jpg", Astro.url.origin).toString(),
                 },
                 optional: {
                     description: Astro.props.description,
@@ -96,7 +96,7 @@ const pageTitle: string = `${showTitle ? title + " – " : ""}${siteName}`;
                         height: 1080,
                     },
                 });
-                ratioLV = stream.getVideoTracks()[0].getSettings().aspectRatio ?? 16 / 9;
+                ratioLV = stream.getVideoTracks()[0]?.getSettings().aspectRatio ?? 16 / 9;
                 liveView.srcObject = stream;
                 liveView.play();
             }
