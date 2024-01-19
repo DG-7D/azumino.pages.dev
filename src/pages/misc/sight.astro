@@ -119,6 +119,10 @@ import Head from "@/components/Head.astro";
                     applySettings();
                 });
             });
+
+            window.addEventListener("orientationchange", () => {
+                activateLiveView().then(applySettings);
+            });
         </script>
         <style lang="scss">
             :root {
