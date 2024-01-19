@@ -1,66 +1,59 @@
 ---
-interface PathNamePair {
-    path: string;
-    name: string;
-}
-interface Tree {
-    current: PathNamePair[];
-    next?: Tree;
-}
-
-let tree: Tree | undefined = {
-    current: [
-        {
-            path: "",
-            name: "あづみのメモ帳",
-        },
-    ],
-    next: {
-        current: [
-            {
-                path: "blog",
-                name: "あづみのブログ",
-            },
-            {
-                path: "about",
-                name: "あづみについて",
-            },
-            {
-                path: "misc",
-                name: "その他",
-            },
-        ],
-    },
-};
-
 if (Astro.url.pathname == "/") {
     // トップでは表示しない
     return;
 }
 
-let paths: string[] = Astro.url.pathname.replace(/\/$/, "").split("/");
-// 自分自身を除去
-paths.pop();
+interface DirectoryData {
+    dir: string;
+    name: string;
+    child?: DirectoryData[];
+}
 
-let pathNameList: PathNamePair[] = new Array();
-let absolutePath: string = "";
-for (const path of paths) {
-    absolutePath = absolutePath + path + "/";
-    let name = tree?.current.find(pathName => pathName.path == path)?.name ?? path;
-    pathNameList.push({
-        path: absolutePath,
-        name: name,
+const root = "";
+
+let rootDir: DirectoryData = {
+    dir: root,
+    name: "あづみのメモ帳",
+    child: [
+        {
+            dir: "blog",
+            name: "あづみのブログ",
+        },
+        {
+            dir: "about",
+            name: "あづみについて",
+        },
+        {
+            dir: "misc",
+            name: "その他",
+        },
+    ]
+}
+
+let path: string[] = Astro.url.pathname.split("/").filter(dir => dir != "");
+path.pop(); // 自分自身を除去
+
+let currentDir: DirectoryData = rootDir;
+let currentPath = "/";
+let pathNamePairs: {path:string, name: string}[] = [ {path: currentPath, name: rootDir.name}];
+
+for (const dir of path) {
+    currentDir = currentDir.child?.find(dirNamePair => dirNamePair.dir == dir) ?? {dir: dir, name: dir};
+    currentPath += currentDir.dir + "/";
+    pathNamePairs.push({
+        path: currentPath,
+        name: currentDir.name,
     });
-    tree = tree?.next;
 }
 ---
 
 <nav>
     <ul class="inline">
         {
-            pathNameList.map(pathName => (
+            pathNamePairs.map(pathNamePair => (
                 <!-- display: inline -->
-                <li><a href={pathName.path}>{pathName.name}</a></li>
+                <li><a href={pathNamePair.path}>{pathNamePair.name}</a></li>
             ))
         }
     </ul>

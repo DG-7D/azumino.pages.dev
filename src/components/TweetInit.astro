@@ -1,8 +1,8 @@
 <script>
     if (window.matchMedia("(prefers-color-scheme: light)").matches) {
-        Object.entries(document.getElementsByClassName("twitter-tweet")).forEach(([_, element]) => {
+        for (const element of document.getElementsByClassName("twitter-tweet")) {
             element.setAttribute("data-theme", "");
-        });
+        }
     }
 </script>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>

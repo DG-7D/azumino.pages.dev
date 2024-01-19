@@ -1,15 +1,25 @@
 ---
 interface Props {
     id: string;
-    hideThread?: boolean;
     hideMedia?: boolean;
+    hideThread?: boolean;
 }
+
+const urlSearchParams = new URLSearchParams({
+    url: `https://twitter.com/i/status/${Astro.props.id}`,
+    hide_media: Astro.props.hideMedia ? "true" : "false",
+    hide_thread: Astro.props.hideThread ? "true" : "false",
+    omit_script: "true",
+    lang: "ja",
+    theme: "dark",
+    dnt: "true",
+});
+const url = new URL("https://publish.twitter.com/oembed?" + urlSearchParams.toString());
+const blockquote = (JSON.parse(await (await fetch(url)).text()).html as string).replace("<a ", '<a target="_blank"');
 ---
 
 <div>
-    <blockquote class="twitter-tweet" data-dnt="true" data-theme="dark" data-conversation={Astro.props.hideThread && "none"} data-cards={Astro.props.hideMedia && "hidden"}>
-        <a href={"https://twitter.com/i/status/" + Astro.props.id.toString()} target="_blank">ツイート読込中</a>
-    </blockquote>
+    <Fragment set:html={blockquote} />
 </div>
 <style>
     blockquote {

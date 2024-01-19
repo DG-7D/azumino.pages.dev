@@ -11,13 +11,13 @@ let ogpProperties: { [key: string]: string | undefined } = {};
 try {
     const responseText = await (await fetch(url)).text();
     const doc = new JSDOM(responseText).window.document;
-    Object.entries(doc.getElementsByTagName("meta")).forEach(([_, metaTag]) => {
+    for (const metaTag of doc.getElementsByTagName("meta")) {
         const property = metaTag.getAttribute("property");
         const content = metaTag.getAttribute("content");
         if (property?.startsWith("og:") && content) {
             ogpProperties[property.substring(3)] = content;
         }
-    });
+    }
     ogpProperties["title"] ??= doc.getElementsByTagName("title")[0]?.textContent ?? undefined;
     ogpProperties["description"] ??= doc.getElementsByName("description")[0]?.getAttribute("content") ?? undefined;
 } catch (error) {
