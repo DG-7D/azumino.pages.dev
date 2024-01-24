@@ -8,10 +8,6 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
     <dl id="output"></dl>
 </BaseLayout>
 <script>
-    function codePointOf(char: string): number {
-        return char.codePointAt(0)!;
-    }
-
     const formats = [
         // セリフ
         {
@@ -183,23 +179,37 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
     ];
 
     const input = document.getElementById("input")! as HTMLTextAreaElement;
-    const output = document.getElementById("output")! as HTMLDataListElement;
+    const output = document.getElementById("output")!;
+    const outputs: { [id: string]: HTMLElement } = {};
+
+    for (const format of formats) {
+        const dt = document.createElement("dt");
+        const dd = document.createElement("dd");
+        dt.textContent = format.friendlyName;
+        output.insertAdjacentElement("beforeend", dt);
+        output.insertAdjacentElement("beforeend", dd);
+        outputs[format.id] = dd;
+    }
+
     input.addEventListener("input", onInput);
+    onInput();
+
+    function codePointOf(char: string): number {
+        return char.codePointAt(0)!;
+    }
     function onInput() {
-        output.innerHTML = "";
         for (const format of formats) {
-            output.innerHTML += `<dt>${format.friendlyName}</dt><dd>`;
+            outputs[format.id]!.textContent = "";
             for (let index = 0; index < input.value.length; index++) {
                 const codePoint = input.value.codePointAt(index)!;
                 const exception = format.exceptions.find(exception => exception.from == codePoint);
                 if (exception) {
-                    output.innerHTML += String.fromCodePoint(exception.to);
+                    outputs[format.id]!.textContent += String.fromCodePoint(exception.to);
                 } else {
                     let base = range(codePoint) ? format.codePoint[range(codePoint)!] : 0;
-                    output.innerHTML += String.fromCodePoint(base + codePoint);
+                    outputs[format.id]!.textContent += String.fromCodePoint(base + codePoint);
                 }
             }
-            output.innerHTML += "</dd>";
         }
     }
     function range(codePoint: number): "number" | "capital" | "small" | undefined {
@@ -212,8 +222,6 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
         }
         return undefined;
     }
-
-    onInput();
 </script>
 
 <style>
