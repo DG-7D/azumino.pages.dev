@@ -104,12 +104,12 @@ const links: { title: string; url: URL; description: string }[] = [
         return array[Math.floor(Math.random() * array.length)]!;
     }
 
-    const messages: string[] = ["やあやあ、", "ようこそ、", "ゆっくりしていってね。", "いらっしゃい。", "Hello and Welcome!! ", "へぇい、", "やっほー、", "うおおおおおお、", "どうも、", "はじめましての方ははじめまして、", "はい、というわけでね、", "えーっとね、"];
-    document.getElementById("welcome")!.innerText = random(messages);
+    const messages = ["やあやあ、", "ようこそ、", "ゆっくりしていってね。", "いらっしゃい。", "Hello and Welcome!! ", "へぇい、", "やっほー、", "うおおおおおお、", "どうも、", "はじめましての方ははじめまして、", "はい、というわけでね、", "えーっとね、"];
+    document.getElementById("welcome")!.textContent = random(messages);
 
-    const tipsElement: HTMLElement = document.getElementById("tips")!;
-    function setTips(): void {
-        const tips: string[] = [
+    const tipsElement = document.getElementById("tips")!;
+    function setTips() {
+        const tips = [
             "窓口やモバイルのアプリでSuica/PASMOの残高が1000円を切った際のタッチ音を変更できる。<a href='https://www.pasmo.co.jp/about/service/' target='_blank'>PASMO公式サイト</a>",
             "Windows、JISキーボード環境ではCaps Lockと書いてあるキー(英数キー)でIME切替ができる。",
             "自転車が歩道を走行する際は車道寄りを徐行しなければならない。<a href='https://elaws.e-gov.go.jp/document?lawid=335AC0000000105#Mp-At_63_4' target='_blank'>道路交通法 第六十三条の四</a>",
@@ -136,8 +136,8 @@ const links: { title: string; url: URL; description: string }[] = [
         ];
         tipsElement.innerHTML = random(tips);
     }
-    tipsElement.addEventListener("mousedown", (e) => {
-        if (e.button == 1) {
+    tipsElement.addEventListener("mousedown", ev => {
+        if (ev.button == 1) {
             setTips();
         }
     });

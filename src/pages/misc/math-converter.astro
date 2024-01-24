@@ -4,16 +4,8 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 
 <BaseLayout title="数学用英数字記号変換器" description="通常のASCII英数字列から数学用英数字記号を生成するツールです。">
     <p>入力欄に文字列を入力すると各種<a href="https://ja.wikipedia.org/wiki/%E6%95%B0%E5%AD%A6%E7%94%A8%E8%8B%B1%E6%95%B0%E5%AD%97%E8%A8%98%E5%8F%B7" target="_blank">数学用英数字記号</a>に変換された結果が表示されます。数字の斜体とフラクトゥールはありません。英数以外はそのままになります。</p>
-    <textarea id="input" autocomplete="off" autofocus placeholder="ここに文字列を入力">0123456789 abcdefghijklmnopqrstuvwzyz ABCDEFGHIJKLMNOPQRSTUVWXYZ</textarea>
+    <textarea id="input" autocomplete="off" autofocus placeholder="ここに文字列を入力">0123456789 abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ</textarea>
     <dl id="output"></dl>
-    {
-        /*         
-         <h2>解説</h2>
-         <p>数学において、文字の立体と斜体、細字と太字は異なる意味を持つ。一部のASCIIしか使えなかった時代の産廃システムは、こういった文字を同じASCII文字のフォント違いとして表現している。表示に特定のフォントを強制することも、意味が違うものを同じ文字とすることも、まったくもって不適切である。</p>
-         <p>Microsoft Wordの数式入力システムなどはUnicode Mathという方式を採用している。</p>
-         <p>逆に、同じ文字の書式違いを違う文字とすることも不適切であるため、ここで生成した文字を使うのはSNS等のみに留めるべきともいえる。</p>
-        */
-    }
 </BaseLayout>
 <script>
     function codePointOf(char: string): number {
