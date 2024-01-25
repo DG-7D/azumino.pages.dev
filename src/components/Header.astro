@@ -2,9 +2,12 @@
 import "@/styles/style.scss";
 import HeaderLogo from "./HeaderLogo.astro";
 
-interface Props {
-    siteName: string;
-}
+const menu = [
+    { path: "/", text: "トップ" },
+    { path: "/blog/", text: "ブログ" },
+    { path: "/misc/", text: "その他" },
+    { path: "/about/", text: "自己紹介" },
+];
 ---
 
 <header>
@@ -13,13 +16,15 @@ interface Props {
     </a>
     <nav>
         <ul>
-            <li><a href="/">トップ</a></li>
-            <li><a href="/blog/">ブログ</a></li>
-            <li><a href="/misc/">その他</a></li>
-            <li><a href="/about/">自己紹介</a></li>
+            {
+                menu.map(item => (
+                    <li>
+                        <a href={item.path}>{item.text}</a>
+                    </li>
+                ))
+            }
         </ul>
     </nav>
-    <!-- <button style="width: 1rem; height: 1rem;"></button> -->
 </header>
 <style lang="scss">
     $logo-height: 2rem;
