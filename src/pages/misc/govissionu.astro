@@ -1,19 +1,23 @@
 ---
-import BaseLayout from "../../layouts/BaseLayout.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
 ---
 
-<BaseLayout title="ゴヴィッショヌ揃え" description="JavaScript版ゴヴィッショヌ揃え。">
+<BaseLayout title="ゴヴィッショヌ揃え" description="ゴヴィッショヌ揃えをJavaScriptで実装してみた。">
     <p><a href="http://checoole.s1009.xrea.com/govissionu/make_govissionu.php" target="_blank">ゴヴィッショヌ揃え</a>をJavaScriptで実装してみた。本家より速いけど<a href="https://yuino.dev/works/govissionu/" target="_blank">これ</a>よりはおそいとおもう。</p>
-    <div id="govBox"><span id="govOut"></span><a id="govEnd"></a></div>
-    <p id="govResult">ごゔぃっしょにんぐ……</p>
+    <div id="govBox"></div>
+    <p id="govResult"><span id="govLength"></span>文字目でｺﾞｳﾞｨｯｼｮﾇが完成しました！ <a id="govTweet" href="" target="_blank">ツイート</a> <button id="reGov">もういちど</button></p>
     <script>
         function random<T>(array: T[]): T {
-            return array[Math.floor(Math.random() * array.length)];
+            return array[Math.floor(Math.random() * array.length)]!;
         }
+
+        const govs = ["(", "´", "･", "_", "･", "`", ")"];
+        const govBox = document.getElementById("govBox")!;
+        const govLength = document.getElementById("govLength")!;
+        const govTweet = document.getElementById("govTweet")! as HTMLAnchorElement;
+        document.getElementById("reGov")!.addEventListener("click", makeGov);
+
         function makeGov() {
-            const govs = ["(", "´", "･", "_", "･", "`", ")"];
-            const govOut = document.getElementById("govOut")!;
-            const govResult = document.getElementById("govResult")!;
             let nextLetter = 0;
             let govText = "";
             while (true) {
@@ -22,26 +26,27 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
                 if (newLetter == govs[nextLetter]) {
                     nextLetter++;
                     if (nextLetter == govs.length) {
-                        finishGov();
+                        finishGov(govText);
                         return;
                     }
                 } else {
                     nextLetter = 0;
                 }
             }
-            function finishGov() {
-                govOut.innerText = govText;
-                govResult.innerHTML = `${govText.length}文字目でｺﾞｳﾞｨｯｼｮﾇが完成しました! <a href="${encodeURI("https://twitter.com/intent/tweet?text=" + govText.length + "文字目でｺﾞｳﾞｨｯｼｮﾇが完成しました(´･_･`)&url=" + location.href)}" target="_blank">ツイート</a> <a href="#" id="reGov">もういちど</a>`;
-                document.getElementById("govEnd")!.scrollIntoView();
-                document.getElementById("reGov")!.addEventListener("click", makeGov);
-            }
+        }
+        function finishGov(govText: string) {
+            govBox.textContent = govText;
+            govLength.textContent = govText.length.toString();
+            govTweet.href = encodeURI(`https://twitter.com/intent/tweet?text=${govText.length}文字目でｺﾞｳﾞｨｯｼｮﾇが完成しました(´･_･\`)&url=${location.href}`);
+            govBox.scrollTop = govBox.scrollHeight;
         }
         makeGov();
     </script>
     <style>
         #govBox {
             max-height: 50vh;
-            overflow-y: scroll;
+            overflow-x: hidden;
+            overflow-y: auto;
             resize: vertical;
         }
     </style>

@@ -1,9 +1,9 @@
 ---
-import "../styles/style.scss";
-import Header from "../components/Header.astro";
-import Breadcrumb from "../components/Breadcrumb.astro";
-import Footer from "../components/Footer.astro";
-import { SEO } from "astro-seo";
+import "@/styles/style.scss";
+import Head from "@/components/Head.astro";
+import Header from "@/components/Header.astro";
+import Breadcrumb from "@/components/Breadcrumb.astro";
+import Footer from "@/components/Footer.astro";
 const siteName = "あづみのメモ帳";
 
 interface Props {
@@ -13,47 +13,18 @@ interface Props {
     description: string;
 }
 
-const title = Astro.props.title;
-const showTitle: boolean = title != siteName;
-const pageTitle: string = `${showTitle ? title + " – " : ""}${siteName}`;
-// todo: astro-seoでなんとかできる？
+const title = Astro.props.title == "" ? undefined : Astro.props.title;
 ---
 
 <!doctype html>
 <html lang="ja">
-    <head>
-        <meta name="viewport" content="width=device-width" />
-        <meta name="generator" content={Astro.generator} />
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <SEO
-            title={pageTitle}
-            description={Astro.props.description}
-            charset="UTF-8"
-            openGraph={{
-                basic: {
-                    title: pageTitle,
-                    type: "website",
-                    image: new URL(Astro.props.ogImage ?? "ogImageDefault.jpg", Astro.url.origin).toString(),
-                },
-                optional: {
-                    description: Astro.props.description,
-                    locale: "ja_JP",
-                    siteName: siteName,
-                },
-            }}
-            twitter={{
-                card: Astro.props.summaryLargeImage ? "summary_large_image" : "summary",
-                site: "@DG_7D",
-                creator: "@DG_7D",
-            }}
-        />
-    </head>
+    <Head {...Astro.props} />
     <body>
-        <Header siteName={siteName} />
+        <Header />
         <div id="main">
             <main>
                 <Breadcrumb />
-                <h1 style={showTitle ? "" : "display: none;"}>{title}</h1>
+                <h1 style={title ? "" : "display: none;"}>{title ?? siteName}</h1>
                 <slot />
             </main>
             <Footer />

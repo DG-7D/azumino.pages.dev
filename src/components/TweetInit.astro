@@ -1,0 +1,8 @@
+<script>
+    if (window.matchMedia("(prefers-color-scheme: light)").matches) {
+        for (const element of document.getElementsByClassName("twitter-tweet")) {
+            element.setAttribute("data-theme", "");
+        }
+    }
+</script>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>

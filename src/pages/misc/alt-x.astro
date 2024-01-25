@@ -1,0 +1,34 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="コードポイントから文字に変換するやつ" description="入力したUnicodeコードポイントに対応する文字を表示するツールです。">
+    <p>入力欄にスペース区切りでUnicodeコードポイント(16進数)を入力すると、下に対応する文字列が表示されます。<a href="https://chobitool.com/unicodepoint/" target="_blank">このツール</a>の逆です。16進数の数字として解釈できない部分はそのままになります。なお、Windows 11のメモ帳やMicrosoft Wordなど一部のアプリではAlt+Xを押下すると同じ事ができます。</p>
+    <textarea id="input" autocomplete="off" autofocus placeholder="ここに数値を入力">5c (バックスラッシュ)&#x20 a5 (円記号)&#x20 4e00 (いち)&#x20 30fc (長音符)&#x20 ff0d (全角ハイフンマイナス)&#x20 2014 (EMダッシュ)&#x20 2500 (罫線)</textarea>
+    <div id="output"></div>
+</BaseLayout>
+<script>
+    const input = document.getElementById("input")! as HTMLTextAreaElement;
+    const output = document.getElementById("output")!;
+    input.addEventListener("input", onInput);
+    function onInput() {
+        const codePoints = input.value.replaceAll("  ", " 20 ").split(" ");
+        let lastIsCodePoint = true;
+        output.textContent = "";
+        for (const codePointText of codePoints) {
+            const codePoint = parseInt(codePointText, 16);
+            if (codePoint) {
+                output.textContent += String.fromCodePoint(codePoint);
+                lastIsCodePoint = true;
+            } else {
+                if (!lastIsCodePoint) {
+                    output.textContent += " ";
+                }
+                output.textContent += codePointText;
+                lastIsCodePoint = false;
+            }
+        }
+    }
+
+    onInput();
+</script>

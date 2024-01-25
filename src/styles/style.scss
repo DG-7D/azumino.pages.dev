@@ -3,8 +3,8 @@
 
 :root {
     --theme-color: var(--green);
+    color-scheme: light dark;
 
-    color-scheme: dark;
     --background-color: var(--black);
     --main-shadow: var(--bblack);
     --main-color: var(--bwhite);
@@ -12,7 +12,6 @@
     --link-color: var(--byellow);
 
     @media (prefers-color-scheme: light) {
-        color-scheme: light;
         --background-color: var(--bwhite);
         --main-shadow: var(--white);
         --main-color: var(--black);
@@ -26,6 +25,8 @@ html {
     background: var(--background-color);
     font-size: 100%;
     height: 100%;
+    overflow-y: scroll;
+    scroll-padding-top: var(--header-height);
 }
 
 body {
@@ -54,6 +55,7 @@ main {
     * {
         line-height: 150%;
         overflow-wrap: anywhere;
+        // word-break: auto-phrase;
     }
 
     >h1 {
@@ -65,9 +67,11 @@ main {
         border-style: solid;
         border-width: 0 0 0.1rem;
         border-color: var(--theme-color);
+        word-break: auto-phrase;
 
         +div.publishDate {
             color: var(--sub-color);
+            margin: 0;
         }
     }
 
@@ -94,15 +98,26 @@ main {
     }
 
     >p,
+    >figure,
     >pre,
     >ul,
     >ol,
-    >dl {
+    >dl,
+    >div,
+    >table,
+    >textarea {
+        display: block;
         margin: 0.5rem 0;
     }
 
-    >pre {
+    >pre,
+    >textarea {
         padding: 0.25rem;
+        border: 0.1rem solid var(--main-shadow);
+        width: 100%;
+        @supports (text-autospace: no-autospace) {
+            text-autospace: no-autospace;
+        }
     }
 
     ul:not(.inline),
@@ -164,14 +179,17 @@ main {
 
     p {
         text-indent: 1rem;
+        text-align: justify;
     }
 
-    a {
+    a,
+    button {
+        cursor: pointer;
         color: var(--link-color);
-        text-decoration: underline;
+        text-decoration-line: underline;
 
         &:hover {
-            text-decoration: none;
+            text-decoration-line: none;
         }
     }
 
@@ -188,7 +206,9 @@ main {
     del {
         color: var(--main-shadow);
         font-size: 0.9em;
-        text-decoration: line-through 0.2em;
+        text-decoration-line: line-through;
+        text-decoration-color: var(--main-color);
+        text-decoration-thickness: 0.1em;
     }
 
     code,
@@ -213,4 +233,22 @@ main {
         max-height: 50vh;
     }
 
+    // TODO: なんとかする
+    table {
+        display: table;
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+
+        thead,
+        tbody {
+            border: 0.1rem solid var(--main-color);
+            border-style: solid none;
+        }
+
+        th,
+        td {
+            padding: 0 0.25em;
+        }
+    }
 }

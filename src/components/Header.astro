@@ -1,40 +1,72 @@
 ---
-import "../styles/style.scss";
+import "@/styles/style.scss";
+import HeaderLogo from "./HeaderLogo.astro";
 
-interface Props {
-    siteName: string;
-}
-
-const { siteName } = Astro.props;
+const menu = [
+    { path: "/", text: "トップ" },
+    { path: "/blog/", text: "ブログ" },
+    { path: "/misc/", text: "その他" },
+    { path: "/about/", text: "自己紹介" },
+];
 ---
 
 <header>
     <a href="/">
-        {siteName}
+        <HeaderLogo />
     </a>
-    <!-- <button style="width: 1rem; height: 1rem;"></button> -->
+    <nav>
+        <ul>
+            {
+                menu.map(item => (
+                    <li>
+                        <a href={item.path}>{item.text}</a>
+                    </li>
+                ))
+            }
+        </ul>
+    </nav>
 </header>
 <style lang="scss">
-    $font-size: 2rem;
+    $logo-height: 2rem;
     $padding: 0.25rem;
     :root {
-        --header-height: #{$font-size + 2 * $padding};
+        --header-height: #{$logo-height + 2 * $padding};
     }
     header {
+        height: var(--header-height);
+        overflow: hidden;
         position: sticky;
         top: 0;
         z-index: 1645;
         padding: $padding;
         display: flex;
-        justify-content: center;
-        align-items: center;
+        flex-wrap: wrap;
+        justify-content: space-evenly;
+        align-items: flex-end;
         background-color: var(--theme-color);
         box-shadow: 0 0 0.5rem 0.25rem var(--background-color);
-        a {
+        > a {
+            line-height: 0;
             color: var(--bwhite);
-            font-size: $font-size;
+            :global(svg) {
+                height: $logo-height;
+            }
         }
-        button {
+        > nav {
+            ul {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                li {
+                    padding: 0.25rem;
+                    margin: 0;
+                    a {
+                        color: var(--bwhite);
+                    }
+                }
+            }
+        }
+        > button {
             position: absolute;
             right: 1rem;
         }

@@ -13,14 +13,17 @@ const commits: {
 const history: { [date: string]: string[] } = {};
 let overflow: boolean = false;
 for (const commit of commits) {
-    if (!history[commit.date]) {
+    if (commit.message.startsWith("_")) {
+        continue;
+    }
+    if (history[commit.date] === undefined) {
         if (Object.keys(history).length < Astro.props.count) {
             history[commit.date] = [commit.message];
         } else {
             overflow = true;
         }
-    } else if (!history[commit.date].includes(commit.message)) {
-        history[commit.date].push(commit.message);
+    } else if (!history[commit.date]!.includes(commit.message)) {
+        history[commit.date]!.unshift(commit.message);
     }
 }
 
@@ -33,10 +36,9 @@ function isoTo年月日(iso: string): string {
     {
         Object.entries(history).map(([date, messages]) => (
             <>
-                <dt>
-                    <time datetime={date}>{isoTo年月日(date)}</time>
-                </dt>
-                {messages.map((message) => (
+                <!-- display: inline -->
+                <dt><time datetime={date}>{isoTo年月日(date)}</time></dt
+                >{messages.map(message => (
                     <dd>{message}</dd>
                 ))}
             </>
@@ -45,10 +47,8 @@ function isoTo年月日(iso: string): string {
     {
         overflow && (
             <>
-                <dt>それ以降</dt>
-                <dd>
-                    <a href="/changes/">もっと見る</a>
-                </dd>
+                <dt>それ以前</dt
+                ><dd><a href="/changes/">もっと見る</a></dd>
             </>
         )
     }

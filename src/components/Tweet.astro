@@ -1,0 +1,35 @@
+---
+interface Props {
+    id: string;
+    hideMedia?: boolean;
+    hideThread?: boolean;
+}
+
+const urlSearchParams = new URLSearchParams({
+    url: `https://twitter.com/i/status/${Astro.props.id}`,
+    hide_media: Astro.props.hideMedia ? "true" : "false",
+    hide_thread: Astro.props.hideThread ? "true" : "false",
+    omit_script: "true",
+    lang: "ja",
+    theme: "dark",
+    dnt: "true",
+});
+const url = new URL("https://publish.twitter.com/oembed?" + urlSearchParams.toString());
+const responseJson = await fetch(url).then(response => response.json());
+const blockquote = (responseJson.html as string).replaceAll("<a ", '<a target="_blank"');
+---
+
+<div>
+    <Fragment set:html={blockquote} />
+</div>
+<style>
+    blockquote {
+        height: 300px;
+    }
+    :global(.twitter-tweet-rendered) {
+        max-width: 30rem !important;
+        margin: 0 auto !important;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+</style>
