@@ -2,9 +2,10 @@
 import { execSync } from "child_process";
 import { getCollection } from "astro:content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getState } from "./_functions";
 export async function getStaticPaths() {
-    const blogEntries = await getCollection("blog", ({ data }) => {
-        return import.meta.env.DEV || data.publish && data.publishDate < new Date();
+    const blogEntries = await getCollection("blog", post => {
+        return import.meta.env.DEV || getState(post) == "published";
     });
     return blogEntries.map(entry => ({
         params: { slug: entry.slug },

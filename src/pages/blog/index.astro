@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
+import { getState } from "./_functions";
 const allPosts = await getCollection("blog");
 // TODO: 表示をなんとかする
 ---
@@ -11,11 +12,14 @@ const allPosts = await getCollection("blog");
     <ul>
         {
             allPosts.map(post => {
-                if (import.meta.env.DEV || (post.data.publish && post.data.publishDate < new Date())) {
+                const state = getState(post);
+                if (import.meta.env.DEV || state == "published") {
                     return (
-                        <li>
-                            <a href={"/blog/" + post.slug + "/"}>{!post.data.publish && "非公開: "}{post.data.title}</a>
-                        </li>
+                        <!-- display:inline -->
+                        <li
+                            ><a href={"/blog/" + post.slug + "/"}
+                                >{state != "published" && `${state}: `}{post.data.title}</a
+                        ></li>
                     );
                 }
             })
