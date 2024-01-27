@@ -31,28 +31,38 @@ html {
 
 body {
     min-height: 100%;
-    display: grid;
+
+    display: flex;
     grid-template-rows: auto 1fr;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: center;
 
-    // ここにヘッダー
-    div#main {
-        display: grid;
-        grid-template-rows: 1fr auto;
-
-        main {
-            contain: inline-size; // table対応
-            width: 100%;
-            max-width: 60rem;
-            margin: 0 auto;
-            padding: 0.75rem;
-            box-shadow: 0 0 0.5rem 0.25rem var(--main-shadow);
-        }
-
-        // ここにフッター
+    >header {
+        flex: none;
+        width: 100%;
     }
+
+
+    >main {
+        flex: 1;
+        width: 100%;
+        max-width: 60rem;
+    }
+
+    >footer {
+        flex: none;
+        width: 100%;
+    }
+
 }
 
 :where(main) {
+    contain: inline-size; // table対応
+    padding: 0.75rem;
+    box-shadow: 0 0 0.5rem 0.25rem var(--main-shadow);
+
     * {
         line-height: 150%;
         overflow-wrap: anywhere;
