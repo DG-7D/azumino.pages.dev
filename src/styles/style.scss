@@ -122,58 +122,53 @@ body {
     }
 
     ul:not(.inline),
-    ol,
-    dl {
+    dl:not(.inline) {
         padding-left: 1rem;
-    }
 
-    ul:not(.inline) li,
-    dl dt {
-        margin-left: -1rem;
+        >li,
+        >dt {
+            display: list-item;
+            list-style: "–\2002" outside;
+        }
 
-        &::before {
-            content: "–\2002";
+        > dd{
+            padding-left: 1rem;
         }
     }
 
     ul.inline {
-        li {
+        >li {
             display: inline;
 
-            // &:has(+li)::after {
-            // }
-            +li::before {
+            &:has(+ li)::after {
                 content: "、";
             }
         }
     }
 
     dl.inline {
-        @supports selector(:has(+ *)) {
+        padding-left: 2rem;
 
-            dt {
-                display: inline;
+        >dt {
+            display: inline list-item;
+            list-style: "–\2002" inside;
+            margin-left: -2rem;
 
-                &::after {
-                    content: ":";
-                    margin: 0 0.25rem;
-                }
-            }
-
-            dd {
-
-                &:has(+dt)::after {
-                    content: "\A";
-                    white-space: pre;
-                }
+            &::after {
+                content: ": ";
             }
         }
 
-        dd {
+        >dd {
             display: inline;
 
-            +dd::before {
+            &:has(+ dd)::after {
                 content: "、";
+            }
+
+            &:has(+ dt)::after {
+                content: "";
+                display: block;
             }
         }
     }
