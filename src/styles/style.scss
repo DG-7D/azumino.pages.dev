@@ -40,6 +40,7 @@ body {
         grid-template-rows: 1fr auto;
 
         main {
+            contain: inline-size; // table対応
             width: 100%;
             max-width: 60rem;
             margin: 0 auto;
@@ -241,9 +242,12 @@ body {
         max-height: 50vh;
     }
 
-    // TODO: なんとかする
+    // TODO: 謎を解明する
     table {
-        display: table;
+        display: flow-root;
+        width: max-content;
+        max-width: 100%;
+        overflow: auto;
         text-align: center;
         margin-left: auto;
         margin-right: auto;
@@ -257,6 +261,7 @@ body {
         th,
         td {
             padding: 0 0.25em;
+            white-space: nowrap;
         }
     }
 }
