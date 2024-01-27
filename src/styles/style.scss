@@ -69,7 +69,16 @@ body {
         // word-break: auto-phrase;
     }
 
+    >*:first-child,
+    >h1.hidden-title+* {
+        margin-top: 0;
+    }
+
     >h1 {
+        &.hidden-title {
+            display: none;
+        }
+
         line-height: 100%;
         font-size: 2.5rem;
         font-weight: bolder;
