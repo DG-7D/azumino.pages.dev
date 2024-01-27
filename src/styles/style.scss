@@ -51,7 +51,7 @@ body {
     }
 }
 
-main {
+:where(main) {
     * {
         line-height: 150%;
         overflow-wrap: anywhere;
@@ -115,6 +115,7 @@ main {
         padding: 0.25rem;
         border: 0.1rem solid var(--main-shadow);
         width: 100%;
+
         @supports (text-autospace: no-autospace) {
             text-autospace: no-autospace;
         }
@@ -182,14 +183,20 @@ main {
         text-align: justify;
     }
 
-    a,
-    button {
+    a:any-link,
+    *.like-link {
         cursor: pointer;
         color: var(--link-color);
         text-decoration-line: underline;
 
+        // &:focus {}
+
         &:hover {
             text-decoration-line: none;
+        }
+
+        &:active {
+            opacity: 50%;
         }
     }
 
