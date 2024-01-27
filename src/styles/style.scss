@@ -131,7 +131,7 @@ body {
             list-style: "–\2002" outside;
         }
 
-        > dd{
+        >dd {
             padding-left: 1rem;
         }
     }
@@ -150,8 +150,14 @@ body {
         padding-left: 2rem;
 
         >dt {
-            display: inline list-item;
-            list-style: "–\2002" inside;
+            // display: inline list-item; // なぜかSafariだと動かない
+            // list-style: "–\2002" inside;
+            display: inline;
+
+            &::before {
+                content: "–\2002";
+            }
+
             margin-left: -2rem;
 
             &::after {
