@@ -31,34 +31,54 @@ html {
 
 body {
     min-height: 100%;
-    display: grid;
+
+    display: flex;
     grid-template-rows: auto 1fr;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: center;
 
-    // ここにヘッダー
-    div#main {
-        display: grid;
-        grid-template-rows: 1fr auto;
-
-        main {
-            width: 100%;
-            max-width: 60rem;
-            margin: 0 auto;
-            padding: 0.75rem;
-            box-shadow: 0 0 0.5rem 0.25rem var(--main-shadow);
-        }
-
-        // ここにフッター
+    >header {
+        flex: none;
+        width: 100%;
     }
+
+
+    >main {
+        flex: 1;
+        width: 100%;
+        max-width: 60rem;
+    }
+
+    >footer {
+        flex: none;
+        width: 100%;
+    }
+
 }
 
-main {
+:where(main) {
+    contain: inline-size; // table対応
+    padding: 0.75rem;
+    box-shadow: 0 0 0.5rem 0.25rem var(--main-shadow);
+
     * {
         line-height: 150%;
         overflow-wrap: anywhere;
         // word-break: auto-phrase;
     }
 
+    >*:first-child,
+    >h1.hidden-title+* {
+        margin-top: 0;
+    }
+
     >h1 {
+        &.hidden-title {
+            display: none;
+        }
+
         line-height: 100%;
         font-size: 2.5rem;
         font-weight: bolder;
@@ -115,64 +135,66 @@ main {
         padding: 0.25rem;
         border: 0.1rem solid var(--main-shadow);
         width: 100%;
+
         @supports (text-autospace: no-autospace) {
             text-autospace: no-autospace;
         }
     }
 
     ul:not(.inline),
-    ol,
-    dl {
+    dl:not(.inline) {
         padding-left: 1rem;
-    }
 
-    ul:not(.inline) li,
-    dl dt {
-        margin-left: -1rem;
+        >li,
+        >dt {
+            display: list-item;
+            list-style: "–\2002" outside;
+        }
 
-        &::before {
-            content: "–\2002";
+        >dd {
+            padding-left: 1rem;
         }
     }
 
     ul.inline {
-        li {
+        >li {
             display: inline;
 
-            // &:has(+li)::after {
-            // }
-            +li::before {
+            &:has(+ li)::after {
                 content: "、";
             }
         }
     }
 
     dl.inline {
-        @supports selector(:has(+ *)) {
+        padding-left: 2rem;
 
-            dt {
-                display: inline;
+        >dt {
+            // display: inline list-item; // なぜかSafariだと動かない
+            // list-style: "–\2002" inside;
+            display: inline;
 
-                &::after {
-                    content: ":";
-                    margin: 0 0.25rem;
-                }
+            &::before {
+                content: "–\2002";
             }
 
-            dd {
+            margin-left: -2rem;
 
-                &:has(+dt)::after {
-                    content: "\A";
-                    white-space: pre;
-                }
+            &::after {
+                content: ": ";
             }
         }
 
-        dd {
+        >dd {
             display: inline;
 
-            +dd::before {
+            &:has(+ dd)::after {
                 content: "、";
+            }
+
+            &:has(+ dt)::after {
+                content: "";
+                display: block;
             }
         }
     }
@@ -182,14 +204,20 @@ main {
         text-align: justify;
     }
 
-    a,
-    button {
+    a:any-link,
+    *.like-link {
         cursor: pointer;
         color: var(--link-color);
         text-decoration-line: underline;
 
+        // &:focus {}
+
         &:hover {
             text-decoration-line: none;
+        }
+
+        &:active {
+            opacity: 50%;
         }
     }
 
@@ -233,12 +261,13 @@ main {
         max-height: 50vh;
     }
 
-    // TODO: なんとかする
+    // TODO: 謎を解明する
     table {
-        display: table;
-        text-align: center;
+        max-width: max-content;
+        overflow-x: auto;
         margin-left: auto;
         margin-right: auto;
+        text-align: center;
 
         thead,
         tbody {
@@ -249,6 +278,7 @@ main {
         th,
         td {
             padding: 0 0.25em;
+            white-space: nowrap;
         }
     }
 }

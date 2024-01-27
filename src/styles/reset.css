@@ -1,9 +1,15 @@
-* {
+html {
+    box-sizing: border-box;
+}
+
+*,
+*::after,
+*::before {
     appearance: none;
     background: none;
     border: none;
     border-collapse: collapse;
-    box-sizing: border-box;
+    box-sizing: inherit;
     color: unset;
     font-size: 1rem;
     font-family: sans-serif;
