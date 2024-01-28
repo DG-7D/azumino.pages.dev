@@ -23,9 +23,6 @@ const blockquote = (responseJson.html as string).replaceAll("<a ", '<a target="_
     <Fragment set:html={blockquote} />
 </div>
 <style>
-    blockquote {
-        height: 300px;
-    }
     :global(.twitter-tweet-rendered) {
         max-width: 30rem !important;
         margin: 0 auto !important;
@@ -33,3 +30,11 @@ const blockquote = (responseJson.html as string).replaceAll("<a ", '<a target="_
         overflow: hidden;
     }
 </style>
+<script>
+    if (window.matchMedia("(prefers-color-scheme: light)").matches) {
+        for (const element of document.getElementsByClassName("twitter-tweet")) {
+            element.setAttribute("data-theme", "");
+        }
+    }
+</script>
+<script src="https://platform.twitter.com/widgets.js"></script>
