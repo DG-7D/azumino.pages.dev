@@ -3,13 +3,18 @@ import "@/styles/style.scss";
 const copylightYear: string = new Date().getFullYear().toString();
 ---
 
-<a href="/about/"><footer><div>© {copylightYear} あづみ</div></footer></a>
+<footer><a href="/about/"><div>© {copylightYear} あづみ</div></a></footer>
 <style lang="scss">
-    footer {
-        padding: 0.25rem;
+    a {
+        width: 100%;
+        height: 100%;
         display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
         justify-content: center;
         align-items: center;
+
+        padding: 0.25rem;
         background-color: var(--theme-color);
         div {
             font-size: 1rem;

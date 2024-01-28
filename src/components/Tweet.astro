@@ -22,14 +22,45 @@ const blockquote = (responseJson.html as string).replaceAll("<a ", '<a target="_
 <div>
     <Fragment set:html={blockquote} />
 </div>
-<style>
-    blockquote {
-        height: 300px;
-    }
-    :global(.twitter-tweet-rendered) {
-        max-width: 30rem !important;
-        margin: 0 auto !important;
-        border-radius: 12px;
-        overflow: hidden;
+<style lang="scss">
+    div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        :global(blockquote) {
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 12px;
+
+            background-color: rgb(21, 32, 43);
+            @media (prefers-color-scheme: light) {
+                background-color: rgb(255, 255, 255);
+            }
+
+            max-width: 30rem;
+            border-radius: 12px;
+            padding: 12px;
+
+            :global(> a) {
+                display: contents;
+            }
+            :global(p) {
+                text-indent: 0;
+            }
+        }
+        :global(.twitter-tweet-rendered) {
+            max-width: 30rem !important;
+            margin: 0 !important;
+            border-radius: 12px;
+            overflow: hidden;
+        }
     }
 </style>
+<script>
+    if (window.matchMedia("(prefers-color-scheme: light)").matches) {
+        for (const element of document.getElementsByClassName("twitter-tweet")) {
+            element.setAttribute("data-theme", "");
+        }
+    }
+</script>
+<script src="https://platform.twitter.com/widgets.js"></script>

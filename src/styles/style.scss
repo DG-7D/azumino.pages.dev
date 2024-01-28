@@ -23,7 +23,6 @@
 html {
     color: var(--main-color);
     background: var(--background-color);
-    font-size: 100%;
     height: 100%;
     overflow-y: scroll;
     scroll-padding-top: var(--header-height);
@@ -31,214 +30,194 @@ html {
 
 body {
     min-height: 100%;
-    display: grid;
+
+    display: flex;
     grid-template-rows: auto 1fr;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: center;
 
-    // ここにヘッダー
-    div#main {
-        display: grid;
-        grid-template-rows: 1fr auto;
-
-        main {
-            width: 100%;
-            max-width: 60rem;
-            margin: 0 auto;
-            padding: 0.75rem;
-            box-shadow: 0 0 0.5rem 0.25rem var(--main-shadow);
-        }
-
-        // ここにフッター
+    >header {
+        flex: none;
+        width: 100%;
     }
+
+
+    >main {
+        flex: 1;
+        width: 100%;
+        max-width: 60rem;
+    }
+
+    >footer {
+        flex: none;
+        width: 100%;
+    }
+
 }
 
-main {
-    * {
+:where(main) {
+    $padding-main: 0.75rem;
+
+    contain: inline-size; // table対応
+    padding: $padding-main;
+    box-shadow: 0 0 0.5rem 0.25rem var(--main-shadow);
+
+    >* {
         line-height: 150%;
         overflow-wrap: anywhere;
         // word-break: auto-phrase;
     }
 
-    >h1 {
-        line-height: 100%;
-        font-size: 2.5rem;
-        font-weight: bolder;
-        padding: 0.25rem 0.75rem;
-        margin: 0 -0.75rem;
-        border-style: solid;
-        border-width: 0 0 0.1rem;
-        border-color: var(--theme-color);
-        word-break: auto-phrase;
+    // ブロック
+    >* {
+        display: block;
+        width: 100%;
 
-        +div.publishDate {
-            color: var(--sub-color);
-            margin: 0;
+        +* {
+            margin-top: 0.5rem;
         }
     }
 
+    >h1.hidden-title {
+        display: none;
+
+        +* {
+            margin-top: 0;
+        }
+    }
+
+    // // 見出し
+    >h1 {
+        width: calc(100% + 2 * $padding-main);
+        margin: 0 (-$padding-main);
+        padding: 0 $padding-main;
+        border-bottom: 0.1rem solid var(--theme-color);
+        line-height: 120%;
+        font-size: 2.5rem;
+        font-weight: bolder;
+        word-break: auto-phrase;
+    }
+
+    $hn-overflow: calc($padding-main / 2);
+
+    >h2,
+    >h3 {
+        width: calc(100% + $hn-overflow * 2);
+        margin-left: -$hn-overflow;
+        margin-right: -$hn-overflow;
+        border-bottom: 0.1rem solid;
+        padding: 0 0.5rem;
+    }
+
     >h2 {
-        line-height: 100%;
-        font-size: 1.5rem;
         position: sticky;
         top: var(--header-height);
-
-        background-color: var(--background-color);
         z-index: 1645;
-        border-style: solid;
-        border-width: 0 0 0.1rem 0.5rem;
-        padding: 0.25rem 0.5rem;
-        margin: 1rem -0.5rem 0.5rem;
+        margin-top: 1rem;
+
+        border-left: $hn-overflow solid;
+        background-color: var(--background-color);
+        font-size: 1.5rem;
     }
 
     >h3 {
-        line-height: 100%;
-        border-style: solid double;
-        border-width: 0 0 0.1rem 0.5rem;
-        padding: 0.25rem 0.5rem;
-        margin: 0.5rem -0.5rem;
+        border-left: $hn-overflow double;
     }
 
-    >p,
-    >figure,
-    >pre,
-    >ul,
-    >ol,
-    >dl,
-    >div,
-    >table,
-    >textarea {
-        display: block;
-        margin: 0.5rem 0;
+
+    // // 本文
+    p {
+        text-indent: 1em;
+        text-align: justify;
     }
 
     >pre,
-    >textarea {
+    >textarea,
+    >*.bordered {
         padding: 0.25rem;
         border: 0.1rem solid var(--main-shadow);
-        width: 100%;
+    }
+
+    >pre {
+        max-height: 50vh;
+        resize: vertical;
+        font-family: monospace;
+        font-size: 0.9em;
+
         @supports (text-autospace: no-autospace) {
             text-autospace: no-autospace;
         }
     }
 
+    // // リスト
     ul:not(.inline),
-    ol,
-    dl {
-        padding-left: 1rem;
-    }
+    dl:not(.inline) {
+        padding-left: 1em;
 
-    ul:not(.inline) li,
-    dl dt {
-        margin-left: -1rem;
+        >li,
+        >dt {
+            display: list-item;
+            list-style: "–\2002" outside;
+        }
 
-        &::before {
-            content: "–\2002";
+        >dd {
+            padding-left: 1em;
         }
     }
 
     ul.inline {
-        li {
+        >li {
             display: inline;
 
-            // &:has(+li)::after {
-            // }
-            +li::before {
+            &:has(+ li)::after {
                 content: "、";
             }
         }
     }
 
     dl.inline {
-        @supports selector(:has(+ *)) {
+        padding-left: 2em;
 
-            dt {
-                display: inline;
-
-                &::after {
-                    content: ":";
-                    margin: 0 0.25rem;
-                }
-            }
-
-            dd {
-
-                &:has(+dt)::after {
-                    content: "\A";
-                    white-space: pre;
-                }
-            }
-        }
-
-        dd {
+        >dt {
+            // display: inline list-item; // なぜかSafariだと動かない
+            // list-style: "–\2002" inside;
             display: inline;
 
-            +dd::before {
+            &::before {
+                content: "–\2002";
+            }
+
+            margin-left: -2em;
+
+            &::after {
+                content: ": ";
+            }
+        }
+
+        >dd {
+            display: inline;
+
+            &:has(+ dd)::after {
                 content: "、";
+            }
+
+            &:has(+ dt)::after {
+                content: "";
+                display: block;
             }
         }
     }
 
-    p {
-        text-indent: 1rem;
-        text-align: justify;
-    }
-
-    a,
-    button {
-        cursor: pointer;
-        color: var(--link-color);
-        text-decoration-line: underline;
-
-        &:hover {
-            text-decoration-line: none;
-        }
-    }
-
-    em {
-        font-size: 1.1em;
-        font-style: italic;
-    }
-
-    strong {
-        font-size: 1.1em;
-        font-weight: bold;
-    }
-
-    del {
-        color: var(--main-shadow);
-        font-size: 0.9em;
-        text-decoration-line: line-through;
-        text-decoration-color: var(--main-color);
-        text-decoration-thickness: 0.1em;
-    }
-
-    code,
-    code * {
-        font-size: 0.9rem;
-        font-family: monospace, sans-serif;
-    }
-
-    :not(pre) code {
-        color: var(--background-color);
-        background-color: var(--main-color);
-        border-color: var(--main-color);
-
-        margin: 0.25rem;
-        border-style: solid;
-        border-width: 0 0.25rem;
-        border-radius: 0.25rem;
-    }
-
-    pre {
-        resize: vertical;
-        max-height: 50vh;
-    }
-
-    // TODO: なんとかする
+    // // 表
+    // TODO: 謎を解明する
     table {
-        display: table;
-        text-align: center;
+        max-width: max-content;
+        overflow-x: auto;
         margin-left: auto;
         margin-right: auto;
+        text-align: center;
 
         thead,
         tbody {
@@ -249,6 +228,59 @@ main {
         th,
         td {
             padding: 0 0.25em;
+            white-space: nowrap;
+        }
+    }
+
+
+    // // インライン
+    >* {
+
+        a:any-link,
+        *.like-link {
+            cursor: pointer;
+            color: var(--link-color);
+            text-decoration-line: underline;
+
+            // &:focus {}
+
+            &:hover {
+                text-decoration-line: none;
+            }
+
+            &:active {
+                opacity: 50%;
+            }
+        }
+
+        em {
+            font-size: 1.1em;
+            font-style: italic;
+        }
+
+        strong {
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        del {
+            color: var(--main-shadow);
+            font-size: 0.9em;
+            text-decoration-line: line-through;
+            text-decoration-color: var(--main-color);
+            text-decoration-thickness: 0.1em;
+        }
+
+        &:not(pre) code {
+            padding: 0.05em 0.1em;
+            font-size: 0.9em;
+            font-family: monospace;
+            color: var(--background-color);
+            background-color: var(--main-color);
+
+            @supports (text-autospace: no-autospace) {
+                text-autospace: no-autospace;
+            }
         }
     }
 }
