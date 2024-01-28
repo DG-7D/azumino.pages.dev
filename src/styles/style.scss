@@ -92,15 +92,15 @@ body {
     >h1 {
         width: calc(100% + 2 * $padding-main);
         margin: 0 (-$padding-main);
-        padding: 0.25rem $padding-main;
+        padding: 0 $padding-main;
         border-bottom: 0.1rem solid var(--theme-color);
-        line-height: 100%;
+        line-height: 120%;
         font-size: 2.5rem;
         font-weight: bolder;
         word-break: auto-phrase;
     }
 
-    $hn-overflow: calc($padding-main * 2 / 3);
+    $hn-overflow: calc($padding-main / 2);
 
     >h2,
     >h3 {
