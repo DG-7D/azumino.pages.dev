@@ -37,5 +37,6 @@ html {
     padding: 0;
     position: relative;
     -webkit-text-size-adjust: 100%;
+    text-indent: 0;
     text-size-adjust: 100%;
 }

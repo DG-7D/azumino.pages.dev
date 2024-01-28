@@ -23,7 +23,6 @@
 html {
     color: var(--main-color);
     background: var(--background-color);
-    font-size: 100%;
     height: 100%;
     overflow-y: scroll;
     scroll-padding-top: var(--header-height);
@@ -129,7 +128,7 @@ body {
 
     // // 本文
     p {
-        text-indent: 1rem;
+        text-indent: 1em;
         text-align: justify;
     }
 
@@ -144,14 +143,16 @@ body {
     }
 
     >pre {
-        resize: vertical;
         max-height: 50vh;
+        resize: vertical;
+        font-family: monospace;
+        font-size: 0.9em;
     }
 
     // // リスト
     ul:not(.inline),
     dl:not(.inline) {
-        padding-left: 1rem;
+        padding-left: 1em;
 
         >li,
         >dt {
@@ -160,7 +161,7 @@ body {
         }
 
         >dd {
-            padding-left: 1rem;
+            padding-left: 1em;
         }
     }
 
@@ -175,7 +176,7 @@ body {
     }
 
     dl.inline {
-        padding-left: 2rem;
+        padding-left: 2em;
 
         >dt {
             // display: inline list-item; // なぜかSafariだと動かない
@@ -186,7 +187,7 @@ body {
                 content: "–\2002";
             }
 
-            margin-left: -2rem;
+            margin-left: -2em;
 
             &::after {
                 content: ": ";
@@ -231,55 +232,49 @@ body {
 
 
     // // インライン
-    a:any-link,
-    *.like-link {
-        cursor: pointer;
-        color: var(--link-color);
-        text-decoration-line: underline;
+    >* {
 
-        // &:focus {}
+        a:any-link,
+        *.like-link {
+            cursor: pointer;
+            color: var(--link-color);
+            text-decoration-line: underline;
 
-        &:hover {
-            text-decoration-line: none;
+            // &:focus {}
+
+            &:hover {
+                text-decoration-line: none;
+            }
+
+            &:active {
+                opacity: 50%;
+            }
         }
 
-        &:active {
-            opacity: 50%;
+        em {
+            font-size: 1.1em;
+            font-style: italic;
         }
-    }
 
-    em {
-        font-size: 1.1em;
-        font-style: italic;
-    }
+        strong {
+            font-size: 1.1em;
+            font-weight: bold;
+        }
 
-    strong {
-        font-size: 1.1em;
-        font-weight: bold;
-    }
+        del {
+            color: var(--main-shadow);
+            font-size: 0.9em;
+            text-decoration-line: line-through;
+            text-decoration-color: var(--main-color);
+            text-decoration-thickness: 0.1em;
+        }
 
-    del {
-        color: var(--main-shadow);
-        font-size: 0.9em;
-        text-decoration-line: line-through;
-        text-decoration-color: var(--main-color);
-        text-decoration-thickness: 0.1em;
-    }
-
-    code,
-    code * {
-        font-size: 0.9rem;
-        font-family: monospace, sans-serif;
-    }
-
-    :not(pre) code {
-        color: var(--background-color);
-        background-color: var(--main-color);
-        border-color: var(--main-color);
-
-        margin: 0.25rem;
-        border-style: solid;
-        border-width: 0 0.25rem;
-        border-radius: 0.25rem;
+        &:not(pre) code {
+            padding: 0.05em 0.1em;
+            font-size: 0.9em;
+            font-family: monospace;
+            color: var(--background-color);
+            background-color: var(--main-color);
+        }
     }
 }
