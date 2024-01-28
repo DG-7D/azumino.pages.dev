@@ -10,18 +10,18 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/mdx": "^2.0.2",
-    "@astrojs/sitemap": "^3.0.3",
-    "astro": "^4.0.7",
+    "@astrojs/mdx": "^2.1.0",
+    "@astrojs/sitemap": "^3.0.5",
+    "astro": "^4.2.6",
     "astro-auto-import": "^0.4.2",
     "astro-robots-txt": "^1.0.0",
     "astro-seo": "^0.8.0",
-    "jsdom": "^23.0.1",
+    "jsdom": "^24.0.0",
     "rehype-external-links": "^3.0.0"
   },
   "devDependencies": {
     "@types/jsdom": "^21.1.6",
-    "@types/node": "^20.10.5",
-    "sass": "^1.69.5"
+    "@types/node": "^20.11.8",
+    "sass": "^1.70.0"
   }
 }
