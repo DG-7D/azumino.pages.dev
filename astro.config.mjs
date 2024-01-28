@@ -26,7 +26,6 @@ export default defineConfig({
       imports: [
         "@/components/Img.astro",
         "@/components/OGPCard.astro",
-        "@/components/TweetInit.astro",
         "@/components/Tweet.astro",
       ]
     }),
