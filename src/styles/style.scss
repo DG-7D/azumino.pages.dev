@@ -134,13 +134,10 @@ body {
     }
 
     >pre,
-    >textarea {
+    >textarea,
+    >*.bordered {
         padding: 0.25rem;
         border: 0.1rem solid var(--main-shadow);
-
-        @supports (text-autospace: no-autospace) {
-            text-autospace: no-autospace;
-        }
     }
 
     >pre {
@@ -148,6 +145,10 @@ body {
         resize: vertical;
         font-family: monospace;
         font-size: 0.9em;
+
+        @supports (text-autospace: no-autospace) {
+            text-autospace: no-autospace;
+        }
     }
 
     // // リスト
@@ -276,6 +277,10 @@ body {
             font-family: monospace;
             color: var(--background-color);
             background-color: var(--main-color);
+
+            @supports (text-autospace: no-autospace) {
+                text-autospace: no-autospace;
+            }
         }
     }
 }

@@ -4,7 +4,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 
 <BaseLayout title="ゴヴィッショヌ揃え" description="ゴヴィッショヌ揃えをJavaScriptで実装してみた。">
     <p><a href="http://checoole.s1009.xrea.com/govissionu/make_govissionu.php" target="_blank">ゴヴィッショヌ揃え</a>をJavaScriptで実装してみた。本家より速いけど<a href="https://yuino.dev/works/govissionu/" target="_blank">これ</a>よりはおそいとおもう。</p>
-    <div id="govBox"></div>
+    <div id="govBox" class="bordered"></div>
     <p id="govResult"><span id="govLength"></span>文字目でｺﾞｳﾞｨｯｼｮﾇが完成しました！ <a id="govTweet" href="" target="_blank">ツイート</a> <button class="like-link" id="reGov">もういちど</button></p>
     <script>
         function random<T>(array: T[]): T {
