@@ -1,20 +1,42 @@
-* {
-    appearance: none;
-    background: none;
-    border: none;
-    border-collapse: collapse;
+/* 継承させたいやつ */
+html {
     box-sizing: border-box;
-    color: unset;
+    color: initial;
     font-size: 1rem;
     font-family: sans-serif;
     font-weight: normal;
     list-style: none;
     line-height: 100%;
+    text-decoration: none;
+    vertical-align: baseline;
+}
+
+*,
+*::after,
+*::before {
+    box-sizing: inherit;
+    color: inherit;
+    font-size: inherit;
+    font-family: inherit;
+    font-weight: inherit;
+    list-style: inherit;
+    line-height: inherit;
+    text-decoration: inherit;
+    vertical-align: inherit;
+}
+
+/* そうでもないやつ */
+*,
+*::after,
+*::before {
+    appearance: none;
+    background: none;
+    border: none;
+    border-collapse: collapse;
     margin: 0;
     padding: 0;
     position: relative;
-    text-decoration: none;
-    vertical-align: baseline;
     -webkit-text-size-adjust: 100%;
+    text-indent: 0;
     text-size-adjust: 100%;
 }

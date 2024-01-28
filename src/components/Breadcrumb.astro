@@ -28,18 +28,18 @@ let rootDir: DirectoryData = {
             dir: "misc",
             name: "その他",
         },
-    ]
-}
+    ],
+};
 
 let path: string[] = Astro.url.pathname.split("/").filter(dir => dir != "");
 path.pop(); // 自分自身を除去
 
 let currentDir: DirectoryData = rootDir;
 let currentPath = "/";
-let pathNamePairs: {path:string, name: string}[] = [ {path: currentPath, name: rootDir.name}];
+let pathNamePairs: { path: string; name: string }[] = [{ path: currentPath, name: rootDir.name }];
 
 for (const dir of path) {
-    currentDir = currentDir.child?.find(dirNamePair => dirNamePair.dir == dir) ?? {dir: dir, name: dir};
+    currentDir = currentDir.child?.find(dirNamePair => dirNamePair.dir == dir) ?? { dir: dir, name: dir };
     currentPath += currentDir.dir + "/";
     pathNamePairs.push({
         path: currentPath,
@@ -49,11 +49,12 @@ for (const dir of path) {
 ---
 
 <nav>
-    <ul class="inline">
+    <ul>
         {
             pathNamePairs.map(pathNamePair => (
-                <!-- display: inline -->
-                <li><a href={pathNamePair.path}>{pathNamePair.name}</a></li>
+                <li>
+                    <a href={pathNamePair.path}>{pathNamePair.name}</a>
+                </li>
             ))
         }
     </ul>
@@ -61,15 +62,23 @@ for (const dir of path) {
 <style>
     ul {
         padding: 0;
-    }
-    li {
-        display: inline;
-        margin-left: 0;
-        &::after {
-            content: " / " !important;
-        }
-        &::before {
-            content: "" !important;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-content: center;
+        justify-content: flex-start;
+        align-items: baseline;
+        column-gap: 0.25rem;
+
+        > li {
+            display: contents;
+            > a {
+                display: block;
+            }
+            &::after {
+                display: block;
+                content: "/";
+            }
         }
     }
 </style>
