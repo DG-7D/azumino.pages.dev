@@ -81,17 +81,13 @@ const links: { title: string; url: URL; description: string }[] = [
     <p>知り合いのサイトとかおすすめとかメモとか。</p>
     <dl class="inline">
         {
-            links.map(link => (
-                <!-- display:inline -->
+            // prettier-ignore
+            links.map(link =>
                 <>
-                    <dt
-                        ><a href={link.url} target="_blank">{link.title}</a
-                    ></dt
-                    ><dd
-                        ><Fragment set:html={link.description}
-                    /></dd>
+                    <dt><a href={link.url} target="_blank">{link.title}</a></dt>
+                    <dd><Fragment set:html={link.description} /></dd>
                 </>
-            ))
+            )
         }
     </dl>
     <h2>更新履歴</h2>
