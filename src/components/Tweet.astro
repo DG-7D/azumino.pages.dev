@@ -7,60 +7,43 @@ interface Props {
 
 const urlSearchParams = new URLSearchParams({
     url: `https://twitter.com/i/status/${Astro.props.id}`,
-    hide_media: Astro.props.hideMedia ? "true" : "false",
-    hide_thread: Astro.props.hideThread ? "true" : "false",
-    omit_script: "true",
+    hideCard: Astro.props.hideMedia ? "true" : "false",
+    hideThread: Astro.props.hideThread ? "true" : "false",
+    id: Astro.props.id,
     lang: "ja",
     theme: "dark",
     dnt: "true",
 });
-const url = new URL("https://publish.twitter.com/oembed?" + urlSearchParams.toString());
-const responseJson = await fetch(url).then(response => response.json());
-const blockquote = (responseJson.html as string).replaceAll("<a ", '<a target="_blank"');
+const url = new URL("https://platform.twitter.com/embed/Tweet.html?" + urlSearchParams.toString());
 ---
 
 <div>
-    <Fragment set:html={blockquote} />
+    <iframe class="twitter-embed" src={url.toString()} allow="fullscreen" scrolling="no" data-tweet-id={Astro.props.id}></iframe>
 </div>
 <style lang="scss">
     div {
         display: flex;
         flex-direction: column;
         align-items: center;
-        :global(blockquote) {
-            display: flex;
-            flex-direction: column-reverse;
-            gap: 12px;
-
-            background-color: rgb(21, 32, 43);
-            @media (prefers-color-scheme: light) {
-                background-color: rgb(255, 255, 255);
-            }
-
-            max-width: 30rem;
-            border-radius: 12px;
-            padding: 12px;
-
-            :global(> a) {
-                display: contents;
-            }
-            :global(p) {
-                text-indent: 0;
-            }
-        }
-        :global(.twitter-tweet-rendered) {
-            max-width: 30rem !important;
-            margin: 0 !important;
+        iframe {
             border-radius: 12px;
             overflow: hidden;
+            width: 100%;
+            max-width: 30rem;
         }
     }
 </style>
 <script>
-    if (window.matchMedia("(prefers-color-scheme: light)").matches) {
-        for (const element of document.getElementsByClassName("twitter-tweet")) {
-            element.setAttribute("data-theme", "");
+    const iframes = document.getElementsByClassName("twitter-embed") as HTMLCollectionOf<HTMLIFrameElement>;
+    window.addEventListener("message", ev => {
+        if (ev.origin == "https://platform.twitter.com") {
+            const data = ev.data["twttr.embed"].params[0];
+            for (const iframe of iframes) {
+                if (data.data.tweet_id == iframe.dataset.tweetId) {
+                    console.log("a");
+                    iframe.height = data.height;
+                }
+            }
         }
-    }
+    });
 </script>
-<script src="https://platform.twitter.com/widgets.js"></script>
