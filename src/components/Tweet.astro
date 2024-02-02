@@ -37,11 +37,14 @@ const url = new URL("https://platform.twitter.com/embed/Tweet.html?" + urlSearch
     const iframes = document.getElementsByClassName("twitter-embed") as HTMLCollectionOf<HTMLIFrameElement>;
     window.addEventListener("message", ev => {
         if (ev.origin == "https://platform.twitter.com") {
-            const data = ev.data["twttr.embed"].params[0];
-            for (const iframe of iframes) {
-                if (data.data.tweet_id == iframe.dataset.tweetId) {
-                    console.log("a");
-                    iframe.height = data.height;
+            const data = ev.data["twttr.embed"];
+            if (data.method == "twttr.private.resize") {
+                const params = data.params[0];
+                for (const iframe of iframes) {
+                    if (params.data.tweet_id == iframe.dataset.tweetId) {
+                        console.log(ev);
+                        iframe.height = params.height;
+                    }
                 }
             }
         }
