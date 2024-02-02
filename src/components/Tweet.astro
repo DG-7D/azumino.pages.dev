@@ -6,7 +6,6 @@ interface Props {
 }
 
 const urlSearchParams = new URLSearchParams({
-    url: `https://twitter.com/i/status/${Astro.props.id}`,
     hideCard: Astro.props.hideMedia ? "true" : "false",
     hideThread: Astro.props.hideThread ? "true" : "false",
     id: Astro.props.id,
@@ -36,16 +35,11 @@ const url = new URL("https://platform.twitter.com/embed/Tweet.html?" + urlSearch
 <script>
     const iframes = document.getElementsByClassName("twitter-embed") as HTMLCollectionOf<HTMLIFrameElement>;
     window.addEventListener("message", ev => {
-        if (ev.origin == "https://platform.twitter.com") {
-            const data = ev.data["twttr.embed"];
-            if (data.method == "twttr.private.resize") {
-                const params = data.params[0];
-                for (const iframe of iframes) {
-                    if (params.data.tweet_id == iframe.dataset.tweetId) {
-                        console.log(ev);
-                        iframe.height = params.height;
-                    }
-                }
+        if (ev.origin == "https://platform.twitter.com" && ev.data["twttr.embed"].method == "twttr.private.resize") {
+            const iframe = [...iframes].find(iframe => iframe.dataset.tweetId == ev.data["twttr.embed"].params[0].data.tweet_id);
+            if (iframe) {
+                console.log(ev);
+                iframe.height = ev.data["twttr.embed"].params[0].height;
             }
         }
     });
