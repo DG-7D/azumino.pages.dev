@@ -1,5 +1,6 @@
 ---
 import { JSDOM } from "jsdom";
+import Center from "./Center.astro";
 
 interface Props {
     url: string;
@@ -25,7 +26,7 @@ try {
 }
 ---
 
-<div class="OGPCard">
+<Center>
     <a href={url.toString()} target={url.hostname == Astro.site?.hostname ? "" : "_blank"}>
         {ogpProperties["image"] && <img src={ogpProperties["image"]} alt="" decoding="async" loading="lazy" />}
         <div class="detail">
@@ -34,12 +35,15 @@ try {
         </div>
         <div class="domain">{url.hostname}</div>
     </a>
-</div>
+</Center>
 
 <style lang="scss">
     $height: 7rem;
 
     a {
+        border: 0.1rem solid var(--main-shadow);
+        width: 100%;
+        max-width: 30rem;
         display: grid;
         grid-template-areas:
             "img padl padt padr"
@@ -49,9 +53,6 @@ try {
             "img padl padb padr";
         grid-template-columns: auto 1fr auto 1fr;
         grid-template-rows: 1fr auto 1fr auto 1fr;
-        max-width: 30rem;
-        margin: 0 auto;
-        border: 0.1rem solid var(--main-shadow);
         text-decoration: inherit;
         color: inherit;
         text-overflow: ellipsis;

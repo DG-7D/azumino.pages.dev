@@ -1,5 +1,6 @@
 ---
 import { getImage } from "astro:assets";
+import Center from "./Center.astro";
 
 interface Props {
     src: ImageMetadata;
@@ -15,33 +16,30 @@ const optimizedImage = await getImage({
 });
 ---
 
-<figure>
-    <a href={optimizedImage.src} target="_blank">
-        <img src={optimizedImage.srcSet.values[0]?.url} {...optimizedImage.attributes} />
-    </a>
-    {Astro.props.caption && <figcaption>{Astro.props.caption}</figcaption>}
-</figure>
+<Center>
+    <figure>
+        <a href={optimizedImage.src} target="_blank">
+            <img src={optimizedImage.srcSet.values[0]?.url} {...optimizedImage.attributes} />
+        </a>
+        {Astro.props.caption && <figcaption>{Astro.props.caption}</figcaption>}
+    </figure>
+</Center>
 <style lang="scss">
     figure {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0.5em;
-
+        display: contents;
         a {
             display: block;
             border: 0.1rem solid var(--main-shadow);
             &:hover {
                 border-color: var(--main-color);
             }
-        }
-        img {
-            display: block;
-            width: auto;
-            height: auto;
-            max-width: 100%;
-            max-height: 50vh;
+            img {
+                display: block;
+                width: auto;
+                height: auto;
+                max-width: 100%;
+                max-height: 50vh;
+            }
         }
         figcaption {
             display: block;
