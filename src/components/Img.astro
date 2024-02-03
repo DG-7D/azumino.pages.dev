@@ -3,10 +3,11 @@ import { getImage } from "astro:assets";
 import Center from "./Center.astro";
 
 interface Props {
-    src: ImageMetadata;
+    src: string;
     alt: string;
     width?: number;
     caption?: string;
+    title?: string;
 }
 
 const optimizedImage = await getImage({
@@ -14,6 +15,8 @@ const optimizedImage = await getImage({
     alt: Astro.props.alt,
     widths: [Astro.props.width ?? 1920],
 });
+
+const caption = Astro.props.caption || Astro.props.title;
 ---
 
 <Center>
@@ -21,7 +24,7 @@ const optimizedImage = await getImage({
         <a href={optimizedImage.src} target="_blank">
             <img src={optimizedImage.srcSet.values[0]?.url} {...optimizedImage.attributes} />
         </a>
-        {Astro.props.caption && <figcaption>{Astro.props.caption}</figcaption>}
+        {caption && <figcaption>{caption}</figcaption>}
     </figure>
 </Center>
 <style lang="scss">
