@@ -200,12 +200,13 @@ body {
     }
 
     // // 表
-    // TODO: 謎を解明する
-    table {
-        max-width: max-content;
+    div:has(>table) {
         overflow-x: auto;
-        margin-left: auto;
-        margin-right: auto;
+    }
+
+    table {
+        width: max-content;
+        margin: 0 auto;
         text-align: center;
 
         thead,
@@ -217,7 +218,6 @@ body {
         th,
         td {
             padding: 0 0.25em;
-            white-space: nowrap;
         }
     }
 

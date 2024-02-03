@@ -4,7 +4,7 @@ import sitemap from "@astrojs/sitemap";
 
 import robotsTxt from "astro-robots-txt";
 import AutoImport from 'astro-auto-import';
-
+import rehypeWrapAll from 'rehype-wrap-all';
 
 // https://astro.build/config
 export default defineConfig({
@@ -15,6 +15,9 @@ export default defineConfig({
       // theme: "css-variables",
       wrap: true,
     },
+    rehypePlugins: [
+      [rehypeWrapAll, { selector: "table", wrap: "div" }],
+    ],
   },
   integrations: [
     AutoImport({
