@@ -16,8 +16,7 @@
     "astro-auto-import": "^0.4.2",
     "astro-robots-txt": "^1.0.0",
     "astro-seo": "^0.8.0",
-    "jsdom": "^24.0.0",
-    "rehype-external-links": "^3.0.0"
+    "jsdom": "^24.0.0"
   },
   "devDependencies": {
     "@types/jsdom": "^21.1.6",
