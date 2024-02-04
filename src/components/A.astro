@@ -1,0 +1,10 @@
+---
+interface Props {
+    href: string;
+    title?: string;
+}
+
+const external = Astro.props.href.includes("//");
+---
+
+<a href={Astro.props.href} target={external ? "_blank" : undefined} title={Astro.props.title}><slot /></a>

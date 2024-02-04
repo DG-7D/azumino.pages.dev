@@ -2,6 +2,8 @@
 import { execSync } from "child_process";
 import { getCollection } from "astro:content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import Img from "@/components/Img.astro";
+import A from "@/components/A.astro";
 export async function getStaticPaths() {
     const blogEntries = await getCollection("blog", ({ data }) => {
         return import.meta.env.DEV || (data.publish && data.publishDate < new Date());
@@ -42,7 +44,7 @@ function to年月日(date: Date): string {
             )
         }
     </div>
-    <Content />
+    <Content components={{ a: A, img: Img }} />
 </BaseLayout>
 <style>
     div.publishDate {

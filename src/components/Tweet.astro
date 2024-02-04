@@ -1,4 +1,6 @@
 ---
+import Center from "./Center.astro";
+
 interface Props {
     id: string;
     hideMedia?: boolean;
@@ -19,41 +21,36 @@ const responseJson = await fetch(url).then(response => response.json());
 const blockquote = (responseJson.html as string).replaceAll("<a ", '<a target="_blank"');
 ---
 
-<div>
+<Center>
     <Fragment set:html={blockquote} />
-</div>
+</Center>
 <style lang="scss">
-    div {
+    :global(blockquote.twitter-tweet) {
         display: flex;
-        flex-direction: column;
-        align-items: center;
-        :global(blockquote) {
-            display: flex;
-            flex-direction: column-reverse;
-            gap: 12px;
+        flex-direction: column-reverse;
+        gap: 12px;
 
-            background-color: rgb(21, 32, 43);
-            @media (prefers-color-scheme: light) {
-                background-color: rgb(255, 255, 255);
-            }
-
-            max-width: 30rem;
-            border-radius: 12px;
-            padding: 12px;
-
-            :global(> a) {
-                display: contents;
-            }
-            :global(p) {
-                text-indent: 0;
-            }
+        background-color: rgb(21, 32, 43);
+        @media (prefers-color-scheme: light) {
+            background-color: rgb(255, 255, 255);
         }
-        :global(.twitter-tweet-rendered) {
-            max-width: 30rem !important;
-            margin: 0 !important;
-            border-radius: 12px;
-            overflow: hidden;
+
+        max-width: 30rem;
+        border-radius: 12px;
+        padding: 12px;
+
+        :global(> a) {
+            display: contents;
         }
+        :global(p) {
+            text-indent: 0;
+        }
+    }
+    :global(div.twitter-tweet.twitter-tweet-rendered) {
+        max-width: 30rem !important;
+        margin: 0 !important;
+        border-radius: 12px;
+        overflow: hidden;
     }
 </style>
 <script>
