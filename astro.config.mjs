@@ -4,7 +4,8 @@ import sitemap from "@astrojs/sitemap";
 
 import robotsTxt from "astro-robots-txt";
 import AutoImport from 'astro-auto-import';
-
+import rehypeWrapAll from 'rehype-wrap-all';
+import remarkUnwrapImages from 'remark-unwrap-images';
 
 // https://astro.build/config
 export default defineConfig({
@@ -15,6 +16,12 @@ export default defineConfig({
       // theme: "css-variables",
       wrap: true,
     },
+    remarkPlugins: [
+      remarkUnwrapImages,
+    ],
+    rehypePlugins: [
+      [rehypeWrapAll, { selector: "table", wrap: "div" }],
+    ],
   },
   integrations: [
     AutoImport({
