@@ -64,14 +64,12 @@ body {
     gap: var(--gap);
     $padding-main: 0.75rem;
 
-    contain: inline-size; // table対応
     padding: $padding-main;
     box-shadow: 0 0 0.5rem 0.25rem var(--main-shadow);
 
     >* {
         line-height: 150%;
         overflow-wrap: anywhere;
-        // word-break: auto-phrase;
     }
 
     // ブロック
