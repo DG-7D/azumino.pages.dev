@@ -36,25 +36,23 @@ body {
     flex-direction: column;
     flex-wrap: nowrap;
     justify-content: flex-start;
-    align-items: center;
+    align-items: stretch;
+
+    --header-height: 2.5rem;
 
     >header {
-        flex: none;
-        width: 100%;
+        height: var(--header-height);
     }
 
 
     >main {
         flex: 1;
+        align-self: center;
         width: 100%;
         max-width: 60rem;
     }
 
-    >footer {
-        flex: none;
-        width: 100%;
-    }
-
+    // footer
 }
 
 :where(main) {
