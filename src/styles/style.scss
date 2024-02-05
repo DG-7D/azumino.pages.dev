@@ -228,8 +228,11 @@ body {
         a:any-link,
         *.like-link {
             cursor: pointer;
-            color: var(--link-color);
-            text-decoration-line: underline;
+
+            &:not(:has(> div)) {
+                color: var(--link-color);
+                text-decoration-line: underline;
+            }
 
             // &:focus {}
 
