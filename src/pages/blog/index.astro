@@ -9,20 +9,24 @@ const allPosts = await getCollection("blog");
 <BaseLayout title="あづみのブログ" description="あづみがどうでもいいことを書いたり書かなかったりするブログです。">
     <p>どうでもいいことを書いたり書かなかったりします。</p>
     <h2>記事一覧</h2>
-    <ul>
+    <dl>
         {
             allPosts.map(post => {
                 const state = getState(post);
                 if (import.meta.env.DEV || state == "published") {
                     return (
-                        <!-- display:inline -->
-                        <li
-                            ><a href={"/blog/" + post.slug + "/"}
-                                >{state != "published" && `${state}: `}{post.data.title}</a
-                        ></li>
+                        <>
+                            <dt>
+                                <a href={"/blog/" + post.slug + "/"}>
+                                    {state != "published" && `${state}: `}
+                                    {post.data.title}
+                                </a>
+                            </dt>
+                            <dd>{post.data.description}</dd>
+                        </>
                     );
                 }
             })
         }
-    </ul>
+    </dl>
 </BaseLayout>
