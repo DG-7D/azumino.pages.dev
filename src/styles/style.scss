@@ -36,25 +36,23 @@ body {
     flex-direction: column;
     flex-wrap: nowrap;
     justify-content: flex-start;
-    align-items: center;
+    align-items: stretch;
+
+    --header-height: 2.5rem;
 
     >header {
-        flex: none;
-        width: 100%;
+        height: var(--header-height);
     }
 
 
     >main {
         flex: 1;
+        align-self: center;
         width: 100%;
         max-width: 60rem;
     }
 
-    >footer {
-        flex: none;
-        width: 100%;
-    }
-
+    // footer
 }
 
 :where(main) {
@@ -66,14 +64,12 @@ body {
     gap: var(--gap);
     $padding-main: 0.75rem;
 
-    contain: inline-size; // table対応
     padding: $padding-main;
     box-shadow: 0 0 0.5rem 0.25rem var(--main-shadow);
 
     >* {
         line-height: 150%;
         overflow-wrap: anywhere;
-        // word-break: auto-phrase;
     }
 
     // ブロック
@@ -228,8 +224,11 @@ body {
         a:any-link,
         *.like-link {
             cursor: pointer;
-            color: var(--link-color);
-            text-decoration-line: underline;
+
+            &:not(:has(> div)) {
+                color: var(--link-color);
+                text-decoration-line: underline;
+            }
 
             // &:focus {}
 

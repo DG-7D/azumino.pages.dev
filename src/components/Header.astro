@@ -27,29 +27,24 @@ const menu = [
     </nav>
 </header>
 <style lang="scss">
-    $logo-height: 2rem;
-    $padding: 0.25rem;
-    :root {
-        --header-height: #{$logo-height + 2 * $padding};
-    }
     header {
-        height: var(--header-height);
+        container: header / size;
         overflow: hidden;
         position: sticky;
         top: 0;
         z-index: 1645;
-        padding: $padding;
+        padding: 0.25rem;
         display: flex;
         flex-wrap: wrap;
         justify-content: space-evenly;
         align-items: flex-end;
         background-color: var(--theme-color);
+        color: var(--bwhite);
         box-shadow: 0 0 0.5rem 0.25rem var(--background-color);
         > a {
-            line-height: 0;
-            color: var(--bwhite);
             :global(svg) {
-                height: $logo-height;
+                display: block;
+                height: 100cqh;
             }
         }
         > nav {
@@ -60,15 +55,8 @@ const menu = [
                 li {
                     padding: 0.25rem;
                     margin: 0;
-                    a {
-                        color: var(--bwhite);
-                    }
                 }
             }
-        }
-        > button {
-            position: absolute;
-            right: 1rem;
         }
     }
 </style>
