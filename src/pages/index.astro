@@ -26,12 +26,12 @@ const links: { title: string; url: URL; description: string }[] = [
     {
         title: "すしのへや",
         url: new URL("https://www.sushichan.live/"),
-        description: "Astro製電通大生個人サイト。つよい人が使うとこうなるらしい。",
+        description: "Astro製電通大生個人サイト。つよい人が使うとこうなるらしい。<del>ちゃんさぶ</del>",
     },
     {
         title: "へる破壊財団",
         url: new URL("https://helkun.dev/"),
-        description: "Astro製電通大生個人サイトn+1。<!--工学研究部部長のページ。-->",
+        description: "Astro製電通大生個人サイトn+1。<!--工学研究部部長のページ。--><del>くんさぶ</del>",
     },
     {
         title: "y-chan's website",
@@ -40,7 +40,8 @@ const links: { title: string; url: URL; description: string }[] = [
     },
     {
         title: "MimiChan",
-        url: new URL("https://www.mimitech.dev/"),
+        // url: new URL("https://www.mimitech.dev/"),
+        url: new URL("https://blog.usa-mimi.net/"),
         description: "Astro製電通大生個人サイトn+3。",
     },
     {
@@ -81,22 +82,25 @@ const links: { title: string; url: URL; description: string }[] = [
     <p>知り合いのサイトとかおすすめとかメモとか。</p>
     <dl class="inline">
         {
-            links.map(link => (
-                <!-- display:inline -->
+            // prettier-ignore
+            links.map(link =>
                 <>
-                    <dt
-                        ><a href={link.url} target="_blank">{link.title}</a
-                    ></dt
-                    ><dd
-                        ><Fragment set:html={link.description}
-                    /></dd>
+                    <dt><a href={link.url} target="_blank">{link.title}</a></dt>
+                    <dd><Fragment set:html={link.description} /></dd>
                 </>
-            ))
+            )
         }
     </dl>
     <h2>更新履歴</h2>
     <p>git log垂れ流し。</p>
     <Changes count={3} inline />
+    <h2>動作環境</h2>
+    <p>当サイトは以下の環境で動作を確認しています。これ以外の環境でも、不具合等があればお知らせください。気が向いたらなんとかします。</p>
+    <ul>
+        <li>Microsoft Edge 最新版 (Windows 11)</li>
+        <li>Firefox 最新版 (Windows 11)</li>
+        <li>Mobile Safari 最新版 (iOS 17, iPadOS 17)</li>
+    </ul>
 </BaseLayout>
 
 <script>
@@ -104,12 +108,13 @@ const links: { title: string; url: URL; description: string }[] = [
         return array[Math.floor(Math.random() * array.length)]!;
     }
 
-    const messages = ["やあやあ、", "ようこそ、", "ゆっくりしていってね。", "いらっしゃい。", "Hello and Welcome!! ", "へぇい、", "やっほー、", "うおおおおおお、", "どうも、", "はじめましての方ははじめまして、", "はい、というわけでね、", "えーっとね、"];
+    const messages = ["やあやあ、", "ようこそ、", "ゆっくりしていってね。", "いらっしゃい。", "Hello and Welcome!! ", "へぇい、", "やっほー、", "うおおおおおお、", "どうも、", "はじめましての方ははじめまして、", "はい、というわけでね、", "えーっとね、", "にゃーん、"];
     document.getElementById("welcome")!.textContent = random(messages);
 
     const tipsElement = document.getElementById("tips")!;
     function setTips() {
         const tips = [
+            "undefined",
             "窓口やモバイルのアプリでSuica/PASMOの残高が1000円を切った際のタッチ音を変更できる。<a href='https://www.pasmo.co.jp/about/service/' target='_blank'>PASMO公式サイト</a>",
             "Windows、JISキーボード環境ではCaps Lockと書いてあるキー(英数キー)でIME切替ができる。",
             "自転車が歩道を走行する際は車道寄りを徐行しなければならない。<a href='https://elaws.e-gov.go.jp/document?lawid=335AC0000000105#Mp-At_63_4' target='_blank'>道路交通法 第六十三条の四</a>",
@@ -118,19 +123,18 @@ const links: { title: string; url: URL; description: string }[] = [
             "電気通信大学 D棟の間取りは基礎科学実験の教科書で確認できるが、基礎科学実験Aのもののほうが若干正確である。",
             "Google Drive上で開かれたPDFは印刷ボタンを押すとブラウザのビューアーで直接開ける。",
             "「Windows PCとMacってどっちがいい？」という疑問が生じた人はいまのところMacを使うべきではない。",
-            "井の頭線の急行で永福町から渋谷方面に向かうと「次は明大前」と「まもなく明大前」の放送の間がなさすぎて面白い。",
+            "京王井の頭線の急行で永福町から渋谷方面に向かうと「次は明大前」と「まもなく明大前」の放送の間がなさすぎて面白い。",
             "調布駅から電通大多摩川グラウンドまでは京王バスが便利。",
             "GoogleやBingなどの検索欄に数式を入れるとある程度計算してくれる。",
             "Wikipediaにどうでもいい御託が並べられていてよく分からない項目はニコニコ大百科だと分かりやすいことがある。",
             "「wiki」は一般名詞であり、Wikipediaのことを指して使うのは誤り。",
             "こういう出典のないTipsを安易に信用すべきではない。",
-            "イギリスでは階数は地上階がground floor、その上(2階)がfirst floorである。0-indexedのほうが分かりやすくね？",
+            "イギリスでは階数は地上階がground floor、その上(日本で言う2階)がfirst floorである。0-indexedのほうが分かりやすくね？",
             "「ゔ」はShift_JISでは表現できない。",
-            "undefined",
             "GPSは衛星からの電波を受信するだけなのでSIMなしでも使える。ただし回線があるほうが精度と速度は向上するらしい。",
             "ここで中央クリックするとTipsを再抽選できる。",
-            "たいていの環境ではリンクで中央クリックすると新しいタブで開ける。ここですると……？",
-            "<code>hostname.local</code>でLAN内のデバイスにアクセスできる。(mDNS)",
+            "たいていの環境ではリンクを中央クリックすると新しいタブで開ける。ここですると……？",
+            "<code>hostname.local</code>でLAN内のデバイスのIPアドレスを得られる。(mDNS)",
             "「コンギョ」は一部の配信サイトで配信されている。<a href='https://music.apple.com/jp/album/%E6%94%BB%E6%92%83%E6%88%A6%E3%81%A0/1533246215' target='_blank'>Apple Music</a>",
             "「マリーのアトリエ」はPlayStation(と互換のあるPS2、PS3)、セガサターン、PS4、PS5、Switch、PC、iOSでプレイ可能である(リメイク含む)。",
         ];

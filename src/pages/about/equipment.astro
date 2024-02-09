@@ -1,19 +1,23 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import OGPCard from "@/components/OGPCard.astro";
+import Center from "@/components/Center.astro";
 ---
 
 <BaseLayout title="機材紹介" description="あづみのカメラやパソコンなどいろいろな所有物を列挙するページです。">
     <p>いろいろな所有物を列挙するページです。マキシマリストなのでいらないものがたくさんある。</p>
+
     <h2>カメラ</h2>
+
     <h3>本体</h3>
     <dl>
         <dt><a href="https://www.sony.jp/ichigan/products/ILCE-7M4/" target="_blank">SONY α7 IV</a></dt><dd>最強なのでほぼこれしか使ってない。LA-EA5対応。ボタンを押すだけでいぬの写真が撮れる。</dd>
-        <dt>KONICA MINOLTA α-7 DIGITAL</dt><dd>型番DG-7D。ついったとかのIDの由来。ファインダーとJPEGの色がいい。</dd>
+        <dt>KONICA MINOLTA α-7 DIGITAL</dt><dd>型番DG-7D。ついったとかのIDの由来。ファインダーの見やすさと撮って出しの色がいい。</dd>
         <dt>SONY α900</dt><dd>Aマウントデジタル一眼レフ唯一のフルサイズ。めちゃくちゃファインダーが見やすい。α7 IVがきてからはあんまつかってない。</dd>
-        <dt>SONY α700</dt><dd>α900のしょぼい版。完全下位互換なのでいらない。</dd>
-        <dt>SONY α350</dt><dd>最初に買ってもらったカメラ。像面位相差のなかった時代に専用位相差AFを使ったライブビューができた変態。</dd>
+        <dt>SONY α700</dt><dd>α900のしょぼい版。ファインダーは普通だし色は終わってる。完全下位互換なのでいらない。</dd>
+        <dt>SONY α350</dt><dd>最初に買ってもらったカメラ。像面位相差のなかった時代に専用位相差AFを使ったライブビューができた変態。ファインダーはダハミラーなのでおしまい、色はまあいい。</dd>
     </dl>
+
     <h3>レンズ</h3>
     <p>全部ミノルタAマウント。</p>
     <dl class="inline">
@@ -30,18 +34,21 @@ import OGPCard from "@/components/OGPCard.astro";
         <dt>REFLEX 500mm F8</dt><dd>これとVマウントの400/8は世界で唯一AFの使える反射望遠レンズ。500mmなのに軽くて小さい。Aマウントを使う理由の3割くらいこれ。2本目として必ず選ぶ。ボケはクセが強い。</dd>
         <dt>MC ROKKOR-PF 58mm F1.4</dt><dd>Aマウントじゃないけど改造してAマウントにした。ちょっと絞るといい写りするけど、さすがにAFがないのは不便なのであんま使わない。ボケがいい。</dd>
     </dl>
+
     <h3>周辺機器</h3>
     <dl>
         <dt>SONY LA-EA5</dt>
-        <dd>Eマウント機でAマウントレンズを爆速精密な像面位相差AFで使えるアダプタ。新しい機種でしか使えない。</dd>
+        <dd>Eマウント機でAマウントレンズを爆速精密な像面位相差AFで使えるアダプタ。新しいボディでしか使えない。</dd>
         <dt>Re:CLEAN RC-80L</dt>
         <dd>防湿庫。湿度が上がるのが嫌で蓋を開けるのを躊躇いがちな防湿ケースと違って、気軽にカメラを出し入れ出来てたのしいのでおすすめ。</dd>
         <dt><a href="https://www.biccamera.com/bc/item/3043524/" target="_blank">ハクバ HK-834B</a></dt>
         <dd>川崎のビックカメラで買った新品だけど激安三脚。背高いし軽いししっかりしてるし足の先端が地形に追従してくれるしで優秀。なお雲台がカスなのに交換できるようになってないのでだいなし。</dd>
         <dt>ベルボン D25-D + PH-346</dt>
-        <dd>三脚+雲台。親がくれた。HK-834B比で若干コンパクトだが頼りない。雲台はまあまあまとも。</dd>
+        <dd>三脚+雲台。親がくれた。HK-834B比で若干コンパクトだが頼りないし背が低い。雲台はまあまあまとも。</dd>
     </dl>
+
     <h2>パソコン</h2>
+
     <h3>PC本体</h3>
     <dl>
         <dt>メイン機</dt>
@@ -70,19 +77,22 @@ import OGPCard from "@/components/OGPCard.astro";
             </dl>
         </dd>
         <dt>VAIO SX14 (VJS142)</dt>
-        <dd>大学用ノートPC。あんまOSを破壊しないように気を付けてる。<em>なぜか</em>入学の1年前に買っているのでもう型落ち。VGA出力できたりこの薄さで有線LANが刺さったりする。どこぞの林檎と違って溝に指をかけなくても普通に画面が開けたり、細かい気配りはさすがVAIO。あと無駄のない外観もかっこいい。<del>MacBookがかっこいいと言ってる人には同意できない。</del></dd>
+        <dd>大学用ノートPC。あんまOSを破壊しないように気を付けてる。<em>なぜか</em>入学の1年前に買っているのでもう型落ち。VGA出力できたりこの薄さで有線LANが刺さったりする。どこぞの林檎のように溝に指をかけたり、そのへんのﾉﾊﾟｿのように両手を使ったりすることなく画面が開けるなど、細かい気配りはさすがVAIO。あと無駄のない外観もかっこいい。<del>無駄な曲線だらけのMacBookがかっこいいと言ってる人には同意できない。</del></dd>
         <dd>
             <dl class="inline">
+                <dt>モニタ</dt><dd>4K 14×25.4mm IPS 非光沢</dd>
                 <dt>OS</dt><dd>Windows 10 Pro</dd>
                 <dt>CPU</dt><dd>Core i7-10710U</dd>
                 <dt>RAM</dt><dd>16GB</dd>
                 <dt>SSD</dt><dd>512GB NVMe (Samsung PM981)</dd>
             </dl>
         </dd>
+        <dd>CPUは10710Uな142と1065G7な143があって前者を選び、モニタも4KかFHDかで前者を選んだけど、どっちも後者のほうが絶対によかった。ﾉﾊﾟｿに4Kはいらない。当時の自分はとにかく4Kを体験したかったのだ……。</dd>
         <dt>SONY VAIO Pro 13 (SVP132)</dt>
         <dd>ふるいノートPC。SONY時代のVAIO。どっかで中古で拾った。スペックは終わってるけど見た目とか物理的な細かい使い心地はSX14同様よい。TailscaleとWoLの踏み台として常時起動中。一回BIOS飛ばして無理矢理焼き直したせいで変なことになってる。</dd>
         <dd>
             <dl class="inline">
+                <dt>モニタ</dt><dd>FHD 13×25.4mm IPS 半光沢(ほぼ非光沢)</dd>
                 <dt>OS</dt><dd>Windows 10 Pro</dd>
                 <dt>CPU</dt><dd>Core i7-4500U</dd>
                 <dt>RAM</dt><dd>8GB</dd>
@@ -92,9 +102,10 @@ import OGPCard from "@/components/OGPCard.astro";
             </dl>
         </dd>
     </dl>
-    <div style="width: max-content; margin:0 auto;">↓紛争を開始↓</div>
+    <Center>↓紛争を開始↓</Center>
     <OGPCard url="https://www.cpubenchmark.net/compare/4603vs902vs1038vs3567vs1937/" />
     <OGPCard url="https://www.videocardbenchmark.net/compare/4345vs3595vs2910vs3950vs2643/" />
+
     <h3>周辺機器</h3>
     <dl>
         <dt><a href="https://www.logicool.co.jp/ja-jp/products/keyboards/k855-signature-wireless-mechanical-tkl.920-011080.html" target="_blank">Logicool K855</a></dt>
@@ -102,9 +113,9 @@ import OGPCard from "@/components/OGPCard.astro";
         <dt>Logicool M750</dt>
         <dd>ワイヤレス静音マウス。K855と同じドングルで一度に接続できる。M590の保証交換できたけどM590のほうがよかった。</dd>
         <dt><a href="https://www.lg.com/jp/monitors/4k-5k-monitors/32un500-w/" target="_blank">LG 32UN500-W</a></dt>
-        <dd>80cm 4Kモニタ。メイン。でかい。デフォで150%スケーリングでしっくりきたからそのまま使ってる。付属の脚が前後方向にでかいのでモニタアームにつけたい。</dd>
+        <dd>4K 80cm VA 非光沢。メイン。でかい。デフォで150%スケーリングでしっくりきたからそのまま使ってる。付属の脚が前後方向にでかいのでモニタアームにつけたい。</dd>
         <dt>MITSUBISHI RDT234WLM</dt>
-        <dd>23×25.4mmモニタ。ﾊﾟｯﾊﾟのお下がり。サブ。足をもぎ取って拾ったモニタスタンドの上とVESA穴の下を2箇所で固定して無理矢理縦置きしてる。ちょっとでも正面から外れるとおしまいの色になる。とてもメインで使える代物ではない。もう一枚あって押し付けられそうになったけど拒否した。</dd>
+        <dd>FHD 23×25.4mm TN 非光沢。サブ。ﾊﾟｯﾊﾟのお下がり。足をもぎ取って拾ったモニタスタンドの上とVESA穴の下を2箇所で固定して無理矢理縦置きしてる。ちょっとでも正面から外れるとおしまいの色になる。とてもメインで使える代物ではない。もう一枚あって押し付けられそうになったけど拒否した。</dd>
         <dt>ELECOM TK-TDP019</dt>
         <dd>専用ドングル接続のワイヤレステンキー。メカニカルではない。</dd>
         <dt><a href="https://www.yodobashi.com/product/100000001004005572/" target="_blank">変換名人 MB-USB2</a></dt>
@@ -121,12 +132,13 @@ import OGPCard from "@/components/OGPCard.astro";
         <dd>auひかりの貸出ONU兼ルータ。WAN側10Gbps。LAN側も1つ10Gbpsあるけど対応する接続先がない……。回線は実測で1Gbpsギリギリまで出る。</dd>
     </dl>
     <p>モニタをもっといいかんじに置きたいけど、机の形状的にふつうのモニタアームが使えないのがしんどい。</p>
+
     <h3>使ってないPC</h3>
     <dl>
         <dt>SONY VAIO type R master</dt>
         <dd>SONYの名作機。PCIeをぶっといケーブルで外部ユニットに引っ張ってたりマザボがmicroBTXだったりと変態。Core 2 Quad対応のとそうでないの2台ある。もう使うことはないだろうけど面白さと愛着があるので捨てにくい。</dd>
         <dt>iMac (21.5, Late 2012)</dt>
-        <dd>ディスプレイとして使えるかと思って親からもらってみたけどDP入力に対応してなかった(Thunderboltのみ)。macOS Catalinaまでしか上げられない。いらない。邪魔。誰かもらって。</dd>
+        <dd>ディスプレイとして使えるかと思って親からもらってみたけどDP入力に対応してなかった(Thunderboltのみ)。macOS Catalinaまでしか上げられない。形状的に積めなくて邪魔。もらいたいというなぞの人がいるのでとっとと輸送したい。</dd>
         <dd>
             <dl class="inline">
                 <dt>CPU</dt><dd>Core i5-3335S</dd>
@@ -137,22 +149,21 @@ import OGPCard from "@/components/OGPCard.astro";
         <dt>余ってる部品</dt>
         <dd>
             <ul class="inline">
-                <li>Core 2 Quad Q6600</li><li>Core 2 Duo E6600</li><li>Core 2 Duo E8400</li><li>7600GS</li><li>9600GT (壊れてる)</li><li>GT 330</li><li>GTS 450</li><li>GTX 1050 Ti (グラボはよく壊れるので予備として温存)</li><li>SATA SSD 数枚</li><li>SeagateのおしまいHDD</li><li>SATA BDドライブ 2台</li><li>Intel Wireless-AC 9260</li><li>Win11Pro, Educationのライセンス</li>
+                <li>Core 2 Quad Q6600</li><li>Core 2 Duo E6600</li><li>Core 2 Duo E8400</li><li>7600GS</li><li>9600GT (壊れてる)</li><li>GT 330</li><li>GTS 450</li><li>GTX 1050 Ti (グラボはよく壊れるので予備として温存)</li><li>SATA SSD 数枚</li><li>SeagateのおしまいHDD</li><li>SATA BDドライブ 2台</li><li>Intel Wireless-AC 9260</li><li>Win11Proのライセンス(バグで滅びたかもしれん)</li><li>Win11Educationのライセンス(大学がくれたやつ)</li>
             </ul>
         </dd>
     </dl>
+
     <h3>使ってない周辺機器</h3>
     <dl>
         <dt>LG W2361VG</dt>
-        <dd>23×25.4mmモニタ。トレファク三鷹店で拾ってきた。素晴らしくはないがふつうに使えてた。光沢なのが気に入らない。非光沢ならサブに回してた。</dd>
+        <dd>FHD 23×25.4mm TN 光沢。トレファク三鷹店で拾ってきた。素晴らしくはないがふつうに使えてた。光沢なのが気に入らない。非光沢ならサブに回してた。</dd>
         <dt>LG L204WT</dt>
-        <dd>20×25.4mmモニタ。1680×1050。ﾊﾟｯﾊﾟのおさがりで昔けっこう長いこと使ってた。三菱ほどじゃないけど色が怪しい。足が壊れてて分解撤去されている。一応VESA対応。</dd>
-        <dt>Logicool K380</dt>
-        <dd>ワイヤレスキーボード。iMac用。いらない。</dd>
-        <dt>Logicool M350</dt>
-        <dd>ワイヤレスマウス。iMac用。いらない。</dd>
+        <dd>WSXGA+ 20×25.4mm TN 非光沢。1680×1050。ﾊﾟｯﾊﾟのおさがりで昔けっこう長いこと使ってた。三菱ほどじゃないけど色が怪しい。足が壊れてて分解撤去されている。一応VESA対応。</dd>
         <dt>Microsoft Designer Bluetooth Mouse</dt>
         <dd>ワイヤレスマウス。VAIO Pro 13で使ってた。ちょっと挙動が怪しい。いらない。</dd>
+        <dt><del>Logicool K380, M350</del></dt>
+        <dd>ワイヤレスキーボード、マウス。なぜか欲しがってる人がいたのであげた。</dd>
     </dl>
 
     <h2>音響</h2>
@@ -167,17 +178,19 @@ import OGPCard from "@/components/OGPCard.astro";
         <dt>なぞのサラウンド環境</dt>
         <dd>ﾊﾟｯﾊﾟがリビングに構築してる4.1ch(?)環境。耳をすませばのブルーレイとか流すとかなりいい。これで戦車ｹﾞｰやってみたいけどリビングにPCないからなぁ。</dd>
     </dl>
+
     <h2>携帯端末</h2>
     <dl>
         <dt>iPhone SE (第3世代)</dt>
-        <dd>たぶん最後になってしまわれた画面が変な形にエグれてないまともなiPhone。SE2よりかなり改善されたけどちょーーっと電池持ちが物足りないかもしれない。10シリーズがXperiaみたいな形になってくれれば移行できるんだけど……。</dd>
+        <dd>画面が変な形にエグれてない貴重なまともなiPhone。たぶん後継機は出ない。SE2よりかなり改善されたけどちょーーっと電池持ちが物足りないかもしれない。10シリーズがXperiaみたいな形になってくれれば移行できるんだけど……。</dd>
         <dt>iPhone SE (第2世代)</dt>
         <dd>まさかまともなiPhoneの後継が出るとは思わず発売直後にXSを投げ捨てて買った。今はサブ機としてひたすらα7 IVに位置情報を飛ばしている。</dd>
         <dt>iPad (第8世代)</dt>
-        <dd>謎の一年間の途中からノート取るのに導入。もう紙には戻れない。Lightningなのはいいとして(よくない)PD非対応なのが最悪。10世代に置き換えられ売り払われた。</dd>
+        <dd>謎の一年間の途中からノート取るのに導入。もう紙には戻れない。Lightningなのはいいとして(よくない)PD非対応なのが最悪なので、10世代に置き換えられ売り払われた。</dd>
         <dt>iPad (第10世代)</dt>
-        <dd>第8世代に代わり2023年11月に生えてきた。Apple Pencil(第1世代)の接続方法とTouch IDの場所がバカな以外はまとも。</dd>
+        <dd>第8世代に代わり生えてきた。Apple Pencil(第1世代)の接続方法とTouch IDの場所がバカな以外はまとも。</dd>
     </dl>
+
     <h3>周辺機器</h3>
     <dl>
         <dt>BLUEDOT BMB-PD101</dt><dd>PD対応10000mAhモバイルバッテリ。Micro-B端子がついちゃったりしてる古めのだけどまあ使える。会社が吹き飛んでるっぽい()</dd>
@@ -185,9 +198,9 @@ import OGPCard from "@/components/OGPCard.astro";
         <dt>Apple MHJA3AM</dt><dd>PD充電器(20W)。iPadの付属品。家でのiPhone充電用。</dd>
         <dt>AUKEY PA-D5</dt><dd>PD充電器(60W or 45W+18W)。ちゃんさぶさんからもらった。鞄に常備(クソ便利)。</dd>
         <dt>USB Type-Cケーブル</dt>
-        <dd><a href="https://ja.aliexpress.com/item/1005006128932643.html" target="_blank">アリエクの怪しいやつ</a>(布巻き、Gen2x2)(初回割引で72円、平時でも900円、2x2対応機器がないので本当に20Gbps出るかは知らんw)</dd>
+        <dd><a href="https://ja.aliexpress.com/item/1005006128932643.html" target="_blank">アリエクの怪レいやつ</a>(布巻き、Gen2x2)(初回割引で72円、平時でも900円、2x2対応機器がないので本当に20Gbps出るかは知らんw)</dd>
         <dd>ダイソーで200円のやつ(布巻きで根本がつよそう、USB2.0)(黒いのと白いのがあるけど白いののほうが圧倒的に品質がいい(1敗))</dd>
-        <dd>iPad付属のやつ(布巻きだけど根本はよわそう🥺 USB2.0)</dd>
+        <dd>iPad付属のやつ(布巻きだけど根本はよわそうなのでダイソーのに置き換え封印 USB2.0)</dd>
         <dd>ハードオフ稲城矢野口店で300円で拾ってきたやつ(布(?)巻き、USB2.0)</dd>
         <dd>ﾓﾊﾞﾌﾞ付属のやつ(充電だけ)</dd>
         <dt>Type-C to Lightningケーブル</dt>

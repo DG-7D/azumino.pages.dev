@@ -76,26 +76,27 @@ for (const commit of commits) {
 
 AstroのJSXライクな構文とやらでは1つの式(?)しか書けなかったり、オブジェクトだと直接`map()`が使えなかったりして手間取ったが、ChatGPTに聞いたところ`Object.entries()`なるものを教えてもらったので使った。`map()`もよくわからない使い方してる。
 
-また、いつだかのバージョンから改行がビルド時に空白として残ってしまうようになり、変な隙間が空くようになってしまったため、~~`{}`を行末につけるとなぜかフォーマッタが改行しなくなる現象を利用している~~`<!-- display: inline -->`なるおまじないを唱えてフォーマットしないようにさせている。
+また、いつだかのバージョンから改行がビルド時に空白として残ってしまうようになり、変な隙間が空くようになってしまったため、`// prettier-ignore`なるおまじないを唱えてフォーマットしないようにさせている。
 
 ```astro
 <dl class={Astro.props.inline ? "inline" : ""}>
     {
-        Object.entries(history).map(([date, messages]) => (
+        // prettier-ignore
+        Object.entries(history).map(([date, messages]) =>
             <>
-                <!-- display: inline -->
-                <dt><time datetime={date}>{isoTo年月日(date)}</time></dt
-                >{messages.map(message => (
+                <dt><time datetime={date}>{isoTo年月日(date)}</time></dt>
+                {messages.map(message => (
                     <dd>{message}</dd>
                 ))}
             </>
-        ))
+        )
     }
     {
+        // prettier-ignore
         overflow && (
             <>
-                <dt>それ以前</dt
-                ><dd><a href="/changes/">もっと見る</a></dd>
+                <dt>それ以前</dt>
+                <dd><a href="/changes/">もっと見る</a></dd>
             </>
         )
     }
@@ -112,7 +113,8 @@ AstroのJSXライクな構文とやらでは1つの式(?)しか書けなかっ�
 
 ローカルでちゃんと動いたのでこのままデプロイしてみると、なぜか最新のメッセージしか表示されなかった。これはCloudflare Pagesではshallow cloneなる機能を用い、最新のコミットのみを取得しているためであるっぽい。解決策としては、ビルド時の処理で`npm run build`の前に`git fetch --unshallow`を追加することで、完全な履歴を取得させることができる。
 
-<Img src={import("./20231225-changes-buildConfig.png")} alt="ビルド コマンド: git fetch --unshallow && npm run build" caption="Cloudflare Pagesのビルド構成" />
+![Cloudflare Pagesのビルド構成](./20231225-changes-buildConfig.png "ビルド コマンド: git fetch --unshallow && npm run build")
+
 
 なお、Cloudflare Pagesのプレビューブランチ参照機能がなぜか`ERR_SSL_VERSION_OR_CIPHER_MISMATCH`とかいうエラーが出て使えないので、本番環境にぶち込んで試してロールバックするなどして動作確認していた。~~クソ不便。なにか間違ってるんだろうか🤔~~プロジェクトを消して(サブドメインはすぐに解放される)作り直したら特になにも設定することなく使えるようになった。作った時ちょうど障害発生中だったから処理がちゃんとされなかったのかな……。
 

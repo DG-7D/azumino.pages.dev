@@ -34,21 +34,22 @@ function isoTo年月日(iso: string): string {
 
 <dl class={Astro.props.inline ? "inline" : ""}>
     {
-        Object.entries(history).map(([date, messages]) => (
+        // prettier-ignore
+        Object.entries(history).map(([date, messages]) =>
             <>
-                <!-- display: inline -->
-                <dt><time datetime={date}>{isoTo年月日(date)}</time></dt
-                >{messages.map(message => (
+                <dt><time datetime={date}>{isoTo年月日(date)}</time></dt>
+                {messages.map(message => (
                     <dd>{message}</dd>
                 ))}
             </>
-        ))
+        )
     }
     {
+        // prettier-ignore
         overflow && (
             <>
-                <dt>それ以前</dt
-                ><dd><a href="/changes/">もっと見る</a></dd>
+                <dt>それ以前</dt>
+                <dd><a href="/changes/">もっと見る</a></dd>
             </>
         )
     }

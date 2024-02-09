@@ -36,58 +36,43 @@ body {
     flex-direction: column;
     flex-wrap: nowrap;
     justify-content: flex-start;
-    align-items: center;
+    align-items: stretch;
+
+    --header-height: 2.5rem;
 
     >header {
-        flex: none;
-        width: 100%;
+        height: var(--header-height);
     }
 
 
     >main {
         flex: 1;
+        align-self: center;
         width: 100%;
         max-width: 60rem;
     }
 
-    >footer {
-        flex: none;
-        width: 100%;
-    }
-
+    // footer
 }
 
 :where(main) {
+    --gap: 0.5em;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--gap);
     $padding-main: 0.75rem;
 
-    contain: inline-size; // table対応
     padding: $padding-main;
     box-shadow: 0 0 0.5rem 0.25rem var(--main-shadow);
 
     >* {
         line-height: 150%;
         overflow-wrap: anywhere;
-        // word-break: auto-phrase;
     }
 
     // ブロック
-    >* {
-        display: block;
-        width: 100%;
-
-        +* {
-            margin-top: 0.5rem;
-        }
-    }
-
-    >h1.hidden-title {
-        display: none;
-
-        +* {
-            margin-top: 0;
-        }
-    }
-
     // // 見出し
     >h1 {
         width: calc(100% + 2 * $padding-main);
@@ -115,7 +100,7 @@ body {
         position: sticky;
         top: var(--header-height);
         z-index: 1645;
-        margin-top: 1rem;
+        margin-top: var(--gap); // flexのgapに追加で
 
         border-left: $hn-overflow solid;
         background-color: var(--background-color);
@@ -211,12 +196,13 @@ body {
     }
 
     // // 表
-    // TODO: 謎を解明する
-    table {
-        max-width: max-content;
+    div:has(>table) {
         overflow-x: auto;
-        margin-left: auto;
-        margin-right: auto;
+    }
+
+    table {
+        width: max-content;
+        margin: 0 auto;
         text-align: center;
 
         thead,
@@ -228,7 +214,6 @@ body {
         th,
         td {
             padding: 0 0.25em;
-            white-space: nowrap;
         }
     }
 
@@ -239,8 +224,11 @@ body {
         a:any-link,
         *.like-link {
             cursor: pointer;
-            color: var(--link-color);
-            text-decoration-line: underline;
+
+            &:not(:has(> div)) {
+                color: var(--link-color);
+                text-decoration-line: underline;
+            }
 
             // &:focus {}
 
