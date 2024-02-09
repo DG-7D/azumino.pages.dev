@@ -10,18 +10,19 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/mdx": "^2.1.0",
+    "@astrojs/mdx": "^2.1.1",
     "@astrojs/sitemap": "^3.0.5",
-    "astro": "^4.2.6",
+    "astro": "^4.3.1",
     "astro-auto-import": "^0.4.2",
     "astro-robots-txt": "^1.0.0",
     "astro-seo": "^0.8.0",
     "jsdom": "^24.0.0",
-    "rehype-external-links": "^3.0.0"
+    "rehype-wrap-all": "^1.1.0",
+    "remark-unwrap-images": "^4.0.0"
   },
   "devDependencies": {
     "@types/jsdom": "^21.1.6",
-    "@types/node": "^20.11.8",
+    "@types/node": "^20.11.16",
     "sass": "^1.70.0"
   }
 }

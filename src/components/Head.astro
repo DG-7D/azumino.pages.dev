@@ -11,12 +11,14 @@ interface Props {
 ---
 
 <head>
+    <meta name="theme-color" content="13a10e" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
     <SEO
         title={Astro.props.title}
-        titleTemplate={`%s  – ${siteName}`}
+        titleTemplate={`%s – ${siteName}`}
         titleDefault={siteName}
         description={Astro.props.description}
         charset="UTF-8"

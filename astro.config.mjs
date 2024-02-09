@@ -1,11 +1,11 @@
 import { defineConfig } from 'astro/config';
-import rehypeExternalLinks from 'rehype-external-links';
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 
 import robotsTxt from "astro-robots-txt";
 import AutoImport from 'astro-auto-import';
-
+import rehypeWrapAll from 'rehype-wrap-all';
+import remarkUnwrapImages from 'remark-unwrap-images';
 
 // https://astro.build/config
 export default defineConfig({
@@ -16,15 +16,16 @@ export default defineConfig({
       // theme: "css-variables",
       wrap: true,
     },
-    rehypePlugins: [[rehypeExternalLinks, {
-      target: "_blank",
-      rel: [],
-    }]]
+    remarkPlugins: [
+      remarkUnwrapImages,
+    ],
+    rehypePlugins: [
+      [rehypeWrapAll, { selector: "table", wrap: "div" }],
+    ],
   },
   integrations: [
     AutoImport({
       imports: [
-        "@/components/Img.astro",
         "@/components/OGPCard.astro",
         "@/components/Tweet.astro",
       ]

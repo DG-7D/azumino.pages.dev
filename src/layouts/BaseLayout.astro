@@ -23,9 +23,17 @@ const title = Astro.props.title == "" ? undefined : Astro.props.title;
         <Header />
         <main>
             <Breadcrumb />
-            <h1 class={title ? "" : "hidden-title"}>{title ?? siteName}</h1>
+            <h1>{title ?? siteName}</h1>
             <slot />
         </main>
         <Footer />
     </body>
 </html>
+{
+    title ? <></> :
+    <style>
+        h1 {
+            display: none;
+        }
+    </style>
+}
