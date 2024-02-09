@@ -1,24 +1,34 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
+import { getState } from "./_functions";
 const allPosts = await getCollection("blog");
 // TODO: 表示をなんとかする
+import { toJpDateString, toJpISODateString } from "@/utils/Date.mjs";
 ---
 
 <BaseLayout title="あづみのブログ" description="あづみがどうでもいいことを書いたり書かなかったりするブログです。">
     <p>どうでもいいことを書いたり書かなかったりします。</p>
     <h2>記事一覧</h2>
-    <ul>
+    <dl>
         {
             allPosts.map(post => {
-                if (import.meta.env.DEV || (post.data.publish && post.data.publishDate < new Date())) {
+                const state = getState(post);
+                const { publishDate, title, description } = post.data;
+                if (import.meta.env.DEV || state == "published") {
                     return (
-                        <li>
-                            <a href={"/blog/" + post.slug + "/"}>{!post.data.publish && "非公開: "}{post.data.title}</a>
-                        </li>
+                        // prettier-ignore
+                        <>
+                            <dt>
+                                <a href={"/blog/" + post.slug + "/"}>{state != "published" && `${state}: `}{title}</a>
+                                <time datetime={toJpISODateString(publishDate)}>{toJpDateString(publishDate)}</time>
+                            </dt>
+                            <dd>{description}</dd>
+                        </>
                     );
                 }
             })
         }
-    </ul>
+    </dl>
 </BaseLayout>
+@/utils/Date.mjs
