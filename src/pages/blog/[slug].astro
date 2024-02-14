@@ -19,14 +19,17 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { Content } = await entry.render();
 
-const publish: Date = entry.data.publishDate;
-const lastUpdate: Date = new Date(execSync(`git log -1 --format="%ad" --date="iso" ./src/content/${entry.collection}/${entry.id}`).toString());
+const publish = entry.data.publishDate;
+const lastUpdate = (() => {
+    const lastUpdateISO = execSync(`git log -1 --format="%ad" --date="iso" ./src/content/${entry.collection}/${entry.id}`).toString();
+    return lastUpdateISO.length != 0 ? new Date(lastUpdateISO) : undefined;
+})();
 
 const lastUpdateString = (() => {
-    if (lastUpdate < publish) {
+    if (!lastUpdate || lastUpdate < publish) {
         return undefined;
     }
-    const string = toJpDateString(lastUpdate)
+    const string = toJpDateString(lastUpdate);
     if (publish.getFullYear() != lastUpdate.getFullYear()) {
         return string;
     }
@@ -46,7 +49,7 @@ const lastUpdateString = (() => {
         {
             lastUpdateString && (
                 <>
-                    (最終更新: <time datetime={toJpISOString(lastUpdate)}>{lastUpdateString}</time>)
+                    (最終更新: <time datetime={toJpISOString(lastUpdate!)}>{lastUpdateString}</time>)
                 </>
             )
         }
