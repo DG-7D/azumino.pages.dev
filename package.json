@@ -12,7 +12,7 @@
   "dependencies": {
     "@astrojs/mdx": "^2.1.1",
     "@astrojs/sitemap": "^3.0.5",
-    "astro": "^4.3.1",
+    "astro": "^4.4.0",
     "astro-auto-import": "^0.4.2",
     "astro-robots-txt": "^1.0.0",
     "astro-seo": "^0.8.0",
