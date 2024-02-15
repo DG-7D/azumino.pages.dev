@@ -6,6 +6,11 @@ description: "せつめい"
 # TODO: WinRE
 ---
 
+## Windows REとは
+
+「回復ドライブの作成」を用いることで、REを起動できるUSBメモリ等のメディアを作ることができる。この際、メディアの中身は全て消去されてしまう。
+
+PowerShellで`bcdedit`を用いる場合、以下のようにしてBCDを構成する。`$ramid`と`$reid`は直前に作成した際に表示されたエントリのID(毎回異なる)を代入する。`{` `}`は特殊文字であるためシングルクオート`'`で囲むことに注意。
 
 ```powershell
 # BCDのパスを変数に入れる
@@ -37,7 +42,7 @@ bcdedit /store $bcd /default $reid
 bcdedit /store $bcd /enum all /v
 ```
 
-こんな感じになっていれば成功。
+最後の一覧の出力がこんな感じになっていれば成功。
 
 ```
 Windows Boot Manager
@@ -62,6 +67,23 @@ identifier              {95f51527-cae2-11ee-b865-581cf8117e06}
 ramdisksdidevice        boot
 ramdisksdipath          \boot\boot.sdi
 ```
+
+Windows Boot Manager
+テキストモードの英語表示だけなら`bootmgfw.efi`単体で動作する。
+
+`bootmgfw.efi`については、外部ドライブについては`\EFI\Boot\bootx64.efi`を読むようにできているはずなのでそこに置いておくのが手っ取り早い。
+`BCD`はまずブートマネージャと同じディレクトリが読み込まれ、なければ`\EFI\Microsoft\Boot\BCD`が読み込まれる。別の場所に置いてもめんどくさいだけなので`\EFI\Boot\BCD`でよい。
+
+こうなっていればよい。
+
+```
+\EFI\Boot\bootx64.efi
+\EFI\Boot\BCD
+\Boot\winre.wim
+\Boot\boot.sdi
+```
+
+ファイルを置くだけでいいのでUEFIは楽。レガシBIOSに対応させようとすると、`bcdboot`か何かを使ってMBRとPBRを書き込むところから始めなければならない。
 
 ## あとがき
 
