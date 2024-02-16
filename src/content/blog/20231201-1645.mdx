@@ -11,9 +11,9 @@ description: "「1645」でおなじみの調布市の防災無線メロディ�
 
 みなさんご存じかと思われるが、そもそも「1645」とは何かについて一応説明しておく。防災行政無線では、試験放送、および時刻を報じる目的として、毎日決まった時刻に音楽を流すことが一般的である。平凡な自治体であれば17時とかに「ウエストミンスターの鐘」とかを鳴らす。しかし、電通大のある調布市では、16時45分という中途半端な時刻に調布市民の歌である「わが町調布」が流れる。この時刻の中途半端さから、電通大生の間では「1645」として親しまれて(?)いる。
 
-この「わが町調布」、調布市公式サイトで[歌の音源](https://www.city.chofu.tokyo.jp/www/contents/1450671006552/index.html)だけでなく[防災無線バージョンの音源](https://www.city.chofu.tokyo.jp/www/contents/1361495751275/index.html)まで公開されている。
+この「わが町調布」、調布市公式サイトで[歌の音源](https://www.city.chofu.lg.jp/010040/p003146.html)だけでなく[防災無線バージョンの音源](https://www.city.chofu.lg.jp/020090/p013076.html)まで公開されている。
 
-<OGPCard url="https://www.city.chofu.tokyo.jp/www/contents/1361495751275/index.html"/>
+<OGPCard url="https://www.city.chofu.lg.jp/020090/p013076.html"/>
 
 ## 音割れ1645
 
@@ -26,7 +26,7 @@ description: "「1645」でおなじみの調布市の防災無線メロディ�
 最近機械力学の講義で強制振動の共振曲線だか周波数応答曲線だかをやったが、あんな感じでこの周波数周辺をぶち上げてやれば再現になるはず。`ffmpeg`のフィルタを用いてこれを実現し、再生するのが以下のコマンドである。`equalizer`で1200Hzと800Hz、ついでに400Hzも雑に持ち上げている。そのままでは特に最後の「**ち**りばめる」のあたりで耳が破壊されるため、`alimiter`で限界ちょい越えくらいに抑えてやりほどよい音割れにしている。`ffplay`を`ffmpeg`に置き換え、最後に出力ファイル名を追加してやれば加工後の音源を保存できる。なかなかいいかんじになったのではないかと思う。
 
 ```
-ffplay -i 'https://www.city.chofu.tokyo.jp/www/contents/1361495751275/files/wagamachichofu.mp3' -af equalizer=f=1200:t=h:w=100:g=20,equalizer=f=800:t=h:w=100:g=20,equalizer=f=400:t=h:w=100:g=10,alimiter=level_in=0.9:level_out=1.1
+ffplay -i 'https://www.city.chofu.lg.jp/documents/221/wagamachichofu_1.mp3' -af equalizer=f=1200:t=h:w=100:g=20,equalizer=f=800:t=h:w=100:g=20,equalizer=f=400:t=h:w=100:g=10,alimiter=level_in=0.9:level_out=1.1
 ```
 
 なお、`ffmpeg`はWindows環境では`winget install ffmpeg`で容易にインストール可能である。パスも勝手に通る。音源を再配布するのはどうかと思うので、聞きたい方は各自で実行してみてほしい。また、公式サイト上のファイルを直接取りに行くコマンドなので、短時間で繰り返し実行する場合はローカルに保存してそのパスを指定したほうがいいと思う。耳に支障をきたしても責任は負わない。
