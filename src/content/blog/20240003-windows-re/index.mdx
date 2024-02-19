@@ -1,0 +1,89 @@
+---
+publish: false
+title: "じぶんでつくるWindows RE"
+publishDate: 9999-12-31 00:00:00 +09:00
+description: "せつめい"
+# TODO: WinRE
+---
+
+## Windows REとは
+
+「回復ドライブの作成」を用いることで、REを起動できるUSBメモリ等のメディアを作ることができる。この際、メディアの中身は全て消去されてしまう。
+
+PowerShellで`bcdedit`を用いる場合、以下のようにしてBCDを構成する。`$ramid`と`$reid`は直前に作成した際に表示されたエントリのID(毎回異なる)を代入する。`{` `}`は特殊文字であるためシングルクオート`'`で囲むことに注意。
+
+```powershell
+# BCDのパスを変数に入れる
+$bcd = 'D:\BCD'
+
+# BCD作成
+bcdedit /createstore $bcd
+bcdedit /store $bcd /create '{bootmgr}'
+
+# RAMディスクのエントリ作成
+bcdedit /store $bcd /create /device
+$ramid = '{id}' # 表示されるIDを変数に入れる
+bcdedit /store $bcd /set $ramid ramdisksdidevice boot
+bcdedit /store $bcd /set $ramid ramdisksdipath \boot\boot.sdi
+
+# Windows REのエントリ作成
+bcdedit /store $bcd /create /d "Windows RE" /application osloader
+$reid='{id}' # 表示されるIDを変数に入れる
+bcdedit /store $bcd /set $reid device ramdisk=[boot]\boot\winre.wim,$ramid
+bcdedit /store $bcd /set $reid osdevice ramdisk=[boot]\boot\winre.wim,$ramid
+bcdedit /store $bcd /set $reid path \windows\system32\boot\winload.efi
+bcdedit /store $bcd /set $reid locale ja-jp
+bcdedit /store $bcd /set $reid systemroot \windows\
+bcdedit /store $bcd /set $reid winpe yes
+
+bcdedit /store $bcd /default $reid
+
+# 確認
+bcdedit /store $bcd /enum all /v
+```
+
+最後の一覧の出力がこんな感じになっていれば成功。
+
+```
+Windows Boot Manager
+--------------------
+identifier              {9dea862c-5cdd-4e70-acc1-f32b344d4795}
+default                 {a64fced8-cae2-11ee-b865-581cf8117e06}
+
+Windows Boot Loader
+-------------------
+identifier              {a64fced8-cae2-11ee-b865-581cf8117e06}
+device                  ramdisk=[boot]\boot\winre.wim,{95f51527-cae2-11ee-b865-581cf8117e06}
+path                    \windows\system32\boot\winload.efi
+description             Windows RE
+locale                  ja-jp
+osdevice                ramdisk=[boot]\boot\winre.wim,{95f51527-cae2-11ee-b865-581cf8117e06}
+systemroot              \windows\
+winpe                   Yes
+
+Device options
+--------------
+identifier              {95f51527-cae2-11ee-b865-581cf8117e06}
+ramdisksdidevice        boot
+ramdisksdipath          \boot\boot.sdi
+```
+
+Windows Boot Manager
+テキストモードの英語表示だけなら`bootmgfw.efi`単体で動作する。
+
+`bootmgfw.efi`については、外部ドライブについては`\EFI\Boot\bootx64.efi`を読むようにできているはずなのでそこに置いておくのが手っ取り早い。
+`BCD`はまずブートマネージャと同じディレクトリが読み込まれ、なければ`\EFI\Microsoft\Boot\BCD`が読み込まれる。別の場所に置いてもめんどくさいだけなので`\EFI\Boot\BCD`でよい。
+
+こうなっていればよい。
+
+```
+\EFI\Boot\bootx64.efi
+\EFI\Boot\BCD
+\Boot\winre.wim
+\Boot\boot.sdi
+```
+
+ファイルを置くだけでいいのでUEFIは楽。レガシBIOSに対応させようとすると、`bcdboot`か何かを使ってMBRとPBRを書き込むところから始めなければならない。
+
+## あとがき
+
