@@ -113,7 +113,7 @@ AstroのJSXライクな構文とやらでは1つの式(?)しか書けなかっ�
 
 ローカルでちゃんと動いたのでこのままデプロイしてみると、なぜか最新のメッセージしか表示されなかった。これはCloudflare Pagesではshallow cloneなる機能を用い、最新のコミットのみを取得しているためであるっぽい。解決策としては、ビルド時の処理で`npm run build`の前に`git fetch --unshallow`を追加することで、完全な履歴を取得させることができる。
 
-![Cloudflare Pagesのビルド構成](./20231225-changes/build-config.png "ビルド コマンド: git fetch --unshallow && npm run build")
+![Cloudflare Pagesのビルド構成](./build-config.png "ビルド コマンド: git fetch --unshallow && npm run build")
 
 
 なお、Cloudflare Pagesのプレビューブランチ参照機能がなぜか`ERR_SSL_VERSION_OR_CIPHER_MISMATCH`とかいうエラーが出て使えないので、本番環境にぶち込んで試してロールバックするなどして動作確認していた。~~クソ不便。なにか間違ってるんだろうか🤔~~プロジェクトを消して(サブドメインはすぐに解放される)作り直したら特になにも設定することなく使えるようになった。作った時ちょうど障害発生中だったから処理がちゃんとされなかったのかな……。
