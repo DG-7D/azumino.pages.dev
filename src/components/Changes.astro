@@ -1,5 +1,6 @@
 ---
 import { execSync } from "child_process";
+import { toJpDateString } from "@/utils/Date.mjs";
 
 interface Props {
     count: number;
@@ -26,10 +27,6 @@ for (const commit of commits) {
         history[commit.date]!.unshift(commit.message);
     }
 }
-
-function isoTo年月日(iso: string): string {
-    return `${iso.substring(0, 4)}年${iso.substring(5, 7)}月${iso.substring(8, 10)}日`;
-}
 ---
 
 <dl class={Astro.props.inline ? "inline" : ""}>
@@ -37,7 +34,7 @@ function isoTo年月日(iso: string): string {
         // prettier-ignore
         Object.entries(history).map(([date, messages]) =>
             <>
-                <dt><time datetime={date}>{isoTo年月日(date)}</time></dt>
+                <dt><time datetime={date}>{toJpDateString(date)}</time></dt>
                 {messages.map(message => (
                     <dd>{message}</dd>
                 ))}
