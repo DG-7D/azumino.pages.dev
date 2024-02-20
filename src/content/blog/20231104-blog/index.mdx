@@ -32,62 +32,59 @@ Windows 11みたいなスッカスカで見づらいくせにかっこよくも�
 
 ダークテーマ切替機能は一度実装したけどいらないので外した。常に端末/ブラウザの設定と同期します。ちなみにカラーパレットはWindows Terminalで使われてる[Campbell](https://learn.microsoft.com/ja-jp/windows/terminal/customize-settings/color-schemes#campbell)。
 
-~~誰かさんにクソ煽られたので~~ページ高さが表示高さ未満のときでもフッターが一番下に表示されるようにしたりもした。gridを使ってすまーとな感じ(body要素の外に物体が存在したりフッターと被るのを避けるためにmarginを入れたりする必要があったりしない)に実装できたので満足。
+~~誰かさんにクソ煽られたので~~ページ高さが表示高さ未満のときでもフッターが一番下に表示されるようにしたりもした。flexを使ってすまーとな感じ(body要素の外に物体が存在したりフッターと被るのを避けるためにmarginを入れたりする必要があったりしない)に実装できたので満足。
 
 ## パンくずリスト
 
 上にある階層を表示するやつ。これも大学の授業でやったね。既存のみたいなのもあるっぽいけど、なんかよくわからないので自分で作ってみた。ディレクトリ構造とそれぞれの表示名を保持する構造体(?)みたいなのを作り、パスと照らし合わせてリストを生成してる。大学の授業でやった連結リストみたいになってる。TypeScriptなんもわからんので雰囲気で作ってるけど若干気持ち悪さある。名前を定義してないパスがあってもディレクトリ名をそのまま表示するようにしてみたり。
 
 ```typescript
-interface PathNamePair {
-    path: string;
-    name: string;
-}
-interface Tree {
-    current: PathNamePair[];
-    next?: Tree;
-}
-
-let tree: Tree | undefined = {
-    current: [
-        {
-            path: "",
-            name: "あづみのメモ帳",
-        },
-    ],
-    next: {
-        current: [
-            {
-                path: "blog",
-                name: "あづみのブログ",
-            },
-            {
-                path: "about",
-                name: "あづみについて",
-            },
-        ],
-    },
-};
-
 if (Astro.url.pathname == "/") {
     // トップでは表示しない
     return;
 }
 
-let path: string[] = Astro.url.pathname.replace(/\/$/, "").split("/");
-// 自分自身を除去
-path.pop();
+interface DirectoryData {
+    dir: string;
+    name: string;
+    child?: DirectoryData[];
+}
 
-let pathNameList: PathNamePair[] = new Array();
-let absolutePath: string = "";
-for (let index = 0; index < path.length; index++) {
-    absolutePath = absolutePath + path[index] + "/";
-    let name = tree?.current.find((pathName) => pathName.path == path[index])?.name ?? path[index];
-    pathNameList.push({
-        path: absolutePath,
-        name: name,
+const root = "";
+
+let rootDir: DirectoryData = {
+    dir: root,
+    name: "あづみのメモ帳",
+    child: [
+        {
+            dir: "blog",
+            name: "あづみのブログ",
+        },
+        {
+            dir: "about",
+            name: "あづみについて",
+        },
+        {
+            dir: "misc",
+            name: "その他",
+        },
+    ],
+};
+
+let path: string[] = Astro.url.pathname.split("/").filter(dir => dir != "");
+path.pop(); // 自分自身を除去
+
+let currentDir: DirectoryData = rootDir;
+let currentPath = "/";
+let pathNamePairs: { path: string; name: string }[] = [{ path: currentPath, name: rootDir.name }];
+
+for (const dir of path) {
+    currentDir = currentDir.child?.find(dirNamePair => dirNamePair.dir == dir) ?? { dir: dir, name: dir };
+    currentPath += currentDir.dir + "/";
+    pathNamePairs.push({
+        path: currentPath,
+        name: currentDir.name,
     });
-    tree = tree?.next;
 }
 ```
 

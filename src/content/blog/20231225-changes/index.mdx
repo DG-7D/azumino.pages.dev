@@ -51,41 +51,35 @@ const commits: {
 
 ## 整理する
 
-このままメッセージを連ねるのではおもしろくないので、日付ごとにまとめたりしてみる。日付の文字列をキー、文字列の配列を値とするオブジェクト(?)を作り、いいかんじにぶち込んでいく。コンポーネントの引数で表示日数を指定できるようにしたり(トップページで使ってる)、`_`から始まるメッセージは無視したり、重複するメッセージがあれば飛ばしたりなどもした。
+このままメッセージを連ねるのではおもしろくないので、日付ごとにまとめたりしてみる。[Map](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Map)や[Set](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Set)なるものを用いて日付とメッセージが重複しないようにしたり、`_`から始まるメッセージは無視したり、コンポーネントの引数で表示日数を指定できるように(トップページで使ってる)したりした。
 
 ```typescript
-const history: { [date: string]: string[] } = {};
+const history = new Map<string, Set<string>>();
 let overflow: boolean = false;
 for (const commit of commits) {
     if (commit.message.startsWith("_")) {
         continue;
     }
-    if (!history[commit.date]) {
-        if (Object.keys(history).length < Astro.props.count) {
-            history[commit.date] = [commit.message];
-        } else {
-            overflow = true;
-        }
-    } else if (!history[commit.date].includes(commit.message)) {
-        history[commit.date].unshift(commit.message);
+    if (!history.has(commit.date) && history.size == Astro.props.count) {
+        overflow = true;
+        continue;
     }
+    history.set(commit.date, new Set([...(history.get(commit.date) ?? []), commit.message]));
 }
 ```
 
 ## 描画する
 
-AstroのJSXライクな構文とやらでは1つの式(?)しか書けなかったり、オブジェクトだと直接`map()`が使えなかったりして手間取ったが、ChatGPTに聞いたところ`Object.entries()`なるものを教えてもらったので使った。`map()`もよくわからない使い方してる。
-
-また、いつだかのバージョンから改行がビルド時に空白として残ってしまうようになり、変な隙間が空くようになってしまったため、`// prettier-ignore`なるおまじないを唱えてフォーマットしないようにさせている。
+MapだのSetだのは`...`でぶちまけることで`map()`が使える。いつだかのバージョンから改行がビルド時に空白として残ってしまうようになり、変な隙間が空くようになってしまったため、`// prettier-ignore`なるおまじないを唱えてフォーマットしないようにさせている。
 
 ```astro
 <dl class={Astro.props.inline ? "inline" : ""}>
     {
         // prettier-ignore
-        Object.entries(history).map(([date, messages]) =>
+        [...history].map(([date, messages]) =>
             <>
-                <dt><time datetime={date}>{isoTo年月日(date)}</time></dt>
-                {messages.map(message => (
+                <dt><time datetime={date}>{toJpDateString(date)}</time></dt>
+                {[...messages].map(message => (
                     <dd>{message}</dd>
                 ))}
             </>
@@ -105,7 +99,7 @@ AstroのJSXライクな構文とやらでは1つの式(?)しか書けなかっ�
 
 <Tweet id="1739214733759357375" />
 
-ちなみに`isoTo年月日()`とかいう馬鹿な名前の関数は、`yyyy-MM-dd`を文字数決め打ちで`yyyy年MM月dd日`に変換するだけのものである。万が一`undefined`が渡ると`unde年in月d日`になる。
+`toJpDateString(date)`は`yyyy-MM-dd`を`-`で区切ることで`yyyy年MM月dd日`に変換するだけのものである。昔は文字数決め打ちにしていたので`undefined`が渡ると`unde年in月d日`になっていた。
 
 <Tweet id="1723580260854428062" />
 
@@ -116,7 +110,7 @@ AstroのJSXライクな構文とやらでは1つの式(?)しか書けなかっ�
 ![Cloudflare Pagesのビルド構成](./build-config.png "ビルド コマンド: git fetch --unshallow && npm run build")
 
 
-なお、Cloudflare Pagesのプレビューブランチ参照機能がなぜか`ERR_SSL_VERSION_OR_CIPHER_MISMATCH`とかいうエラーが出て使えないので、本番環境にぶち込んで試してロールバックするなどして動作確認していた。~~クソ不便。なにか間違ってるんだろうか🤔~~プロジェクトを消して(サブドメインはすぐに解放される)作り直したら特になにも設定することなく使えるようになった。作った時ちょうど障害発生中だったから処理がちゃんとされなかったのかな……。
+なお、作ったのが障害発生中だったからか、Cloudflare Pagesのプレビューブランチ参照機能がなぜか`ERR_SSL_VERSION_OR_CIPHER_MISMATCH`とかいうエラーが出て使えないので、本番環境にぶち込んで試してロールバックするなどして動作確認していた。プロジェクトを消して(サブドメインはすぐに解放される)作り直したら特になにも設定することなく使えるようになった。
 
 ## 課題
 
@@ -124,26 +118,39 @@ AstroのJSXライクな構文とやらでは1つの式(?)しか書けなかっ�
 
 ## 最終更新も表示する
 
-`git log ファイルパス`で特定のファイルに関するコミットを表示できるのを使えば、同じようにブログ記事に最終更新日時を書ける。こちらではフロントマターの公開日時と合わせるため`Date`オブジェクトとして読み込んでいる。時刻情報はいらないので吹き飛ばすことで、日付が異なるかどうかを単純に比較できるようにしている。タイムゾーンを保持できない`Date`を許さない。
+`git log ファイルパス`で特定のファイルに関するコミットを表示できるのを使えば、同じようにブログ記事に最終更新日時を書ける。こちらではフロントマターの公開日時と合わせるため`Date`オブジェクトにしている。`Date`オブジェクトはタイムゾーンを保持できないため、いちいち9時間足してごにょごにょする`toJpISOString(date)`を作っている。また、公開日と同じ年、月を省略するようにしている。
 
 ```typescript
-const publish: Date = entry.data.publishDate;
-const lastUpdate: Date = new Date(execSync(`git log -1 --format="%ad" --date="iso" ./src/content/${entry.collection}/${entry.id}`).toString());
+const publish = entry.data.publishDate;
+const lastUpdate = (() => {
+    const lastUpdateISO = execSync(`git log -1 --format="%ad" --date="iso" ./src/content/${entry.collection}/${entry.id}`).toString();
+    return lastUpdateISO.length != 0 ? new Date(lastUpdateISO) : undefined;
+})();
 
-publish.setHours(9);
-publish.setMinutes(0);
-publish.setSeconds(0);
-lastUpdate.setHours(9);
-lastUpdate.setMinutes(0);
-lastUpdate.setSeconds(0);
+const lastUpdateString = (() => {
+    if (!lastUpdate || lastUpdate < publish) {
+        return undefined;
+    }
+    const string = toJpDateString(lastUpdate);
+    if (publish.getFullYear() != lastUpdate.getFullYear()) {
+        return string;
+    }
+    if (publish.getMonth() != lastUpdate.getMonth()) {
+        return string.slice(5, 11);
+    }
+    if (publish.getDate() != lastUpdate.getDate()) {
+        return string.slice(8, 11);
+    }
+    return undefined;
+})();
 ```
 
 ```astro
-<time datetime={publish.toISOString().substring(0, 10)}>{to年月日(publish)}</time>
+<time datetime={toJpISODateString(publish)}>{toJpDateString(publish)}</time>
 {
-    publish < lastUpdate && (
+    lastUpdateString && (
         <>
-            (最終更新: <time datetime={lastUpdate.toISOString().substring(0, 10)}>{to年月日(lastUpdate)}</time>)
+            (最終更新: <time datetime={toJpISOString(lastUpdate!)}>{lastUpdateString}</time>)
         </>
     )
 }
