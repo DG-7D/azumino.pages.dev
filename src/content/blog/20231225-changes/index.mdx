@@ -31,41 +31,43 @@ Sat Nov 4 12:51:44 2023 +0900 いにしゃるこみっと
 
 ```
 
-Astroはビルド時にNode.jsでJavaScriptを実行して静的なhtmlを生成するわけだが、Node.jsでは`child_process`とかいうやつでローカルのコマンドを実行することができる。つまり、`git log`を実行することができる。このような実行結果(文字列)をオブジェクトとしてJavaScriptに渡すには、JSONの形にするのが手っ取り早い。
+Astroはビルド時にNode.jsでJavaScriptを実行して静的なhtmlを生成するわけだが、Node.jsでは`child_process`とかいうやつでローカルのコマンドを実行することができる。つまり、`git log`を実行することができる。このような実行結果(文字列)をオブジェクトとしてJavaScriptに渡すには、~~JSONの形にするのが手っ取り早い~~2項目しかないなら自力でパースしたほうが早い。
 
-```ts
+```typescript
 import { execSync } from "child_process";
-const commits: {
-    date: string;
-    message: string;
-}[] = JSON.parse(("[" + execSync('git log --format=\'{"date":"%ad","message":"%s"},\' --date=short --first-parent', { shell: "bash" }).toString() + "]").replace(",\n]", "]"));
+const separator = "\uF8FF";
+execSync(`git log --format=%ad${separator}%s --date=short --first-parent`)
+    .toString()
+    .split("\n")
+    .map(line => {
+        const [date, message] = line.split(separator);
+        // ここは後述
+    });
 ```
-
-……手っ取り早いかこれ???　末尾のカンマくらい許してくれ。
-
-シェルに`bash`を明示することで、WindowsでもWSLを使わせるようにして解決したが、コマンドラインの挙動の違いも気持ち悪かった。PowerShellとbashとで`'`と`"`の挙動は異ならないはずなので同じまま行けると思いきや、PowerShellとは別にWindows側のコマンドライン引数の挙動というのがあるらしくそううまくはいかなかった。なお、Windowsでの`execSync`での既定シェルはPowerShellではなくコマンドプロンプトだったので、行き当たりばったりで動くように作った時はもっとカオスだった。
-
-<Tweet id="1723333252092764502" hideThread />
 
 ここでは`--date=short`として日付部分を`yyyy-MM-dd`で出力してもらい、そのまま文字列として扱っているが、デプロイ環境のタイムゾーンをJSTにしておかないと0000-0900の更新が前日扱いになってしまったりすると思われる。
 
+JSONで処理していたときは文字列を引用符で囲む必要があり面倒だった。Windowsでの`execSync`での既定シェルはコマンドプロンプトだったので、行き当たりばったりで動くように作ったらとんでもなくカオスになった。Cloudflareのデプロイ環境のUbuntuでは当然動かなかった。PowerShellを使えばbashと`'` `"`の挙動は異ならないはずなので同じまま行けると思いきや、PowerShellとは別にWindows側のコマンドライン引数の挙動というのがあるらしくそううまくはいかなかった。シェルに`bash`を明示することで、WindowsでもWSLを使わせるようにして解決していた。
+
+<Tweet id="1723333252092764502" hideThread />
+
+
 ## 整理する
 
-このままメッセージを連ねるのではおもしろくないので、日付ごとにまとめたりしてみる。[Map](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Map)や[Set](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Set)なるものを用いて日付とメッセージが重複しないようにしたり、`_`から始まるメッセージは無視したり、コンポーネントの引数で表示日数を指定できるように(トップページで使ってる)したりした。
+ただメッセージを連ねるのではおもしろくないので、日付ごとにまとめたりしてみる。[Map](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Map)や[Set](https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Set)なるものを用いて日付とメッセージが重複しないようにしたり、`_`から始まるメッセージは無視したり、コンポーネントの引数で表示日数を指定できるように(トップページで使ってる)したりした。
 
 ```typescript
 const history = new Map<string, Set<string>>();
 let overflow: boolean = false;
-for (const commit of commits) {
-    if (commit.message.startsWith("_")) {
-        continue;
-    }
-    if (!history.has(commit.date) && history.size == Astro.props.count) {
-        overflow = true;
-        continue;
-    }
-    history.set(commit.date, new Set([...(history.get(commit.date) ?? []), commit.message]));
+// map内
+if (!date || !message || message.startsWith("_")) {
+    return;
 }
+if (!history.has(date) && history.size == Astro.props.count) {
+    overflow = true;
+    return;
+}
+history.set(date, new Set([...(history.get(date) ?? []), message]));
 ```
 
 ## 描画する
@@ -108,7 +110,6 @@ MapだのSetだのは`...`でぶちまけることで`map()`が使える。い�
 ローカルでちゃんと動いたのでこのままデプロイしてみると、なぜか最新のメッセージしか表示されなかった。これはCloudflare Pagesではshallow cloneなる機能を用い、最新のコミットのみを取得しているためであるっぽい。解決策としては、ビルド時の処理で`npm run build`の前に`git fetch --unshallow`を追加することで、完全な履歴を取得させることができる。
 
 ![Cloudflare Pagesのビルド構成](./build-config.png "ビルド コマンド: git fetch --unshallow && npm run build")
-
 
 なお、作ったのが障害発生中だったからか、Cloudflare Pagesのプレビューブランチ参照機能がなぜか`ERR_SSL_VERSION_OR_CIPHER_MISMATCH`とかいうエラーが出て使えないので、本番環境にぶち込んで試してロールバックするなどして動作確認していた。プロジェクトを消して(サブドメインはすぐに解放される)作り直したら特になにも設定することなく使えるようになった。
 

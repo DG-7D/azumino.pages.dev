@@ -7,22 +7,24 @@ interface Props {
     inline?: boolean;
 }
 
-const commits: {
-    date: string;
-    message: string;
-}[] = JSON.parse(("[" + execSync('git log --format=\'{"date":"%ad","message":"%s"},\' --date=short --first-parent', { shell: "bash" }).toString() + "]").replace(",\n]", "]"));
+// TODO: groupByがきたら使ってもいいかも
+const separator = "\uF8FF";
 const history = new Map<string, Set<string>>();
 let overflow: boolean = false;
-for (const commit of commits) {
-    if (commit.message.startsWith("_")) {
-        continue;
-    }
-    if (!history.has(commit.date) && history.size == Astro.props.count) {
-        overflow = true;
-        continue;
-    }
-    history.set(commit.date, new Set([...(history.get(commit.date) ?? []), commit.message]));
-}
+execSync(`git log --format=%ad${separator}%s --date=short --first-parent`)
+    .toString()
+    .split("\n")
+    .forEach(line => {
+        const [date, message] = line.split(separator);
+        if (!date || !message || message.startsWith("_")) {
+            return;
+        }
+        if (!history.has(date) && history.size == Astro.props.count) {
+            overflow = true;
+            return;
+        }
+        history.set(date, new Set([...(history.get(date) ?? []), message]));
+    });
 ---
 
 <dl class={Astro.props.inline ? "inline" : ""}>
