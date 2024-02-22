@@ -1,44 +1,39 @@
 ---
 import { execSync } from "child_process";
+import { toJpDateString } from "@/utils/Date.mjs";
 
 interface Props {
     count: number;
     inline?: boolean;
 }
 
-const commits: {
-    date: string;
-    message: string;
-}[] = JSON.parse(("[" + execSync('git log --format=\'{"date":"%ad","message":"%s"},\' --date=short --first-parent', { shell: "bash" }).toString() + "]").replace(",\n]", "]"));
-const history: { [date: string]: string[] } = {};
+// TODO: groupByがきたら使ってもいいかも
+const separator = "\uF8FF";
+const history = new Map<string, Set<string>>();
 let overflow: boolean = false;
-for (const commit of commits) {
-    if (commit.message.startsWith("_")) {
-        continue;
-    }
-    if (history[commit.date] === undefined) {
-        if (Object.keys(history).length < Astro.props.count) {
-            history[commit.date] = [commit.message];
-        } else {
-            overflow = true;
+execSync(`git log --format=%ad${separator}%s --date=short --first-parent`)
+    .toString()
+    .split("\n")
+    .forEach(line => {
+        const [date, message] = line.split(separator);
+        if (!date || !message || message.startsWith("_")) {
+            return;
         }
-    } else if (!history[commit.date]!.includes(commit.message)) {
-        history[commit.date]!.unshift(commit.message);
-    }
-}
-
-function isoTo年月日(iso: string): string {
-    return `${iso.substring(0, 4)}年${iso.substring(5, 7)}月${iso.substring(8, 10)}日`;
-}
+        if (!history.has(date) && history.size == Astro.props.count) {
+            overflow = true;
+            return;
+        }
+        history.set(date, new Set([...(history.get(date) ?? []), message]));
+    });
 ---
 
 <dl class={Astro.props.inline ? "inline" : ""}>
     {
         // prettier-ignore
-        Object.entries(history).map(([date, messages]) =>
+        [...history].map(([date, messages]) =>
             <>
-                <dt><time datetime={date}>{isoTo年月日(date)}</time></dt>
-                {messages.map(message => (
+                <dt><time datetime={date}>{toJpDateString(date)}</time></dt>
+                {[...messages].map(message => (
                     <dd>{message}</dd>
                 ))}
             </>
