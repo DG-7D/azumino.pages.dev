@@ -12,8 +12,7 @@ export default defineConfig({
   site: "https://azumino.pages.dev/",
   markdown: {
     shikiConfig: {
-      theme: "github-dark",
-      // theme: "css-variables",
+      theme: "dark-plus",
       wrap: true,
     },
     remarkPlugins: [
