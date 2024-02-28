@@ -11,18 +11,18 @@
   },
   "dependencies": {
     "@astrojs/mdx": "^2.1.1",
-    "@astrojs/sitemap": "^3.0.5",
-    "astro": "^4.4.0",
+    "@astrojs/sitemap": "^3.1.1",
+    "astro": "^4.4.5",
     "astro-auto-import": "^0.4.2",
     "astro-robots-txt": "^1.0.0",
-    "astro-seo": "^0.8.0",
+    "astro-seo": "^0.8.2",
     "jsdom": "^24.0.0",
     "rehype-wrap-all": "^1.1.0",
     "remark-unwrap-images": "^4.0.0"
   },
   "devDependencies": {
     "@types/jsdom": "^21.1.6",
-    "@types/node": "^20.11.18",
-    "sass": "^1.70.0"
+    "@types/node": "^20.11.20",
+    "sass": "^1.71.1"
   }
 }
