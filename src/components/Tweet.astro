@@ -9,6 +9,7 @@ interface Props {
     hideThread?: boolean;
 }
 
+// 使わないのは書いてない
 interface Tweet {
     created_at: string,
     entities: {
@@ -34,7 +35,12 @@ interface Tweet {
         screen_name: string,
     },
     parent?: Tweet,
-    // photos?: ,
+    photos?: {
+        expandedUrl: string,
+        url: string,
+        width: number,
+        height: number,
+    }[],
     video?: {
         aspectRatio: number[],
         poster: string,
@@ -70,9 +76,22 @@ if (tweet.entities.media) {
             <a href={"https://twitter.com/i/status/" + Astro.props.id} class="twitter"><TwitterIcon /></a>
         </div>
         <div class="main" set:html={tweet.text} />
-        {tweet.video && <video class="media" controls poster={tweet.video.poster}>{tweet.video.variants.reverse().map(variant => (
-            <source src={variant.src} type={variant.type}></source>
-        ))}</video>}
+        {
+            tweet.photos && tweet.photos.length > 0 && 
+                <div class="media">
+                    {tweet.photos.map(photo=>(
+                        <img src={photo.url} width={photo.width} height={photo.height} alt="">
+                    ))}
+                </div>
+        }   
+        {
+            tweet.video &&
+                <video class="media" controls poster={tweet.video.poster}>
+                    {tweet.video.variants.reverse().map(variant => (
+                        <source src={variant.src} type={variant.type}></source>
+                    ))}
+                </video>
+        }
         <div class="footer">{toJpDateString(new Date(tweet.created_at))}</div>
     </div>
 </Center>
@@ -147,7 +166,20 @@ if (tweet.entities.media) {
             }
         }
         > *.media {
+            border: 0.1rem solid var(--border-color);
             border-radius: 0.5rem;
+            overflow: hidden;
+            &:has(> *) {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 0.1rem;
+            }
+            > * {
+                display: block;
+                width: 100%;
+                height: auto;
+            }
         }
         > *.footer {
             color: var(--sub-color);
