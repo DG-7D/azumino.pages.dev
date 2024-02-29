@@ -60,9 +60,12 @@ for (const url of tweet.entities.urls) {
 }
 if (tweet.entities.media) {
     for (const media of tweet.entities.media) {
-        tweet.text = tweet.text.replaceAll(media.url, "");
+        tweet.text = tweet.text.replaceAll(media.url, 
+            Astro.props.hideMedia? `<a href="${media.expanded_url}" target="_blank">${media.display_url}</a>` : ""
+        );
     }
 }
+
 ---
 
 <Center>
@@ -77,7 +80,7 @@ if (tweet.entities.media) {
         </div>
         <div class="main" set:html={tweet.text} />
         {
-            tweet.photos && tweet.photos.length > 0 && 
+            !Astro.props.hideMedia && tweet.photos && tweet.photos.length > 0 && 
                 <div class="media">
                     {tweet.photos.map(photo=>(
                         <img src={photo.url} width={photo.width} height={photo.height} alt="">
@@ -85,7 +88,7 @@ if (tweet.entities.media) {
                 </div>
         }   
         {
-            tweet.video &&
+            !Astro.props.hideMedia && tweet.video &&
                 <video class="media" controls poster={tweet.video.poster}>
                     {tweet.video.variants.reverse().map(variant => (
                         <source src={variant.src} type={variant.type}></source>
