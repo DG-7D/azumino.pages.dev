@@ -19,6 +19,11 @@ const tweet = await fetch(url).then(response => response.json());
 for (const url of tweet.entities.urls) {
     tweet.text = tweet.text.replaceAll(url.url, `<a href="${url.expanded_url}" target="_blank">${url.display_url}</a>`);
 }
+if (tweet.entities.media) {
+    for (const media of tweet.entities.media) {
+        tweet.text = tweet.text.replaceAll(media.url, "");
+    }
+}
 ---
 
 <Center>
@@ -32,6 +37,9 @@ for (const url of tweet.entities.urls) {
             <a href={"https://twitter.com/i/status/" + Astro.props.id} class="twitter"><TwitterIcon /></a>
         </div>
         <div class="main" set:html={tweet.text} />
+        {tweet.video && <video class="media" controls poster={tweet.video.poster}>{tweet.video.variants.reverse().map(variant => (
+            <source src={variant.src} type={variant.type}></source>
+        ))}</video>}
         <div class="footer">{toJpDateString(new Date(tweet.created_at))}</div>
     </div>
 </Center>
@@ -68,10 +76,10 @@ for (const url of tweet.entities.urls) {
             > *.author {
                 display: grid;
                 grid-template:
-                "icon . ." 1fr
-                "icon . name" 1rem
-                "icon . id" 1rem
-                "icon . ." 1fr / 3rem 0.5rem auto;
+                    "icon . ." 1fr
+                    "icon . name" 1rem
+                    "icon . id" 1rem
+                    "icon . ." 1fr / 3rem 0.5rem auto;
                 > *.icon {
                     grid-area: icon;
                     width: 100%;
@@ -104,6 +112,9 @@ for (const url of tweet.entities.urls) {
             a {
                 color: var(--link-color);
             }
+        }
+        > *.media {
+            border-radius: 0.5rem;
         }
         > *.footer {
             color: var(--sub-color);
