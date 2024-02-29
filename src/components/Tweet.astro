@@ -15,6 +15,10 @@ const urlSearchParams = new URLSearchParams({
 });
 const url = new URL("https://cdn.syndication.twimg.com/tweet-result?" + urlSearchParams.toString());
 const tweet = await fetch(url).then(response => response.json());
+
+for (const url of tweet.entities.urls) {
+    tweet.text = tweet.text.replaceAll(url.url, `<a href="${url.expanded_url}" target="_blank">${url.display_url}</a>`);
+}
 ---
 
 <Center>
@@ -27,7 +31,7 @@ const tweet = await fetch(url).then(response => response.json());
             </a>
             <a href={"https://twitter.com/i/status/" + Astro.props.id} class="twitter"><TwitterIcon /></a>
         </div>
-        <div class="main" set:html={tweet.text}></div>
+        <div class="main" set:html={tweet.text} />
         <div class="footer">{toJpDateString(new Date(tweet.created_at))}</div>
     </div>
 </Center>
@@ -35,6 +39,7 @@ const tweet = await fetch(url).then(response => response.json());
     div.embedded-tweet {
         --main-color: rgb(247, 249, 249);
         --sub-color: rgb(139, 152, 165);
+        --link-color: rgb(29, 115, 240);
         --background-color: rgb(21, 32, 43);
         --border-color: rgb(56, 68, 77);
 
@@ -63,10 +68,10 @@ const tweet = await fetch(url).then(response => response.json());
             > *.author {
                 display: grid;
                 grid-template:
-                    "icon . ." 1fr
-                    "icon . name" 1rem
-                    "icon . id" 1rem
-                    "icon . ." 1fr / 3rem 0.5rem auto;
+                "icon . ." 1fr
+                "icon . name" 1rem
+                "icon . id" 1rem
+                "icon . ." 1fr / 3rem 0.5rem auto;
                 > *.icon {
                     grid-area: icon;
                     width: 100%;
@@ -93,6 +98,11 @@ const tweet = await fetch(url).then(response => response.json());
                 width: 2rem;
                 height: 2rem;
                 color: #1d9bf0;
+            }
+        }
+        > *.body {
+            a {
+                color: var(--link-color);
             }
         }
         > *.footer {
