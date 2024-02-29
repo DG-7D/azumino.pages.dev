@@ -9,12 +9,45 @@ interface Props {
     hideThread?: boolean;
 }
 
+interface Tweet {
+    created_at: string,
+    entities: {
+        // hashtags: ,
+        urls: {
+            display_url:string,
+            expanded_url:string,
+            url:string,
+        }[],
+        // user_mentions:,
+        media?: {
+            display_url: string,
+            expanded_url: string,
+            url: string,
+        }[]
+    },
+    id_str: string,
+    text: string,
+    user: {
+        id_str: string,
+        name: string,
+        profile_image_url_https: string,
+        screen_name: string,
+    },
+    parent?: Tweet,
+    // photos?: ,
+    video?: {
+        aspectRatio: number[],
+        poster: string,
+        variants: {type:string,src:string}[],
+    }
+}
+
 const urlSearchParams = new URLSearchParams({
     id: Astro.props.id,
     token: Math.random().toString(),
 });
 const url = new URL("https://cdn.syndication.twimg.com/tweet-result?" + urlSearchParams.toString());
-const tweet = await fetch(url).then(response => response.json());
+const tweet: Tweet = await fetch(url).then(response => response.json());
 
 for (const url of tweet.entities.urls) {
     tweet.text = tweet.text.replaceAll(url.url, `<a href="${url.expanded_url}" target="_blank">${url.display_url}</a>`);
