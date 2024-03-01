@@ -102,7 +102,8 @@ for(const mention of tweet.entities.user_mentions) {
             !Astro.props.hideMedia && tweet.video &&
                 <video class="media" controls poster={tweet.video.poster}>
                     {tweet.video.variants.reverse().map(variant => (
-                        <source src={variant.src} type={variant.type}></source>
+                        // なぜかtag=12があると途中で止まることがある
+                        <source src={variant.src.replace("?tag=12","")} type={variant.type}></source>
                     ))}
                 </video>
         }
