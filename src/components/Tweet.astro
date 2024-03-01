@@ -15,11 +15,13 @@ interface Tweet {
     entities: {
         // hashtags: ,
         urls: {
-            display_url:string,
-            expanded_url:string,
-            url:string,
+            display_url: string,
+            expanded_url: string,
+            url: string,
         }[],
-        // user_mentions:,
+        user_mentions: {
+            screen_name: string,
+        }[],
         media?: {
             display_url: string,
             expanded_url: string,
@@ -65,19 +67,28 @@ if (tweet.entities.media) {
         );
     }
 }
-
+for(const mention of tweet.entities.user_mentions) {
+    tweet.text = tweet.text.replaceAll("@" + mention.screen_name, "");
+}
 ---
 
 <Center>
     <div class="embedded-tweet">
         <div class="header">
-            <a class="author" href={"https://twitter.com/" + tweet.user.screen_name}>
+            <a class="author" href={"https://twitter.com/" + tweet.user.screen_name} target="_blank">
                 <img class="icon" src={tweet.user.profile_image_url_https} alt="" />
                 <div class="name">{tweet.user.name}</div>
                 <div class="id">@{tweet.user.screen_name}</div>
             </a>
-            <a href={"https://twitter.com/i/status/" + Astro.props.id} class="twitter"><TwitterIcon /></a>
+            <a class="twitter" href={"https://twitter.com/" + tweet.user.screen_name + "/status/" + tweet.id_str } target="_blank"><TwitterIcon /></a>
         </div>
+        {
+            // Astro.props.hideThread && tweet.parent &&
+            tweet.parent &&
+            <div class="replyTo">
+                <a href={"https://twitter.com/" + tweet.parent.user.screen_name + "/status/" + tweet.parent.id_str } target="_blank">返信先: @{tweet.parent.user.screen_name}</a>
+            </div>
+        }
         <div class="main" set:html={tweet.text} />
         {
             !Astro.props.hideMedia && tweet.photos && tweet.photos.length > 0 && 
@@ -124,6 +135,9 @@ if (tweet.entities.media) {
         padding: 1rem;
         background-color: var(--background-color);
         color: var(--main-color);
+        a {
+            color: var(--link-color);
+        }
         > *.header {
             display: flex;
             flex-direction: row;
@@ -135,6 +149,7 @@ if (tweet.entities.media) {
                     "icon . name" 1rem
                     "icon . id" 1rem
                     "icon . ." 1fr / 3rem 0.5rem auto;
+                color: inherit;
                 > *.icon {
                     grid-area: icon;
                     width: 100%;
@@ -163,9 +178,9 @@ if (tweet.entities.media) {
                 color: #1d9bf0;
             }
         }
-        > *.body {
+        > *.replyTo {
             a {
-                color: var(--link-color);
+                color: var(--sub-color);
             }
         }
         > *.media {
