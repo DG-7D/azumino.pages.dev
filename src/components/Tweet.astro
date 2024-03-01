@@ -1,5 +1,7 @@
 ---
 import Center from "./Center.astro";
+import TwitterIcon from "./TwitterIcon.astro";
+import { toJpDateString } from "@/utils/Date.mjs";
 
 interface Props {
     id: string;
@@ -7,57 +9,231 @@ interface Props {
     hideThread?: boolean;
 }
 
+// 使わないのは書いてない
+interface Tweet {
+    created_at: string,
+    entities: {
+        // hashtags: ,
+        urls: {
+            display_url: string,
+            expanded_url: string,
+            url: string,
+        }[],
+        user_mentions: {
+            screen_name: string,
+        }[],
+        media?: {
+            display_url: string,
+            expanded_url: string,
+            url: string,
+        }[]
+    },
+    id_str: string,
+    text: string,
+    user: {
+        id_str: string,
+        name: string,
+        profile_image_url_https: string,
+        screen_name: string,
+    },
+    parent?: Tweet,
+    photos?: {
+        expandedUrl: string,
+        url: string,
+        width: number,
+        height: number,
+    }[],
+    video?: {
+        aspectRatio: number[],
+        poster: string,
+        variants: {type:string,src:string}[],
+    }
+}
+
 const urlSearchParams = new URLSearchParams({
-    url: `https://twitter.com/i/status/${Astro.props.id}`,
-    hide_media: Astro.props.hideMedia ? "true" : "false",
-    hide_thread: Astro.props.hideThread ? "true" : "false",
-    omit_script: "true",
-    lang: "ja",
-    theme: "dark",
-    dnt: "true",
+    id: Astro.props.id,
+    token: Math.random().toString(),
 });
-const url = new URL("https://publish.twitter.com/oembed?" + urlSearchParams.toString());
-const responseJson = await fetch(url).then(response => response.json());
-const blockquote = (responseJson.html as string).replaceAll("<a ", '<a target="_blank"');
+const url = new URL("https://cdn.syndication.twimg.com/tweet-result?" + urlSearchParams.toString());
+const tweet: Tweet = await fetch(url).then(response => response.json());
+
+for (const url of tweet.entities.urls) {
+    tweet.text = tweet.text.replaceAll(url.url, `<a href="${url.expanded_url}" target="_blank">${url.display_url}</a>`);
+}
+if (tweet.entities.media) {
+    for (const media of tweet.entities.media) {
+        tweet.text = tweet.text.replaceAll(media.url, 
+            Astro.props.hideMedia? `<a href="${media.expanded_url}" target="_blank">${media.display_url}</a>` : ""
+        );
+    }
+}
+for(const mention of tweet.entities.user_mentions) {
+    tweet.text = tweet.text.replaceAll("@" + mention.screen_name, "");
+}
 ---
 
 <Center>
-    <Fragment set:html={blockquote} />
+    <div class="embedded-tweet">
+        {
+            !Astro.props.hideThread && tweet.parent &&
+            <div class="header">
+                <a class="author" href={"https://twitter.com/" + tweet.parent.user.screen_name} target="_blank">
+                    <img class="icon" src={tweet.parent.user.profile_image_url_https} alt="" />
+                    <div class="name">{tweet.parent.user.name}</div>
+                    <div class="id">@{tweet.parent.user.screen_name}</div>
+                </a>
+                <a class="twitter" href={"https://twitter.com/" + tweet.parent.user.screen_name + "/status/" + tweet.parent.id_str } target="_blank"><TwitterIcon /></a>
+            </div>
+            <div class="parent">
+                <div class="line"><div /></div>
+                <div class="text" set:html={tweet.parent.text} />
+            </div>
+        }
+        <div class="header">
+            <a class="author" href={"https://twitter.com/" + tweet.user.screen_name} target="_blank">
+                <img class="icon" src={tweet.user.profile_image_url_https} alt="" />
+                <div class="name">{tweet.user.name}</div>
+                <div class="id">@{tweet.user.screen_name}</div>
+            </a>
+            {
+                Astro.props.hideThread && tweet.parent &&
+                <a class="twitter" href={"https://twitter.com/" + tweet.user.screen_name + "/status/" + tweet.id_str } target="_blank"><TwitterIcon /></a>
+            }
+        </div>
+        {
+            Astro.props.hideThread && tweet.parent &&
+            <div class="replyTo">
+                <a href={"https://twitter.com/" + tweet.parent.user.screen_name + "/status/" + tweet.parent.id_str } target="_blank">返信先: @{tweet.parent.user.screen_name}</a>
+            </div>
+        }
+        <div class="main" set:html={tweet.text} />
+        {
+            !Astro.props.hideMedia && tweet.photos && tweet.photos.length > 0 && 
+                <div class="media">
+                    {tweet.photos.map(photo=>(
+                        <img src={photo.url} width={photo.width} height={photo.height} alt="">
+                    ))}
+                </div>
+        }   
+        {
+            !Astro.props.hideMedia && tweet.video &&
+                <video class="media" controls poster={tweet.video.poster}>
+                    {tweet.video.variants.reverse().map(variant => (
+                        // なぜかtag=12があると途中で止まることがある
+                        <source src={variant.src.replace("?tag=12","")} type={variant.type}></source>
+                    ))}
+                </video>
+        }
+        <div class="footer">{toJpDateString(new Date(tweet.created_at))}</div>
+    </div>
 </Center>
-<style lang="scss">
-    :global(blockquote.twitter-tweet) {
-        display: flex;
-        flex-direction: column-reverse;
-        gap: 12px;
+<style>
+    div.embedded-tweet {
+        --main-color: rgb(247, 249, 249);
+        --sub-color: rgb(139, 152, 165);
+        --link-color: rgb(29, 115, 240);
+        --background-color: rgb(21, 32, 43);
+        --border-color: rgb(56, 68, 77);
 
-        background-color: rgb(21, 32, 43);
         @media (prefers-color-scheme: light) {
-            background-color: rgb(255, 255, 255);
+            --main-color: rgb(15, 20, 15);
+            --sub-color: rgb(83, 100, 113);
+            --background-color: rgb(255, 255, 255);
+            --border-color: rgb(239, 243, 244);
         }
 
+        width: 100%;
         max-width: 30rem;
-        border-radius: 12px;
-        padding: 12px;
-
-        :global(> a) {
-            display: contents;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+        border: 0.1rem solid var(--border-color);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        background-color: var(--background-color);
+        color: var(--main-color);
+        a {
+            color: var(--link-color);
         }
-        :global(p) {
-            text-indent: 0;
+        > *.header {
+            display: flex;
+            flex-direction: row;
+            gap: 0.5rem;
+            > *.author {
+                display: grid;
+                grid-template:
+                    "icon . ." 1fr
+                    "icon . name" 1rem
+                    "icon . id" 1rem
+                    "icon . ." 1fr / 3rem 0.5rem auto;
+                color: inherit;
+                > *.icon {
+                    grid-area: icon;
+                    width: 100%;
+                    height: 100%;
+                    border-radius: 0.5rem;
+                }
+                > *.name {
+                    grid-area: name;
+                    overflow: hidden;
+                    line-height: 100%;
+                    font-size: 1rem;
+                    font-weight: bold;
+                }
+                > *.id {
+                    grid-area: id;
+                    overflow: hidden;
+                    line-height: 100%;
+                    font-size: 1rem;
+                    color: var(--sub-color);
+                }
+            }
+            > *.twitter {
+                margin-left: auto;
+                width: 2rem;
+                height: 2rem;
+                color: #1d9bf0;
+            }
         }
-    }
-    :global(div.twitter-tweet.twitter-tweet-rendered) {
-        max-width: 30rem !important;
-        margin: 0 !important;
-        border-radius: 12px;
-        overflow: hidden;
+        > *.replyTo {
+            a {
+                color: var(--sub-color);
+            }
+        }
+        > *.parent {
+            display: flex;
+            flex-direction: row;
+            gap: 0.5rem;
+            > *.line {
+                flex: none;
+                width: 3rem;
+                > * {
+                    margin: auto;
+                    width: 0.2rem;
+                    height: 100%;
+                    background-color: var(--border-color);
+                }
+            }
+        }
+        > *.media {
+            border: 0.1rem solid var(--border-color);
+            border-radius: 0.5rem;
+            overflow: hidden;
+            &:has(> *) {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 0.1rem;
+            }
+            > * {
+                display: block;
+                width: 100%;
+                height: auto;
+            }
+        }
+        > *.footer {
+            color: var(--sub-color);
+        }
     }
 </style>
-<script>
-    if (window.matchMedia("(prefers-color-scheme: light)").matches) {
-        for (const element of document.getElementsByClassName("twitter-tweet")) {
-            element.setAttribute("data-theme", "");
-        }
-    }
-</script>
-<script src="https://platform.twitter.com/widgets.js"></script>
