@@ -96,7 +96,7 @@ for(const mention of tweet.entities.user_mentions) {
                 <div class="id">@{tweet.user.screen_name}</div>
             </a>
             {
-                Astro.props.hideThread && tweet.parent &&
+                !(!Astro.props.hideThread && tweet.parent) &&
                 <a class="twitter" href={"https://twitter.com/" + tweet.user.screen_name + "/status/" + tweet.id_str } target="_blank"><TwitterIcon /></a>
             }
         </div>
