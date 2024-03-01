@@ -74,17 +74,34 @@ for(const mention of tweet.entities.user_mentions) {
 
 <Center>
     <div class="embedded-tweet">
+        {
+            !Astro.props.hideThread && tweet.parent &&
+            <div class="header">
+                <a class="author" href={"https://twitter.com/" + tweet.parent.user.screen_name} target="_blank">
+                    <img class="icon" src={tweet.parent.user.profile_image_url_https} alt="" />
+                    <div class="name">{tweet.parent.user.name}</div>
+                    <div class="id">@{tweet.parent.user.screen_name}</div>
+                </a>
+                <a class="twitter" href={"https://twitter.com/" + tweet.parent.user.screen_name + "/status/" + tweet.parent.id_str } target="_blank"><TwitterIcon /></a>
+            </div>
+            <div class="parent">
+                <div class="line"><div /></div>
+                <div class="text" set:html={tweet.parent.text} />
+            </div>
+        }
         <div class="header">
             <a class="author" href={"https://twitter.com/" + tweet.user.screen_name} target="_blank">
                 <img class="icon" src={tweet.user.profile_image_url_https} alt="" />
                 <div class="name">{tweet.user.name}</div>
                 <div class="id">@{tweet.user.screen_name}</div>
             </a>
-            <a class="twitter" href={"https://twitter.com/" + tweet.user.screen_name + "/status/" + tweet.id_str } target="_blank"><TwitterIcon /></a>
+            {
+                Astro.props.hideThread && tweet.parent &&
+                <a class="twitter" href={"https://twitter.com/" + tweet.user.screen_name + "/status/" + tweet.id_str } target="_blank"><TwitterIcon /></a>
+            }
         </div>
         {
-            // Astro.props.hideThread && tweet.parent &&
-            tweet.parent &&
+            Astro.props.hideThread && tweet.parent &&
             <div class="replyTo">
                 <a href={"https://twitter.com/" + tweet.parent.user.screen_name + "/status/" + tweet.parent.id_str } target="_blank">返信先: @{tweet.parent.user.screen_name}</a>
             </div>
@@ -182,6 +199,21 @@ for(const mention of tweet.entities.user_mentions) {
         > *.replyTo {
             a {
                 color: var(--sub-color);
+            }
+        }
+        > *.parent {
+            display: flex;
+            flex-direction: row;
+            gap: 0.5rem;
+            > *.line {
+                flex: none;
+                width: 3rem;
+                > * {
+                    margin: auto;
+                    width: 0.2rem;
+                    height: 100%;
+                    background-color: var(--border-color);
+                }
             }
         }
         > *.media {
