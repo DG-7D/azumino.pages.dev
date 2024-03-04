@@ -70,6 +70,10 @@ if (tweet.entities.media) {
 for(const mention of tweet.entities.user_mentions) {
     tweet.text = tweet.text.replaceAll("@" + mention.screen_name, "");
 }
+
+function toTweetUrl(tweet: Tweet) {
+    return "https://twitter.com/" + tweet.user.screen_name + "/status/" + tweet.id_str;
+}
 ---
 
 <Center>
@@ -82,7 +86,7 @@ for(const mention of tweet.entities.user_mentions) {
                     <div class="name">{tweet.parent.user.name}</div>
                     <div class="id">@{tweet.parent.user.screen_name}</div>
                 </a>
-                <a class="twitter" href={"https://twitter.com/" + tweet.parent.user.screen_name + "/status/" + tweet.parent.id_str } target="_blank"><TwitterIcon /></a>
+                <a class="twitter" href={toTweetUrl(tweet.parent)} target="_blank"><TwitterIcon /></a>
             </div>
             <div class="parent">
                 <div class="line"><div /></div>
@@ -97,13 +101,13 @@ for(const mention of tweet.entities.user_mentions) {
             </a>
             {
                 !(!Astro.props.hideThread && tweet.parent) &&
-                <a class="twitter" href={"https://twitter.com/" + tweet.user.screen_name + "/status/" + tweet.id_str } target="_blank"><TwitterIcon /></a>
+                <a class="twitter" href={toTweetUrl(tweet)} target="_blank"><TwitterIcon /></a>
             }
         </div>
         {
             Astro.props.hideThread && tweet.parent &&
             <div class="replyTo">
-                <a href={"https://twitter.com/" + tweet.parent.user.screen_name + "/status/" + tweet.parent.id_str } target="_blank">返信先: @{tweet.parent.user.screen_name}</a>
+                <a href={toTweetUrl(tweet.parent)} target="_blank">返信先: @{tweet.parent.user.screen_name}</a>
             </div>
         }
         <div class="main" set:html={tweet.text} />
@@ -124,7 +128,7 @@ for(const mention of tweet.entities.user_mentions) {
                     ))}
                 </video>
         }
-        <div class="footer">{toJpDateString(new Date(tweet.created_at))}</div>
+        <a class="footer" href={toTweetUrl(tweet)} target="_blank">{toJpDateString(new Date(tweet.created_at))}</a>
     </div>
 </Center>
 <style>
