@@ -53,7 +53,7 @@ interface Tweet {
     }
 }
 
-function textToHtml(tweet: Tweet, removeMention = false, removeMediaUrl = false) {
+function textToHtml(tweet: Tweet, removeFirstMention = false, removeMediaUrl = false) {
     for (const hashtag of tweet.entities.hashtags) {
         const hashtagText = "#" + hashtag.text;
         tweet.text = tweet.text.replaceAll(hashtagText, toATag("https://twitter.com/hashtag/" + hashtag.text, hashtagText));
@@ -63,7 +63,11 @@ function textToHtml(tweet: Tweet, removeMention = false, removeMediaUrl = false)
     }
     for (const mention of tweet.entities.user_mentions) {
         const mentionText = "@" + mention.screen_name;
-        tweet.text = tweet.text.replaceAll(mentionText, removeMention ? "" : toATag("https://twitter.com/" + mention.screen_name, mentionText));
+        if(removeFirstMention && tweet.text.startsWith(mentionText)) {
+            tweet.text = tweet.text.replace(mentionText, "");
+            continue;
+        }
+        tweet.text = tweet.text.replaceAll(mentionText, toATag("https://twitter.com/" + mention.screen_name, mentionText));
     }
     if (tweet.entities.media) {
         for (const media of tweet.entities.media) {
@@ -86,7 +90,7 @@ const urlSearchParams = new URLSearchParams({
 const url = new URL("https://cdn.syndication.twimg.com/tweet-result?" + urlSearchParams.toString());
 const tweet: Tweet = await fetch(url).then(response => response.json());
 
-textToHtml(tweet, !Astro.props.hideThread, !Astro.props.hideMedia);
+textToHtml(tweet, tweet.parent ? true : false, !Astro.props.hideMedia); // 返信先がある場合は先頭@id非表示
 tweet.parent && textToHtml(tweet.parent);
 ---
 
