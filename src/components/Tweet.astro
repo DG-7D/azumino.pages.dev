@@ -133,18 +133,22 @@ tweet.parent && textToHtml(tweet.parent);
             !Astro.props.hideMedia && tweet.photos && tweet.photos.length > 0 && 
                 <div class="media">
                     {tweet.photos.map(photo=>(
-                        <img src={photo.url} width={photo.width} height={photo.height} alt="">
+                        <a href={photo.url} target="_blank">
+                            <img src={photo.url} width={photo.width} height={photo.height} alt="">
+                        </a>
                     ))}
                 </div>
         }   
         {
             !Astro.props.hideMedia && tweet.video &&
-                <video class="media" controls poster={tweet.video.poster}>
-                    {tweet.video.variants.reverse().map(variant => (
-                        // なぜかtag=12があると途中で止まることがある
-                        <source src={variant.src.replace("?tag=12","")} type={variant.type}></source>
-                    ))}
-                </video>
+                <div class="media">
+                    <video controls controlslist="nodownload " poster={tweet.video.poster}>
+                        {tweet.video.variants.reverse().map(variant => (
+                            // なぜかtag=12があると途中で止まることがある
+                            <source src={variant.src.replace("?tag=12","")} type={variant.type}></source>
+                        ))}
+                    </video>
+                </div>
         }
         <a class="footer" href={toTweetUrl(tweet)} target="_blank">{toJpDateTimeString(new Date(tweet.created_at))}</a>
     </div>
@@ -242,13 +246,11 @@ tweet.parent && textToHtml(tweet.parent);
             border: 0.1rem solid var(--border-color);
             border-radius: 0.5rem;
             overflow: hidden;
-            &:has(> *) {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 0.1rem;
-            }
-            > * {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.1rem;
+            > * > img {
                 display: block;
                 width: 100%;
                 height: auto;
