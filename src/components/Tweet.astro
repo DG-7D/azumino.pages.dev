@@ -50,6 +50,28 @@ interface Tweet {
     }
 }
 
+function textToHtml(tweet: Tweet, removeMention = false, removeMediaUrl = false) {
+    for (const url of tweet.entities.urls) {
+        tweet.text = tweet.text.replaceAll(url.url, toATag(url.expanded_url, url.display_url));
+    }
+    for (const mention of tweet.entities.user_mentions) {
+        const mentionText = "@" + mention.screen_name;
+        tweet.text = tweet.text.replaceAll(mentionText, removeMention ? "" : toATag("https://twitter.com/${mention.screen_name}", mentionText));
+    }
+    if (tweet.entities.media) {
+        for (const media of tweet.entities.media) {
+            tweet.text = tweet.text.replaceAll(media.url, removeMediaUrl ? "" : toATag(media.expanded_url, media.display_url));
+        }
+    }
+}
+function toATag(href: string, text: string) {
+    return `<a href="${href}" target="_blank">${text}</a>`;
+}
+function toTweetUrl(tweet: Tweet) {
+    return "https://twitter.com/" + tweet.user.screen_name + "/status/" + tweet.id_str;
+}
+
+
 const urlSearchParams = new URLSearchParams({
     id: Astro.props.id,
     token: Math.random().toString(),
@@ -57,23 +79,8 @@ const urlSearchParams = new URLSearchParams({
 const url = new URL("https://cdn.syndication.twimg.com/tweet-result?" + urlSearchParams.toString());
 const tweet: Tweet = await fetch(url).then(response => response.json());
 
-for (const url of tweet.entities.urls) {
-    tweet.text = tweet.text.replaceAll(url.url, `<a href="${url.expanded_url}" target="_blank">${url.display_url}</a>`);
-}
-if (tweet.entities.media) {
-    for (const media of tweet.entities.media) {
-        tweet.text = tweet.text.replaceAll(media.url, 
-            Astro.props.hideMedia? `<a href="${media.expanded_url}" target="_blank">${media.display_url}</a>` : ""
-        );
-    }
-}
-for(const mention of tweet.entities.user_mentions) {
-    tweet.text = tweet.text.replaceAll("@" + mention.screen_name, "");
-}
-
-function toTweetUrl(tweet: Tweet) {
-    return "https://twitter.com/" + tweet.user.screen_name + "/status/" + tweet.id_str;
-}
+textToHtml(tweet, !Astro.props.hideThread, !Astro.props.hideMedia);
+tweet.parent && textToHtml(tweet.parent);
 ---
 
 <Center>
