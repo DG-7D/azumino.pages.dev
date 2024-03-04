@@ -56,7 +56,7 @@ function textToHtml(tweet: Tweet, removeMention = false, removeMediaUrl = false)
     }
     for (const mention of tweet.entities.user_mentions) {
         const mentionText = "@" + mention.screen_name;
-        tweet.text = tweet.text.replaceAll(mentionText, removeMention ? "" : toATag("https://twitter.com/${mention.screen_name}", mentionText));
+        tweet.text = tweet.text.replaceAll(mentionText, removeMention ? "" : toATag("https://twitter.com/" + mention.screen_name, mentionText));
     }
     if (tweet.entities.media) {
         for (const media of tweet.entities.media) {
