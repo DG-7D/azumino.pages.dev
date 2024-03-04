@@ -1,7 +1,7 @@
 ---
 import Center from "./Center.astro";
 import TwitterIcon from "./TwitterIcon.astro";
-import { toJpDateString } from "@/utils/Date.mjs";
+import { toJpDateTimeString } from "@/utils/Date.mjs";
 
 interface Props {
     id: string;
@@ -146,7 +146,7 @@ tweet.parent && textToHtml(tweet.parent);
                     ))}
                 </video>
         }
-        <a class="footer" href={toTweetUrl(tweet)} target="_blank">{toJpDateString(new Date(tweet.created_at))}</a>
+        <a class="footer" href={toTweetUrl(tweet)} target="_blank">{toJpDateTimeString(new Date(tweet.created_at))}</a>
     </div>
 </Center>
 <style>
