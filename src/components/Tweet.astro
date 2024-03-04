@@ -13,7 +13,9 @@ interface Props {
 interface Tweet {
     created_at: string,
     entities: {
-        // hashtags: ,
+        hashtags: {
+            text: string,
+        }[],
         urls: {
             display_url: string,
             expanded_url: string,
@@ -22,6 +24,7 @@ interface Tweet {
         user_mentions: {
             screen_name: string,
         }[],
+        // symbols: {}[], //謎
         media?: {
             display_url: string,
             expanded_url: string,
@@ -51,6 +54,10 @@ interface Tweet {
 }
 
 function textToHtml(tweet: Tweet, removeMention = false, removeMediaUrl = false) {
+    for (const hashtag of tweet.entities.hashtags) {
+        const hashtagText = "#" + hashtag.text;
+        tweet.text = tweet.text.replaceAll(hashtagText, toATag("https://twitter.com/hashtag/" + hashtag.text, hashtagText));
+    }
     for (const url of tweet.entities.urls) {
         tweet.text = tweet.text.replaceAll(url.url, toATag(url.expanded_url, url.display_url));
     }
