@@ -7,6 +7,12 @@ import { getCollection } from "astro:content";
 const blogCollection = await getCollection("blog");
 const blogPickups = [blogCollection.find(post => post.slug == "20231201-1645"), blogCollection.find(post => post.slug == "20231225-changes"), blogCollection.find(post => post.slug == "20240004-destroyed-keio")];
 
+// TODO: パスを書くのを1度にできないものか(Astro.urlのexportは挙動があやしかった)
+const miscPickups = [
+    { ...(await import("@/pages/misc/govissionu.astro")), url: "/misc/govissionu/" },
+    { ...(await import("@/pages/misc/math-converter.astro")), url: "/misc/math-converter/" },
+];
+
 const links: { title: string; url: URL; description: string }[] = [
     {
         title: "wagamachichofu.mp3",
@@ -92,14 +98,27 @@ const links: { title: string; url: URL; description: string }[] = [
     <h2>ブログ</h2>
     <dl class="inline">
         {
-            blogPickups.map(post => <dt><a href={`/blog/${post!.slug}/`}>{post!.data.title}</a></dt><dd>{post!.data.description}</dd>)
+            // prettier-ignore
+            blogPickups.map(post => (
+                <>
+                    <dt><a href={`/blog/${post!.slug}/`}>{post!.data.title}</a></dt>
+                    <dd>{post!.data.description}</dd>
+                </>
+            ))
         }
         <dt><a href="/blog/">もっと見る</a></dt><dd>記事一覧</dd>
     </dl>
     <h2>その他</h2>
     <dl class="inline">
-        <dt><a href="/misc/govissionu/">ゴヴィッショヌ揃え</a></dt><dd>ゴヴィッショヌ揃えをJavaScriptで実装してみた。</dd>
-        <dt><a href="/misc/math-converter/">数学用英数字記号変換器</a></dt><dd>通常のASCII英数字列から数学用英数字記号を生成するツールです。</dd>
+        {
+            // prettier-ignore
+            miscPickups.map(page => (
+                <>
+                    <dt><a href={page.url}>{page.title}</a></dt>
+                    <dd>{page.description}</dd>
+                </>
+            ))
+        }
         <dt><a href="/misc/">もっと見る</a></dt><dd>そのほか</dd>
     </dl>
     <h2>リンク集</h2>
