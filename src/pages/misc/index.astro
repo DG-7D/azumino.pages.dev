@@ -1,15 +1,26 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-// TODO: ここも説明とかつける
+const pages = [
+    { ...(await import("./govissionu.astro")), url: "govissionu/" },
+    // { ...(await import("./sight.astro")), url: "sight/" }, // リセットCSSとかで上書きされてしまう？
+    { title: "Webカメラ照準器", description: "スマホなどを照準器にできるWebアプリです。", url: "sight/" },
+    { ...(await import("./web-camera-test.astro")), url: "web-camera-test/" },
+    { ...(await import("./math-converter.astro")), url: "math-converter/" },
+    { ...(await import("./alt-x.astro")), url: "alt-x/" },
+];
 ---
 
 <BaseLayout title="その他" description="その他のツールなどの制作物やもろもろのページです。">
     <p>そのほかの作ったツールとか。</p>
-    <ul>
-        <li><a href="govissionu/">ゴヴィッショヌ揃え</a></li>
-        <li><a href="sight/">Webカメラ照準器</a></li>
-        <li><a href="web-camera-test/">Webカメラテストページ</a></li>
-        <li><a href="math-converter/">数学用英数字記号変換器</a></li>
-        <li><a href="alt-x/">コードポイントから文字に変換するやつ</a></li>
-    </ul>
+    <dl>
+        {
+            // prettier-ignore
+            pages.map(page => (
+                <>
+                    <dt><a href={page.url}>{page.title}</a></dt>
+                    <dd>{page.description}</dd>
+                </>
+            ))
+        }
+    </dl>
 </BaseLayout>
