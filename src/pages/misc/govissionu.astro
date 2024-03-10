@@ -1,9 +1,11 @@
 ---
+export const title = "ゴヴィッショヌ揃え";
+export const description = "ゴヴィッショヌ揃えをJavaScriptで実装してみた。";
 import A from "@/components/A.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 ---
 
-<BaseLayout title="ゴヴィッショヌ揃え" description="ゴヴィッショヌ揃えをJavaScriptで実装してみた。">
+<BaseLayout title={title} description={description}>
     <p><a href="http://checoole.s1009.xrea.com/govissionu/make_govissionu.php" target="_blank">ゴヴィッショヌ揃え</a>をJavaScriptで実装してみた。文字がだばーっと出るようにしたかったけど重くなるのでやめた。ほかの実装: <A href="https://yuino.dev/works/govissionu/">ゆい</A>、<A href="https://akaakuhub.github.io/govisshonu/">あかあく</A></p>
     <div id="govBox" class="bordered"></div>
     <p id="govResult"><span id="govLength"></span>文字目でｺﾞｳﾞｨｯｼｮﾇが完成しました！ <a id="govTweet" href="" target="_blank">ツイート</a> <button class="like-link" id="reGov">もういちど</button></p>
