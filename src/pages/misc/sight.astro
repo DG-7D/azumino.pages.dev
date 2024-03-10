@@ -1,4 +1,6 @@
 ---
+export const title = "Webカメラ照準器";
+export const description = "スマホなどを照準器にできるWebアプリです。";
 import "@/styles/reset.css";
 import "@/styles/campbell.css";
 import Head from "@/components/Head.astro";
@@ -8,7 +10,7 @@ import Head from "@/components/Head.astro";
 
 <!doctype html>
 <html lang="ja">
-    <Head title="Webカメラ照準器" description="スマホなどを照準器にできるWebアプリです。">
+    <Head title={title} description={description}>
         <link rel="manifest" href="manifest.webmanifest" />
     </Head>
     <body>
