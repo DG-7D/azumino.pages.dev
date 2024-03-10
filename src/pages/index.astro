@@ -2,6 +2,10 @@
 import A from "@/components/A.astro";
 import Changes from "@/components/Changes.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+const blogCollection = await getCollection("blog");
+const blogPickups = [blogCollection.find(post => post.slug == "20231201-1645"), blogCollection.find(post => post.slug == "20231225-changes"), blogCollection.find(post => post.slug == "20240004-destroyed-keio")];
 
 const links: { title: string; url: URL; description: string }[] = [
     {
@@ -87,9 +91,9 @@ const links: { title: string; url: URL; description: string }[] = [
     </dl>
     <h2>ブログ</h2>
     <dl class="inline">
-        <dt><a href="/blog/20231201-1645/">「1645」を音割れさせてみた</a></dt><dd>「1645」でおなじみの調布市の防災無線メロディ「わが町調布」の音源を実際の放送のように加工したり、音源の変遷について調査してみたりした話。</dd>
-        <dt><a href="/blog/20231225-changes/">Astroで更新履歴を自動生成してみた</a></dt><dd>Astroでサイトの更新履歴をGitのコミット履歴から自動生成してみた話。</dd>
-        <dt><a href="/blog/20240004-destroyed-keio/">京王が滅びた世界で調布にたどり着く方法</a></dt><dd>京王線が不通になったとき、別のルートから調布駅にたどり着く方法をまとめた話。</dd>
+        {
+            blogPickups.map(post => <dt><a href={`/blog/${post!.slug}/`}>{post!.data.title}</a></dt><dd>{post!.data.description}</dd>)
+        }
         <dt><a href="/blog/">もっと見る</a></dt><dd>記事一覧</dd>
     </dl>
     <h2>その他</h2>
