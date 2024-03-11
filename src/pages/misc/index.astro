@@ -1,12 +1,12 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+// TODO: 自動取得する
 const pages = [
-    { ...(await import("./govissionu.astro")), url: "govissionu/" },
-    // { ...(await import("./sight.astro")), url: "sight/" }, // リセットCSSとかで上書きされてしまう？
-    { title: "Webカメラ照準器", description: "スマホなどを照準器にできるWebアプリです。", url: "sight/" },
-    { ...(await import("./web-camera-test.astro")), url: "web-camera-test/" },
-    { ...(await import("./math-converter.astro")), url: "math-converter/" },
-    { ...(await import("./alt-x.astro")), url: "alt-x/" },
+    { title: "ゴヴィッショヌ揃え", url: "govissionu/", description: "ゴヴィッショヌ揃えをJavaScriptで実装してみた。" },
+    { title: "Webカメラ照準器", url: "sight/", description: "スマホなどを照準器にできるWebアプリです。" },
+    { title: "Webカメラテストページ", url: "web-camera-test/", description: "Webカメラ映像取得のパラメータをいろいろいじるページです。" },
+    { title: "数学用英数字記号変換器", url: "math-converter/", description: "Webカメラ映像取得のパラメータをいろいろいじるページです。" },
+    { title: "コードポイントから文字に変換するやつ", url: "alt-x/", description: "入力したUnicodeコードポイントに対応する文字を表示するツールです。" },
 ];
 ---
 

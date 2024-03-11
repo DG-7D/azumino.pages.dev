@@ -7,10 +7,10 @@ import { getCollection } from "astro:content";
 const blogCollection = await getCollection("blog");
 const blogPickups = [blogCollection.find(post => post.slug == "20231201-1645"), blogCollection.find(post => post.slug == "20231225-changes"), blogCollection.find(post => post.slug == "20240004-destroyed-keio")];
 
-// TODO: パスを書くのを1度にできないものか(Astro.urlのexportは挙動があやしかった)
+// TODO: タイトル・説明を自動取得にする(importするとこわれる)
 const miscPickups = [
-    { ...(await import("@/pages/misc/govissionu.astro")), url: "/misc/govissionu/" },
-    { ...(await import("@/pages/misc/math-converter.astro")), url: "/misc/math-converter/" },
+    { title: "ゴヴィッショヌ揃え", url: "/misc/govissionu/", description: "ヴィッショヌ揃えをJavaScriptで実装してみた。" },
+    { title: "数学用英数字記号変換器", url: "/misc/math-converter/", description: "通常のASCII英数字列から数学用英数字記号を生成するツールです。" },
 ];
 
 const links: { title: string; url: URL; description: string }[] = [
