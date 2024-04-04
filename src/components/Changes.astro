@@ -16,7 +16,7 @@ execSync(`git log --format=%ad${separator}%s --date=short --first-parent`)
     .split("\n")
     .forEach(line => {
         const [date, message] = line.split(separator);
-        if (!date || !message || message.startsWith("_")) {
+        if (!date || !message || message.startsWith("_") || message.startsWith("Merge")) {
             return;
         }
         if (!history.has(date) && history.size == Astro.props.count) {
