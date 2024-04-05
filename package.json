@@ -10,9 +10,9 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/mdx": "^2.2.1",
-    "@astrojs/sitemap": "^3.1.1",
-    "astro": "^4.5.8",
+    "@astrojs/mdx": "^2.2.4",
+    "@astrojs/sitemap": "^3.1.2",
+    "astro": "^4.5.16",
     "astro-auto-import": "^0.4.2",
     "astro-robots-txt": "^1.0.0",
     "astro-seo": "^0.8.3",
@@ -22,7 +22,7 @@
   },
   "devDependencies": {
     "@types/jsdom": "^21.1.6",
-    "@types/node": "^20.11.30",
-    "sass": "^1.72.0"
+    "@types/node": "^20.12.4",
+    "sass": "^1.74.1"
   }
 }
