@@ -29,7 +29,7 @@ VPNとは、その名の通り仮想的にLANケーブルを大学から家ま�
 
 ![](./control.png "IPv6の無効化とデフォルトゲートウェイの無効化をした図")
 
-次にPowerShell(コマンドプロンプトではなく)を開き以下のコマンドを入力する。`UEC`の部分は上で設定したVPN接続の名前。これで電通大および理科年表への通信のみVPN経由に設定された。
+次にPowerShell(コマンドプロンプトではなく)を開き以下のコマンドを入力する。`UEC`の部分は上で設定したVPN接続の名前。これで電通大および理科年表への通信のみVPN経由に設定された。それ以外のサービスに学内回線から接続する必要が生じた場合は、IPアドレスの範囲を調べて(後述)同様に追加すればよい。
 
 ```powershell
 Add-VpnConnectionRoute 'UEC' -DestinationPrefix 130.153.0.0/16
@@ -45,7 +45,7 @@ Add-VpnConnectionRoute 'UEC' -DestinationPrefix 202.255.56.0/22
 
 ### ショートカット作成
 
-`rasphone.exe -d "UEC"`とかにショートカットを貼れば叩くだけでVPN接続できる。タスクスケジューラとかでログオン時に実行するようにすれば自動接続することもできる。
+`rasphone.exe -d "UEC"`とかにショートカットを貼れば叩くだけでVPN接続できる。タスクスケジューラとかでログオン時に実行するようにすれば自動接続することもできる。なお、同時に接続できる端末は一つまでのようなので、家のPCをつけっぱなしでつなぎっぱなしにすると外出先で(そうそう使わないと思うけど)接続できなかったりするので注意。
 
 ## 設定(macOS, iOS, iPadOS)
 
@@ -93,8 +93,10 @@ Add-VpnConnectionRoute 'UEC' -DestinationPrefix 202.255.56.0/22
 
 <dl>
     <dt>202.255.56.0/22</dt>
-    <dd>理科年表プレミアムなどのIPアドレス。[WHOIS](https://whois.nic.ad.jp/cgi-bin/whois_gw?key=202.255.56.00)で確認できる。</dd>
+    <dd>理科年表プレミアムを提供する丸善雄松堂の所有するIPアドレス。[WHOIS](https://whois.nic.ad.jp/cgi-bin/whois_gw?key=202.255.56.00)で確認できる。</dd>
 </dl>
+
+ちなみに、これらのIPアドレスの範囲は、まず`nslookup`等でIPアドレスを取得し、それを[管理情報検索サービス](https://www.cman.jp/network/support/ip.html)にぶちこむことで得ることができた。
 
 ## あとがき
 
