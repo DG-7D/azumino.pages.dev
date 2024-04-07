@@ -63,6 +63,8 @@ Add-VpnConnectionRoute 'UEC' -DestinationPrefix 202.255.56.0/22
 
 ## 接続確認
 
+学内や学外に対する経路がどうなっているかは`tracert`でそれぞれ見てみれば分かる。他に、実際にサービスに接続して確認する方法を紹介する。
+
 学内ネットワークに対してVPN経由になっていれば、[ITCポータル](https://www.cc.uec.ac.jp/portal/)で統合認証ログインする際二要素認証を求められず、また、「利用中のネットワーク：学内ネットワーク」と表示される。
 
 学外ネットワークに対しては、[minsoku.net](https://minsoku.net/hostname_confirmations)などでホスト名を確認して`uec.ac.jp`と表示されればVPNと大学経由、`kddi.ne.jp`などそれ以外なら直接アクセス。
