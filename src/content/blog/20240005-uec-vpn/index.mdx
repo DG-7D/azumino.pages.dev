@@ -47,6 +47,8 @@ Add-VpnConnectionRoute 'UEC' -DestinationPrefix 202.255.56.0/22
 
 `rasphone.exe -d "UEC"`とかにショートカットを貼れば叩くだけでVPN接続できる。タスクスケジューラとかでログオン時に実行するようにすれば自動接続することもできる。なお、同時に接続できる端末は一つまでのようなので、家のPCをつけっぱなしでつなぎっぱなしにすると外出先で(そうそう使わないと思うけど)接続できなかったりするので注意。
 
+追記: `%appdata%\Microsoft\Network\Connections\Pbk`の中にある`rasphone.pbk`をテキストエディタで開き、`PreviewUserPw=1`の数字を`0`に書き換えるとパスワード入力画面をスキップできる。
+
 ## 設定(macOS, iOS, iPadOS)
 
 「すべての信号を送信」をオフにするとVPNサーバと同じネットワークだけがVPN経由になるとされているがならない。謎。
