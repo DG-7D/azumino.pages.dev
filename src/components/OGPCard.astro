@@ -1,5 +1,6 @@
 ---
-import { JSDOM } from "jsdom";
+import jsdom from "jsdom";
+const { JSDOM } = jsdom;
 import Center from "./Center.astro";
 
 interface Props {
@@ -10,7 +11,7 @@ const url = new URL(Astro.props.url);
 
 let ogpProperties: { [key: string]: string | undefined } = {};
 try {
-    const doc = (await JSDOM.fromURL(url.toString())).window.document;
+    const doc = (await JSDOM.fromURL(url.toString(), { virtualConsole: new jsdom.VirtualConsole() })).window.document;
     for (const metaTag of doc.getElementsByTagName("meta")) {
         const property = metaTag.getAttribute("property");
         const content = metaTag.getAttribute("content");
@@ -21,7 +22,7 @@ try {
     ogpProperties["title"] ??= doc.getElementsByTagName("title")[0]?.textContent ?? undefined;
     ogpProperties["description"] ??= doc.getElementsByName("description")[0]?.getAttribute("content") ?? undefined;
 } catch (error) {
-    console.log(error);
+    throw error;
 }
 ---
 
