@@ -10,8 +10,7 @@ const url = new URL(Astro.props.url);
 
 let ogpProperties: { [key: string]: string | undefined } = {};
 try {
-    const responseText = await (await fetch(url)).text();
-    const doc = new JSDOM(responseText).window.document;
+    const doc = (await JSDOM.fromURL(url.toString())).window.document;
     for (const metaTag of doc.getElementsByTagName("meta")) {
         const property = metaTag.getAttribute("property");
         const content = metaTag.getAttribute("content");
