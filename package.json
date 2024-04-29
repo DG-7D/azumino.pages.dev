@@ -22,7 +22,7 @@
   },
   "devDependencies": {
     "@types/jsdom": "^21.1.6",
-    "@types/node": "^20.12.4",
-    "sass": "^1.74.1"
+    "@types/node": "^20.12.7",
+    "sass": "^1.75.0"
   }
 }
