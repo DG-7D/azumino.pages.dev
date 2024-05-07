@@ -82,6 +82,7 @@ function toTweetUrl(tweet: Tweet) {
     return "https://twitter.com/" + tweet.user.screen_name + "/status/" + tweet.id_str;
 }
 
+console.log("Tweet: " + Astro.props.id)
 
 const urlSearchParams = new URLSearchParams({
     id: Astro.props.id,

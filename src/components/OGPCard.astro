@@ -6,6 +6,8 @@ interface Props {
     url: string;
 }
 
+console.log("OGPCard: " + Astro.props.url);
+
 const url = new URL(Astro.props.url);
 fetch(url, { method: "HEAD" }).then(response => {
     if (!response.ok) {
