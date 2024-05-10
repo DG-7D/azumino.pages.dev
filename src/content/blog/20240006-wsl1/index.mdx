@@ -1,0 +1,75 @@
+---
+publish: true
+title: "rootfsイメージからWSL1のUbuntuをインストールしてみた"
+publishDate: 2024-05-10 21:00:00 +09:00
+description: "Microsoft Storeからではなく公式のrootfsイメージからWSL1のUbuntuをインストールしてみた話。"
+---
+
+ダウンロードしたrootfsイメージからWSL1を設定する手順の自分向けメモ。Microsoft Storeから入れるのに対し、複数同じディストリビューションを使える、実体を置く場所を選べるなどの利点がある。WSLとして提供されてないディストリビューションを使うこともできるっぽい? また、WSL1にはWindows側ファイルシステムへのアクセスが速い、ネットワーク周りがキモくない、メモリを馬鹿食いしない、技術的に面白い(、あんまよくないらしいけどWindows側から直接ファイルを覗ける)などの利点がある。
+
+## WSLをセットアップする
+
+使わないWSL2のカーネルが降ってこないようにWindows Updateの「その他のMicrosoft製品の更新プログラムを受け取る」をオフにする。
+
+WSLを有効にするには「Linux用Windowsサブシステム」と「仮想マシンプラットフォーム」を有効にする。
+
+## イメージをダウンロードする
+
+[公式ページ](https://cloud-images.ubuntu.com/wsl/)からWSL向けrootfsをダウンロードする。24.04 LTSのなら`Invoke-WebRequest -Uri https://cloud-images.ubuntu.com/wsl/noble/current/ubuntu-noble-wsl-amd64-wsl.rootfs.tar.gz -OutFile Ubuntu.tar.gz`とかで落ちてくる。
+
+## インストールする
+
+ディストリビューション名、ディレクトリ名やファイル名は例。ヘルプには「tarファイル」と書いてあるが.tar.gzのままでいける。たぶんここのバージョン指定以外はWSL2でも同じようにいける。
+
+```powershell
+wsl --import Ubuntu D:\WSL\Ubuntu D:\Downloads\Ubuntu.tar.gz --version 1
+```
+
+お好みで`wsl -s Ubuntu`などとしてデフォルトに設定する。
+
+## ユーザ作成
+
+WSLに入って作業する。デフォルトにしてない場合は`wsl -d Ubuntu`などと指定する。rootしかユーザがいない状態なので作る。ここはディストリビューションによって異なることがある気がする。ユーザ名は`username`とした例。
+
+```bash
+useradd -m username
+passwd username
+usermod -aG sudo username
+```
+
+次に、WSLのデフォルトユーザを作ったユーザにする。`/etc/wsl.conf`に以下のように追記する。
+
+```
+[user]
+default=username
+```
+
+これを反映するために`exit`で抜け、`wsl -t Ubuntu`で終了し、`wsl`でもう一度入る。成功していれば作ったユーザでログインされる。
+
+## もろもろ設定
+
+なぜかシェルが`sh`になっているので直す。
+
+```sh
+chsh -s /usr/bin/bash
+```
+
+aptのリポジトリのミラーを設定する。24.04からはdeb822形式になってくれたおかげで書き換えるのは1行でよく、呪文を唱える必要はない。
+
+```bash
+sudo nano /etc/apt/sources.list.d/ubuntu.sources
+# URIsの行を書き換える
+sudo apt update
+sudo apt upgrade
+```
+
+日本語化する。
+
+```bash
+sudo apt install language-pack-ja
+sudo update-locale LANG=ja_JP.utf8
+```
+
+プロンプトがカラフルなほうがたのしいので`.bashrc`の`force_color_prompt=yes`のコメントアウトを外す。
+
+あとは何か思いついたら追記する。
