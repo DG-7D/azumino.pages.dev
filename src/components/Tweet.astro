@@ -1,4 +1,5 @@
 ---
+import { z } from "astro/zod";
 import Center from "./Center.astro";
 import TwitterIcon from "./TwitterIcon.astro";
 import { toJpDateTimeString } from "@/utils/Date.mjs";
@@ -10,50 +11,54 @@ interface Props {
 }
 
 // 使わないのは書いてない
-interface Tweet {
-    created_at: string,
-    entities: {
-        hashtags: {
-            text: string,
-        }[],
-        urls: {
-            display_url: string,
-            expanded_url: string,
-            url: string,
-        }[],
-        user_mentions: {
-            screen_name: string,
-        }[],
-        // symbols: {}[], //謎
-        media?: {
-            display_url: string,
-            expanded_url: string,
-            url: string,
-        }[]
-    },
-    id_str: string,
-    text: string,
-    user: {
-        id_str: string,
-        name: string,
-        profile_image_url_https: string,
-        screen_name: string,
-    },
-    parent?: Tweet,
-    photos?: {
-        expandedUrl: string,
-        url: string,
-        width: number,
-        height: number,
-    }[],
-    video?: {
-        aspectRatio: number[],
-        poster: string,
-        variants: {type:string,src:string}[],
-    }
-}
+const tweetSchemeWithoutParent = z.object({
+    created_at: z.string(),
+    entities: z.object({
+        hashtags: z.object({
+            text: z.string(),
+        }).array(),
+        urls: z.object({
+            display_url: z.string(),
+            expanded_url: z.string().url(),
+            url: z.string().url(),
+        }).array(),
+        user_mentions: z.object({
+            screen_name: z.string(),
+        }).array(),
+        // symbols: z.object({}).array(), //謎
+        media: z.object({
+            display_url: z.string(),
+            expanded_url: z.string().url(),
+            url: z.string().url(),
+        }).array().optional(),
+    }),
+    id_str: z.string(),
+    text: z.string(),
+    user: z.object({
+        id_str: z.string(),
+        name: z.string(),
+        profile_image_url_https: z.string().url(),
+        screen_name: z.string(),
+    }),
+    // parent: ,
+    photos: z.object({
+        expandedUrl: z.string().url(),
+        url: z.string().url(),
+        width: z.number(),
+        height: z.number(),
+    }).array().optional(),
+    video: z.object({
+        aspectRatio: z.number().array().length(2),
+        poster: z.string(),
+        variants: z.object({
+            type: z.string(),
+            src: z.string().url(),
+        }).array(),
+    }).optional(),
+})
+const tweetScheme = tweetSchemeWithoutParent.extend({parent: tweetSchemeWithoutParent.optional()})
 
-function textToHtml(tweet: Tweet, removeFirstMention = false, removeMediaUrl = false) {
+function textToHtml(tweet: z.infer<typeof tweetScheme>, removeFirstMention = false, removeMediaUrl = false) {
     for (const hashtag of tweet.entities.hashtags) {
         const hashtagText = "#" + hashtag.text;
         tweet.text = tweet.text.replaceAll(hashtagText, toATag("https://twitter.com/hashtag/" + hashtag.text, hashtagText));
@@ -78,7 +83,7 @@ function textToHtml(tweet: Tweet, removeFirstMention = false, removeMediaUrl = f
 function toATag(href: string, text: string) {
     return `<a href="${href}" target="_blank">${text}</a>`;
 }
-function toTweetUrl(tweet: Tweet) {
+function toTweetUrl(tweet: z.infer<typeof tweetScheme>) {
     return "https://twitter.com/" + tweet.user.screen_name + "/status/" + tweet.id_str;
 }
 
@@ -89,7 +94,7 @@ const urlSearchParams = new URLSearchParams({
     token: Math.random().toString(),
 });
 const url = new URL("https://cdn.syndication.twimg.com/tweet-result?" + urlSearchParams.toString());
-const tweet: Tweet = await fetch(url).then(response => response.json());
+const tweet = tweetScheme.parse(await fetch(url).then(response => response.json()))
 
 textToHtml(tweet, tweet.parent ? true : false, !Astro.props.hideMedia); // 返信先がある場合は先頭@id非表示
 tweet.parent && textToHtml(tweet.parent);
