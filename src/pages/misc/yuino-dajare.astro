@@ -19,7 +19,7 @@ const database = "https://raw.githubusercontent.com/DG-7D/YuinoDajare/main/dajar
 const tweets = databaseScheme.parse(await fetch(database).then(response => response.json())).tweets.reverse();
 ---
 
-<BaseLayout title="ゆいのだじゃれデータベース" description="ゆいのだじゃれデータベースをもとにゆいくんのだじゃれツイートを一覧表示します。">
+<BaseLayout title="ゆいのだじゃれデータベース" description="ゆいのだじゃれデータベースのツイートを一覧表示します。">
     <p>ゆいくんのだじゃれツイートをまとめた<A href="https://github.com/DG-7D/YuinoDajare">ゆいのだじゃれデータベース</A>を一覧表示します。デプロイごとに静的生成しているため最新とは限りません。本人の許可を得て公開しています。</p>
     <Center>
         <div class="tweets">
