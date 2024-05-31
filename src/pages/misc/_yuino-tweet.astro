@@ -1,0 +1,70 @@
+---
+import A from "@/components/A.astro";
+
+interface Props {
+    date: string;
+    id: string;
+    text: string;
+}
+
+const icon = "https://pbs.twimg.com/profile_images/1735918546138574848/or71lsUd.jpg";
+const name = "ゆい";
+const screenName = "yui__yuuki";
+---
+
+<div class="tweet">
+    <img class="icon" src={icon} alt="" />
+    <div class="author">
+        <A href={"https://twitter.com/" + screenName}><span class="name">{name}</span> @{screenName}</A>
+        ·
+        <A href={`https://twitter.com/${screenName}/status/${Astro.props.id}`}>{Astro.props.date}</A>
+    </div>
+    <div class="text" set:html={Astro.props.text.replaceAll("\n","<br>")} />
+</div>
+
+<style>
+    div.tweet {
+        --main-color: rgb(247, 249, 249);
+        --sub-color: rgb(139, 152, 165);
+        --link-color: rgb(29, 115, 240);
+        --background-color: rgb(21, 32, 43);
+        --border-color: rgb(56, 68, 77);
+
+        @media (prefers-color-scheme: light) {
+            --main-color: rgb(15, 20, 15);
+            --sub-color: rgb(83, 100, 113);
+            --background-color: rgb(255, 255, 255);
+            --border-color: rgb(239, 243, 244);
+        }
+
+        padding: 0.5rem 1rem;
+        background-color: var(--background-color);
+        display: grid;
+        grid-template:
+            "icon author" 1lh
+            "icon text" 1fr / 3rem 1fr;
+        gap: 0 0.5rem;
+        > *.icon {
+            grid-area: icon;
+            width: 100%;
+            border-radius: 0.5rem;
+        }
+        > *.author {
+            grid-area: author;
+            color: var(--sub-color);                
+            a {
+                color: inherit;
+                text-decoration: none;
+                &:hover {
+                    text-decoration: underline;
+                }
+                *.name {
+                    color: var(--main-color);
+                }
+        }
+        > *.text {
+            grid-area: text;
+            white-space: pre-wrap;
+        }
+    }
+</style>
