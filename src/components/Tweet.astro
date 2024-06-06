@@ -94,7 +94,16 @@ const urlSearchParams = new URLSearchParams({
     token: Math.random().toString(),
 });
 const url = new URL("https://cdn.syndication.twimg.com/tweet-result?" + urlSearchParams.toString());
-const tweet = tweetScheme.parse(await fetch(url).then(response => response.json()))
+const tweet = tweetScheme.parse(await (async ()=>{
+    while (true) {
+        try {
+            return await fetch(url).then(response => response.json())
+        } catch (error) {
+            console.error(error);
+            await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+    }
+})());
 
 textToHtml(tweet, tweet.parent ? true : false, !Astro.props.hideMedia); // 返信先がある場合は先頭@id非表示
 tweet.parent && textToHtml(tweet.parent);
