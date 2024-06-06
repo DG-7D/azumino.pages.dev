@@ -14,7 +14,18 @@ fetch(url, { method: "HEAD" }).then(response => {
         throw new Error(`[${response.status}] ${url.toString()}`);
     }
 });
-const metadata = await fetchSiteMetadata(url, { suppressAdditionalRequest: true });
+
+const metadata = await (async ()=>{
+    while (true) {
+        try {
+            return await fetchSiteMetadata(url, { suppressAdditionalRequest: true });
+        } catch (error) {
+            console.error(error);
+            await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+    }
+})();
+    
 metadata.image && (metadata.image.alt ??= "");
 ---
 
