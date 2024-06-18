@@ -1,0 +1,45 @@
+---
+publish: false
+title: "VSCodeでArduinoをいじってみた"
+publishDate: 9999-12-31 00:00:00 +09:00
+description: "せつめい"
+---
+
+Arduino IDEを使うのが定番だと思われるが、エディタが色のつくメモ帳くらいの機能しかなくて厳しすぎるので、使い慣れたVSCodeで書けるようにする。
+
+## 公式ドキュメントを読む
+
+初めて触るので[Arduinoの公式ドキュメント](https://docs.arduino.cc/learn/starting-guide/getting-started-arduino/)を読んでだいたいの流れを把握する。
+
+## 拡張機能の導入
+
+Microsoftの[Arduino](https://marketplace.visualstudio.com/items?itemName=vsciot-vscode.vscode-arduino)拡張機能をインストールする。
+
+## 拡張機能の設定
+
+拡張機能の設定を開き、`Use Arduino Cli`を有効にして、拡張機能に同梱のツールを使うようにする。`Path`とか`Command Path`とかはArduino IDEと連携するための設定だが、古いIDEしか使えないらしいので使わない。
+
+Ctrl+Shift+Pでコマンドパレットを開き、`>Arduino: Board Manager`を実行する。1回目は`command 'arduino.showBoardManager' not found`と出るが、これによって拡張機能が起動するのでもう一度叩けば設定画面が出る。
+
+使用するボードを含む項目、今回はArduino Nanoなので`Arduino AVR Boards`を`Install`する。
+
+## プログラムを書く
+
+適当なフォルダを作ってVSCodeで開き、コマンドパレットで`>Arduino: Initialize`を実行する。ファイル名を聞かれるので`(フォルダ名).ino`とし、ボードを聞かれるので今回は`Arduino Nano`を選択する。これで`(フォルダ名).ino`ファイルと`.vscode/arduino.json`, `.vscode/c_cpp_properties.json`が生成される。なお、`.ino`ファイルの名前をフォルダ名と同じにしないと後者の生成でコケる。
+
+使用するライブラリをインストールする。`>Arduino: Library Manager`で設定画面を開き、今回は`Servo`を`Install`する。次に`>Arduino: Rebuild IntelliSense Configuration`を実行すると、`c_cpp_properties.json`のincludePathが更新される。なお、ライブラリの実体はなぜかドキュメントフォルダに保存される。
+
+あとは適当にプログラムを書く。今回は以下のように単純に連続回転サーボを回すプログラムを書いた。
+
+```ino
+const 
+```
+
+
+## 書き込む
+
+ゆいくんの用意したArduino Nano互換のよく分からないボードを使う。USB接続し、Windows Updateをかけるとドライバが降ってくる。
+
+
+
+## あとがき
