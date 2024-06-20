@@ -1,0 +1,67 @@
+---
+publish: true
+title: "VSCodeでArduinoをいじってみた"
+publishDate: 2024-06-20 21:45:00 +09:00
+description: "Arduino IDEが使いにくいのでVSCodeでArduinoの開発ができるよう環境構築をする話。"
+---
+
+諸事情でArduinoを触ってみることになったので環境構築をする。Arduino IDEを使うのが定番だと思われるが、余計なアプリをインストールしたくないし、そもそもArduino IDEのエディタが色のつくメモ帳くらいの機能しかなくて厳しすぎるので、使い慣れたVSCodeで書けるようにする。
+
+## 公式ドキュメントを読む
+
+Arduinoを初めて触るので[公式ドキュメント](https://docs.arduino.cc/learn/)をざっと読み通してだいたいの流れを把握する。やたら重いしiPhoneから見ると挙動が不安定。静的生成しろ。
+
+## 拡張機能の導入
+
+Microsoftの[Arduino](https://marketplace.visualstudio.com/items?itemName=vsciot-vscode.vscode-arduino)拡張機能をインストールする。
+
+## 拡張機能の設定
+
+拡張機能の設定を開き、`Use Arduino Cli`を有効にして、拡張機能に同梱のArduino CLIを使うようにする。`Path`とか`Command Path`は空欄にする。
+
+Ctrl+Shift+Pでコマンドパレットを開き、`>Arduino: Board Manager`を実行する。1回目は`command 'arduino.showBoardManager' not found`と出るが、これによって拡張機能が起動するのでもう一度叩けば設定画面が出る。使用するボードを含む項目を`Install`する。今回はArduino Nanoなので`Arduino AVR Boards`を選んだ。
+
+なお、`Path`とか`Command Path`とかに`arduino_debug.exe`だかなんだかを指定しろとしているページが多いが、最新のArduino IDE(2.x)にそんなものはない。これは古いIDEと連携するための設定であり、使わずに同梱のArduino CLIを使うことが推奨されている。
+
+## スケッチを書く
+
+適当なフォルダを作ってVSCodeで開き、コマンドパレットで`>Arduino: Initialize`を実行する。ファイル名を聞かれるので`(フォルダ名).ino`とし、ボードを聞かれるので今回は`Arduino Nano`を選択する。これで`(フォルダ名).ino`ファイルと`.vscode/arduino.json`, `.vscode/c_cpp_properties.json`が生成される。なお、`.ino`ファイルの名前をフォルダ名と同じにしないと後者の生成でコケる。
+
+使用するライブラリをインストールする。`>Arduino: Library Manager`で設定画面を開き、今回は`Servo`を`Install`する。次に`>Arduino: Rebuild IntelliSense Configuration`を実行すると、`c_cpp_properties.json`のincludePathが更新される。なお、ライブラリの実体はArduino IDEを使った場合と同じくドキュメントフォルダに保存される。
+
+あとはプログラムを書く。Arduino IDEとは違い補完が効くので快適に書ける。C/C++の環境はもともとあったのでないとどうなるのかは知らない。今回は以下のように単純にボタンを押している間連続回転サーボ(FS90R)を回すプログラムを書いた。
+
+```c
+#include <Servo.h>
+
+Servo myservo;
+
+const int servoPin = 9;
+const int button1Pin = 2;
+const int button2Pin = 3;
+
+int button1State = 0;
+int button2State = 0;
+
+void setup() {
+    myservo.attach(servoPin);
+    pinMode(button1Pin, INPUT_PULLUP);
+    pinMode(button2Pin, INPUT_PULLUP);
+}
+
+void loop() {
+    button1State = digitalRead(button1Pin);
+    button2State = digitalRead(button2Pin);
+    myservo.writeMicroseconds(1500 + 800 * button1State - 800 * button2State);
+}
+```
+
+## 書き込む
+
+今回はMaker Nanoとかいう互換品を使う。Windowsの場合は、USB接続してWindows Updateをかけるとドライバが降ってくる。macOSだと刺したらそのままいけた。
+
+認識されたら`>Arduino: Select Serial Port`を実行して該当のポートを選ぶ。`>Arduino: Upload`でArduinoにプログラムが書き込まれる。
+
+## あとがき
+
+C/C++はめんどくさそうだし慣れてないのでいやだなぁと思っていたが、単純なことをする範囲なら思ったよりすんなりできた。少なくともPythonよりはマシ。また、マイコンはいちいち書き込んだりなんだりでめんどくさそうだなと思っていたので、最初はラズパイでなんとかしようとしていたが、起動を待たなくていいしLANに繋げなくていいしなによりPythonを書かなくていいのでArduinoのほうがだんぜん良かった。
