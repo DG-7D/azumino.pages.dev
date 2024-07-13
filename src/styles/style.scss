@@ -167,13 +167,13 @@ body {
         >dt {
             // display: inline list-item; // なぜかSafariだと動かない
             // list-style: "–\2002" inside;
+            margin-left: -2em;
             display: inline;
 
             &::before {
                 content: "–\2002";
             }
 
-            margin-left: -2em;
 
             &::after {
                 content: " : ";
