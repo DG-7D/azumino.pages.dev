@@ -1,0 +1,61 @@
+---
+publish: true
+title: "PlatformIOでArduino as ISP経由でブートローダを焼いてみた"
+publishDate: 2024-08-25 13:45:00 +09:00
+description: "Arduino IDEを使わずにPlatformIOのみでArduino as ISPを作り、そこからブートローダを焼いてみた話。"
+---
+
+Arduino UNO(の互換機)がなにもしてないのに壊れてUSB経由で書き込めなくなった(デバイスとして認識するが書き込みが失敗する)ので、別のArduinoからブートローダを修復してみた。Arduino IDEは使いたくないのでPlatformIOからやってみたが、まとまった情報が得られず地味に詰まったので備忘録として残しておく。
+
+## Arduino as ISPを作る
+
+PlatformIOでプロジェクトを作り、[ArduinoISP.ino](https://github.com/arduino/arduino-examples/blob/main/examples/11.ArduinoISP/ArduinoISP/ArduinoISP.ino)をコピペしてくる。普通に`/src`に配置すればよいが、拡張子は`.cpp`にせず`.ino`のままにする必要がある(プロトタイプ宣言の要否とかが違うらしい)。あとは普通のプログラムのように書き込めばArduinoが書き込み機として使えるようになる。
+
+## 普通のプログラムを焼いてみる
+
+まずは生きてるArduinoに普通のプログラムを焼いてみる。
+
+[公式ドキュメント](https://docs.platformio.org/en/stable/platforms/atmelavr.html#upload-using-programmer)に従い、`platformio.ini`をArduino as ISP経由で書き込むように変更する。`board`は書き込み対象のもの(先にあったもの)を指定する。`upload_port`は再接続で変わる可能性があるのでここでは指定しない。なお、UNOにはATmegaが載っているはずだが、platformとしてはatmelavrなのでtoolうんちゃらはそのままでいいっぽい。
+
+```ini
+[env:uno_program_via_ArduinoISP]
+platform = atmelavr
+board = uno
+framework = arduino
+upload_protocol = custom
+; upload_port = SERIAL_PORT_HERE
+upload_speed = 19200
+upload_flags =
+    -C
+    ; use "tool-avrdude-megaavr" for the atmelmegaavr platform
+    ${platformio.packages_dir}/tool-avrdude/avrdude.conf
+    -p
+    $BOARD_MCU
+    -P
+    $UPLOAD_PORT
+    -b
+    $UPLOAD_SPEED
+    -c
+    stk500v1
+upload_command = avrdude $UPLOAD_FLAGS -U flash:w:$SOURCE:i
+```
+
+ISPにしたArduinoと書き込み対象のArduinoを[公式ドキュメント](https://docs.arduino.cc/built-in-examples/arduino-isp/ArduinoISP/)通りに配線する。SPI用のピンヘッダーもあるが、メスメスジャンパがなかったので普通のピンソケットを使った。そしたらISPにしたArduinoのほうをパソコンにUSB接続する。
+
+ポートは自動選択されてくれなかったので手動指定する。下部のボタン(たぶん「🔌Auto」になってる)をクリックすると一覧が出るので、それっぽいやつを選ぶ。Windowsなら`COM5`とかになる。この互換機では`USB-SERIAL CH340 (COM5)`という名前だった。
+
+普通の書き込みがされたらArduino as ISPが上書きされてしまうかもしれないので、これ以外のEnvironmentがある場合は、ポート指定の左にある`Default (プロジェクト名)`となっているところをクリックしてさっき作ったやつ(ここでは`env:uno_program_via_ArduinoISP`)を選ぶ。
+
+あとはいつも通り書き込みボタンを押せばプログラムが書き込まれる。
+
+## ブートローダを焼く
+
+いよいよブートローダを焼いてみる。ArduinoをUSB接続するところまでは普通のプログラムと同じ。ただ、Environmentをコマンドラインで指定するので名前(`env:`のあとの文字列)を短くするか、Environmentを一つだけにするとよい。
+
+接続したら、Ctrl+Shift+Pでコマンドパレットを開き、`>PlatformIO: New Terminal`を実行すると、PlatformIOのツールへのパスが通ったシェルが開くので、`pio run -e (Environment名) --upload-port (ポート)`を実行する。GUIでのEnvironmentとポートの設定は反映されない。Environmentが1つだけの場合は指定しなくてよい。
+
+Arduino UNOくんはこれで復活し、普通にUSB経由で書き込めるように戻った。
+
+## あとがき
+
+せっかくUSBなしで書き込めるようになったのでATtinyいじりたいね。
