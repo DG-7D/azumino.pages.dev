@@ -14,17 +14,7 @@ const miscPickups = [
     { title: "数学用英数字記号変換器", url: "/misc/math-converter/", description: "通常のASCII英数字列から数学用英数字記号を生成するツールです。" },
 ];
 
-const links: { title: string; url: URL; description: string }[] = [
-    {
-        title: "wagamachichofu.mp3",
-        url: new URL("https://www.city.chofu.lg.jp/documents/221/wagamachichofu_1.mp3"),
-        description: '「1645」の公式音源。<a href="https://www.city.chofu.lg.jp/020090/p013076.html" target="_blank">紹介ページ</a>',
-    },
-    {
-        title: "chaimuon.mp3",
-        url: new URL("https://www.city.komae.tokyo.jp/index.cfm/46,63352,c,html/63352/chaimuon.mp3"),
-        description: '狛江市の17時の時報の公式音源。<a href="https://www.city.komae.tokyo.jp/index.cfm/46,63352,353,2696,html" target="_blank">紹介ページ</a>',
-    },
+const otakuSites: { title: string; url: URL; description: string }[] = [
     {
         title: "ゆいのページ",
         url: new URL("https://yuino.dev/"),
@@ -38,52 +28,60 @@ const links: { title: string; url: URL; description: string }[] = [
     {
         title: "すしのへや",
         url: new URL("https://www.sushichan.live/"),
-        description: "Astro製電通大生個人サイト。つよい人が使うとこうなるらしい。<del>ちゃんさぶ</del>",
+        description: "Astro製。つよい人が使うとこうなるらしい。<del>ちゃんさぶ</del>",
     },
     {
         title: "へる破壊財団",
         url: new URL("https://helkun.dev/"),
-        description: "Astro製電通大生個人サイトn+1。工学研究部部長のページ。<del>くんさぶ</del>",
+        description: "Astro製。工学研究部部長のページ。",
     },
     {
         title: "y-chan's website",
         url: new URL("https://y-chan.dev/"),
-        description: "Astro製電通大生個人サイトn+2。",
+        description: "Astro製。工学研究部副部長のページ。",
     },
     {
         title: "みみの小屋",
         url: new URL("https://usa-mimi.net/"),
-        description: "Astro製電通大生個人サイトn+3。",
-    },
-    {
-        title: "はんかくくんのページ",
-        url: new URL("https://kqiita.github.io/"),
-        description: "",
-    },
-    {
-        title: "かとうのホームページ",
-        url: new URL("https://kat0h.com/"),
-        description: "",
+        description: "Astro製。",
     },
     {
         title: "Laddgeのページ",
         url: new URL("https://laddge.net/"),
-        description: "",
-    },
-    {
-        title: "なかがわ電機サービス",
-        url: new URL("https://lnln.dev/"),
-        description: "",
+        description: "Astro製。",
     },
     {
         title: "しぐれ煮",
         url: new URL("https://shigu10.neocities.org/"),
-        description: "",
+        description: "フルスクラッチ。",
     },
     {
-        title: "つまみネット",
-        url: new URL("https://trpfrog.net/"),
-        description: "",
+        title: "はんかくくんのページ",
+        url: new URL("https://kqiita.github.io/"),
+        description: "フルスクラッチ。にゃーん。",
+    },
+    {
+        title: "かとうのホームページ",
+        url: new URL("https://kat0h.com/"),
+        description: "フルスクラッチ。平成のインターネット。",
+    },
+    {
+        title: "なかがわ電機サービス",
+        url: new URL("https://lnln.dev/"),
+        description: "工研部室の鍵とか作ってるすごいひと。",
+    },
+];
+
+const links: { title: string; url: URL; description: string }[] = [
+    {
+        title: "wagamachichofu.mp3",
+        url: new URL("https://www.city.chofu.lg.jp/documents/221/wagamachichofu_1.mp3"),
+        description: '「1645」の公式音源。<a href="https://www.city.chofu.lg.jp/020090/p013076.html" target="_blank">紹介ページ</a>',
+    },
+    {
+        title: "chaimuon.mp3",
+        url: new URL("https://www.city.komae.tokyo.jp/index.cfm/46,63352,c,html/63352/chaimuon.mp3"),
+        description: '狛江市の17時の時報の公式音源。<a href="https://www.city.komae.tokyo.jp/index.cfm/46,63352,353,2696,html" target="_blank">紹介ページ</a>',
     },
     {
         title: "MDN Web Docs",
@@ -153,7 +151,19 @@ const links: { title: string; url: URL; description: string }[] = [
         <dt><a href="/misc/">もっと見る</a></dt><dd>そのほか</dd>
     </dl>
     <h2>リンク集</h2>
-    <p>知り合いのサイトとかおすすめとかメモとか。</p>
+    <p>知り合いのサイト。なんか全員工研。</p>
+    <dl class="inline">
+        {
+            // prettier-ignore
+            otakuSites.map(link =>
+                <>
+                    <dt><a href={link.url} target="_blank">{link.title}</a></dt>
+                    <dd><Fragment set:html={link.description} /></dd>
+                </>
+            )
+        }
+    </dl>
+    <p>その他のおすすめとかメモとか。</p>
     <dl class="inline">
         {
             // prettier-ignore
