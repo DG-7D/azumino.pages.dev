@@ -52,7 +52,7 @@ ISPにしたArduinoと書き込み対象のArduinoを[公式ドキュメント](
 
 いよいよブートローダを焼いてみる。ArduinoをUSB接続するところまでは普通のプログラムと同じ。ただ、Environmentをコマンドラインで指定するので名前(`env:`のあとの文字列)を短くするか、Environmentを一つだけにするとよい。
 
-接続したら、Ctrl+Shift+Pでコマンドパレットを開き、`>PlatformIO: New Terminal`を実行すると、PlatformIOのツールへのパスが通ったシェルが開くので、`pio run -e (Environment名) --upload-port (ポート)`を実行する。GUIでのEnvironmentとポートの設定は反映されない。Environmentが1つだけの場合は指定しなくてよい。
+接続したら、Ctrl+Shift+Pでコマンドパレットを開き、`>PlatformIO: New Terminal`を実行すると、PlatformIOのツールへのパスが通ったシェルが開くので、`pio run -e (Environment名) -t bootloader --upload-port (ポート)`を実行する。GUIでのEnvironmentとポートの設定は反映されない。Environmentが1つだけの場合は指定しなくてよい。
 
 Arduino UNOくんはこれで復活し、普通にUSB経由で書き込めるように戻った。
 
