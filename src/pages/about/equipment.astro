@@ -52,29 +52,30 @@ import A from "@/components/A.astro";
 
     <h3>PC本体</h3>
     <dl>
-        <dt>メイン機</dt>
-        <dd>ﾊﾟｯﾊﾟがメルカリで拾ってくれたまあまあ安い他作PC。ケースがださいので変えたい。メモリは足りてなくはないけど令和に16GBは最低限ってかんじでダサいので盛ってもいいかも。グラボはめちゃつよではないけどWar Thunderでまあまあの設定で4Kを楽しめる程度はあるのでいいかな。チップセットは対応してるはずなのにUSB Type-AがGen2じゃなくておしまい。</dd>
+        <dt>メイン</dt>
+        <dd>ﾊﾟｯﾊﾟがメルカリでまあまあ安く拾ってくれた他作PC。ケースがださいので変えたい。メモリは足りてなくはないけど令和に16GBは最低限ってかんじでダサいので盛ってもいいかも。グラボはめちゃつよではないけどWar Thunderでまあまあの設定で4Kを楽しめる程度はあるのでいいかな。チップセットは対応してるはずなのにUSB Type-AがGen2じゃなくておしまい。</dd>
         <dd>
             <dl class="inline">
                 <dt>OS</dt><dd>Windows 11 Pro</dd>
                 <dt>CPU</dt><dd>Core i5-12600K</dd>
                 <dt>GPU</dt><dd>GeForce RTX 3060</dd><dd><del>Intel UHD Graphic 770 (無効)</del></dd>
-                <dt>RAM</dt><dd>24GB DDR4 (2x8+8)</dd>
+                <dt>RAM</dt><dd>16GB DDR4 (2x8)</dd>
                 <dt>SSD</dt><dd>1TB NVMe (KIOXIA EXCERIA G2)</dd>
                 <dt>M/B</dt><dd>MSI Z690-P</dd>
                 <dt>Bluetooth</dt><dd>Intel AX200</dd>
             </dl>
         </dd>
-        <dt>EPSON Endeavor Pro7500</dt>
-        <dd>ﾊﾟｯﾊﾟのお下がり。今でいうi9に相当するCPUが載ってて当時最強だけど処分セールで10万しなかったらしい。メイン機にHDDがほぼ載らないのでファイルサーバとして使ってる。電源とケースファンを交換して静かにしたけどミニPCとかで置き換えたい。N100マザボとかいいかも。</dd>
+        <dt>ファイルサーバ</dt>
+        <dd>省電力なファイルサーバ兼WoLサーバ兼Tailscaleの踏み台。トリガーケーブルを使ってUSB PDで駆動している。室温が高くなければほぼファンレスでとても静か。CPUケースがないので一時的にメーカー製PC(Pro7500)のケースに入れてる。</dd>
         <dd>
             <dl class="inline">
                 <dt>OS</dt><dd>Windows 11 Pro</dd>
-                <dt>CPU</dt><dd>Core i7-3930K (Sandy Bridge-E !!!)</dd>
-                <dt>GPU</dt><dd>GeForce GT 710</dd>
-                <dt>RAM</dt><dd>16GB DDR3 (4x4)</dd>
-                <dt>SSD</dt><dd>120GB SATA (SanDisk SSD Plus)</dd>
-                <dt>HDD</dt><dd>2x2TB (MD04ACA200)</dd><dd>2x8TB (WD80EAZZ)</dd>
+                <dt>CPU</dt><dd>N100</dd>
+                <dt>GPU</dt><dd>Intel UHD Graphic</dd>
+                <dt>RAM</dt><dd>8GB DDR4 (1x8)</dd>
+                <dt>SSD</dt><dd>512GB NVMe (Intel SSD 760p)</dd>
+                <dt>HDD</dt><dd>2x8TB (WD80EAZZ)</dd>
+                <dt>M/B</dt><dd>ASRock N100DC-ITX</dd>
             </dl>
         </dd>
         <dt>VAIO SX14 (VJS142)</dt>
@@ -102,20 +103,6 @@ import A from "@/components/A.astro";
                 <dt>SSD</dt><dd>512GB SATA</dd>
             </dl>
         </dd>
-        <dt>SONY VAIO Pro 13 (SVP132)</dt>
-        <dd>ふるいノートPC。SONY時代のVAIO。どっかで中古で拾った。スペックは終わってるけど見た目とか物理的な細かい使い心地はSX14同様よい。TailscaleとWoLの踏み台として常時起動中。一回BIOS飛ばして無理矢理焼き直したせいで変なことになってる。</dd>
-        <dd>
-            <dl class="inline">
-                <dt>モニタ</dt><dd>FHD 13×25.4mm IPS 半光沢(ほぼ非光沢)</dd>
-                <dt>OS</dt><dd>Windows 10 Pro</dd>
-                <dt>CPU</dt><dd>Core i7-4500U</dd>
-                <dt>GPU</dt><dd>Intel HD Graphics 4400</dd>
-                <dt>RAM</dt><dd>8GB</dd>
-                <dt>SSD</dt><dd>256GB PCIe直付けAHCI(????) (Samsung XP941)</dd>
-                <dt>Wi-Fi</dt><dd>Intel Wireless-AC 7260</dd>
-                <dt>有線LAN</dt><dd>なし🥺</dd>
-            </dl>
-        </dd>
     </dl>
     <Center>↓紛争を開始↓</Center>
     <OGPCard url="https://www.cpubenchmark.net/compare/4603vs902vs1038vs3567vs1937/" />
@@ -141,6 +128,8 @@ import A from "@/components/A.astro";
         <dd>マザボのブザー。前使ってたPCが起動時に「ﾋﾟｯ」と鳴るのに慣れていたので新しいのにもつけた。そしたら「ﾋﾟｰｯ」だった。うるさいのでテープでふさいでちょっとやわらかくしてる。</dd>
         <dt>Ainex U32AC-MFAD</dt>
         <dd>USB Type-A<abbr title="メス、レセプタクル">凹</abbr>からType-C凹に変換する<strong>規格違反</strong>アダプタ。使用法を間違えると危険なのでどうダメなのか分からない人は絶対に使ってはいけない。後述するイヤホンのドングルをPCにつけるのに使ってる。</dd>
+        <dt><A href="https://www.elecom.co.jp/products/DC-PDFE20BK.html">ELECOM DC-PDFE20BK</A></dt>
+        <dd>USB PDから最大20VのDCジャック(5.5-2.5mm)に変換するトリガーケーブル。N100DC-ITXの給電に使用。</dd>
         <dt><A href="https://www.elecom.co.jp/products/EHC-Q05MA-HJB.html">ELECOM EHC-Q05MA-HJB</A></dt>
         <dd>5ポート2.5Gbpsスイッチングハブ。親が拾ってきた。付属のクソつよ磁石で網にくっついてる。電源内蔵じゃないしなんかデカいしほんのりあったかいけどマルチギガってこんなもんなのかな。</dd>
         <dt>LANケーブル</dt>
@@ -152,6 +141,28 @@ import A from "@/components/A.astro";
 
     <h3>使ってないPC</h3>
     <dl>
+        <dt>EPSON Endeavor Pro7500</dt>
+        <dd>ﾊﾟｯﾊﾟのお下がり。今でいうi9に相当するCPUが載ってて当時最強だけど処分セールで10万しなかったらしい。かつてはファイルサーバとして運用されていた。</dd>
+        <dd>
+            <dl class="inline">
+                <dt>CPU</dt><dd>Core i7-3930K (Sandy Bridge-E)</dd>
+                <dt>RAM</dt><dd>16GB DDR3 (4x4)</dd>
+            </dl>
+        </dd>
+        <dt>SONY VAIO Pro 13 (SVP132)</dt>
+        <dd>ふるいノートPC。SONY時代のVAIO。どっかで中古で拾った。スペックは終わってるけど見た目とか物理的な細かい使い心地はSX14同様よい。使い道がない。一回BIOS飛ばして無理矢理焼き直したせいで変なことになってる。</dd>
+        <dd>
+            <dl class="inline">
+                <dt>モニタ</dt><dd>FHD 13×25.4mm IPS 半光沢(ほぼ非光沢)</dd>
+                <dt>OS</dt><dd>Windows 10 Pro</dd>
+                <dt>CPU</dt><dd>Core i7-4500U</dd>
+                <dt>GPU</dt><dd>Intel HD Graphics 4400</dd>
+                <dt>RAM</dt><dd>8GB</dd>
+                <dt>SSD</dt><dd>256GB PCIe直付けAHCI(????) (Samsung XP941)</dd>
+                <dt>Wi-Fi</dt><dd>Intel Wireless-AC 7260</dd>
+                <dt>有線LAN</dt><dd>なし🥺</dd>
+            </dl>
+        </dd>
         <dt>SONY VAIO type R master</dt>
         <dd>SONYの名作機。PCIeをぶっといケーブルで外部ユニットに引っ張ってたりマザボがmicroBTXだったりと変態。Core 2 Quad対応のとそうでないの2台ある。もう使うことはないだろうけど面白さと愛着があるので捨てにくい。</dd>
         <dt><del>iMac (21.5, Late 2012)</del></dt>
@@ -166,7 +177,7 @@ import A from "@/components/A.astro";
         <dt>余ってる部品</dt>
         <dd>
             <ul class="inline">
-                <li>Core 2 Quad Q6600</li><li>Core 2 Duo E6600</li><li>Core 2 Duo E8400</li><li>7600GS</li><li>9600GT (壊れてる)</li><li>GT 330</li><li>GTS 450</li><li>GTX 1050 Ti (グラボはよく壊れるので予備として温存)</li><li>SATA SSD 数枚</li><li>SeagateのおしまいHDD</li><li>SATA BDドライブ 2台</li><li>Intel Wireless-AC 9260</li><li>Win11Proのライセンス(バグで滅びたかもしれん)</li><li>Win11Educationのライセンス(大学がくれたやつ)</li>
+                <li>Core 2 Quad Q6600</li><li>Core 2 Duo E6600</li><li>Core 2 Duo E8400</li><li>7600GS</li><li>9600GT (壊れてる)</li><li>GT 330</li><li>GTS 450</li><li>GT 710</li><li>GTX 1050 Ti (グラボはよく壊れるので予備として温存)</li><li>SATA SSD 数枚</li><li>2xMD04ACA200</li><li>SeagateのおしまいHDD</li><li>SATA BDドライブ 2台</li><li>Intel Wireless-AC 9260</li><li>Win11Proのライセンス(バグで滅びたかもしれん)</li><li>Win11Educationのライセンス(大学がくれたやつ)</li>
             </ul>
         </dd>
     </dl>
@@ -217,10 +228,10 @@ import A from "@/components/A.astro";
     <h3>周辺機器</h3>
     <dl>
         <dt>BLUEDOT BMB-PD101</dt><dd>PD対応10000mAhモバイルバッテリ。Micro-B端子がついちゃったりしてる古めのだけどまあ使える。会社が吹き飛んでるっぽい()</dd>
-        <dt>BLUEDOT BAC-PD60W</dt><dd>PD充電器(60W)。家でのﾉﾊﾟｿ充電用。</dd>
+        <dt>BLUEDOT BAC-PD60W</dt><dd>PD充電器(60W)。N100マザボ給電用。</dd>
         <dt><A href="https://www.elecom.co.jp/products/EC-AC4465BK.html">ELECOM EC-AC4465BK</A></dt><dd>PD充電器(65W or 45W+20W)。Ankerのより小さくて軽い。持ち出し用(1つでPCとスマホ同時に行けるので便利)。Aはおまけ(回路が独立してないのは規格違反らしい)。</dd>
-        <dt>Apple MHJA3AM</dt><dd>PD充電器(20W)。iPadの付属品。家でのその他もろもろ充電用。</dd>
-        <dt>AUKEY PA-D5</dt><dd>PD充電器(60W or 45W+18W)。家でのiPhone、iPad充電用。ちゃんさぶさんからもらった。でかい。</dd>
+        <dt>Apple MHJA3AM</dt><dd>PD充電器(20W)。iPadの付属品。家でのiPhone充電用。</dd>
+        <dt>AUKEY PA-D5</dt><dd>PD充電器(60W or 45W+18W)。家でのもろもろ充電用。ちゃんさぶさんからもらった。でかい。</dd>
         <dt>USB Type-Cケーブル</dt>
         <dd><A href="https://ja.aliexpress.com/item/1005006128932643.html">アリエクの怪レいやつ</A>(布巻き、Gen2x2)(初回割引で72円、平時でも900円、2x2対応機器がないので本当に20Gbps出るかは知らんw)</dd>
         <dd><A href="https://jp.daisonet.com/products/4984279770429">ダイソーで200円のやつ</A>(布巻きで根本がつよそう、USB2.0)(黒いのと白いのがあるけど白いののほうが圧倒的に品質がいい(1敗))</dd>
