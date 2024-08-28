@@ -15,13 +15,20 @@ fetch(url, { method: "HEAD" }).then(response => {
     }
 });
 
-const metadata = await (async ()=>{
+const metadata = await (async () => {
+    let errorCount = 0;
     while (true) {
         try {
             return await fetchSiteMetadata(url, { suppressAdditionalRequest: true });
         } catch (error) {
             console.error(error);
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            if (errorCount < 2) {
+                await new Promise(resolve => setTimeout(resolve, 10000));
+            } else {
+                throw error;
+                // return { title: undefined, description: undefined, icon: undefined, image: undefined };
+            }
+            errorCount++;
         }
     }
 })();
