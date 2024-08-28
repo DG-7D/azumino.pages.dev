@@ -5,7 +5,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 
 const blogCollection = await getCollection("blog");
-const blogPickups = [blogCollection.find(post => post.slug == "20231201-1645"), blogCollection.find(post => post.slug == "20231225-changes"), blogCollection.find(post => post.slug == "20240004-destroyed-keio")];
+const blogPickups = ["20231201-1645", "20231225-changes", "20240004-destroyed-keio"].map(slug => blogCollection.find(post => post.slug == slug));
 
 // TODO: タイトル・説明を自動取得にする(importするとこわれる)
 const miscPickups = [
@@ -18,7 +18,7 @@ const otakuSites: { title: string; url: URL; description: string }[] = [
     {
         title: "ゆいのページ",
         url: new URL("https://yuino.dev/"),
-        description: "写真研究部技術担当(大嘘)、工学研究部副部長のページ。手打ちでコシのあるhtmlらしい。",
+        description: "写真研究部技術担当(大嘘)、工学研究部副部長のページ。手打ちでコシのあるhtml。",
     },
     {
         title: "Akitoshi Lab.",
@@ -41,29 +41,30 @@ const otakuSites: { title: string; url: URL; description: string }[] = [
         description: "Astro製。工学研究部副部長のページ。",
     },
     {
+        title: "しぐれ煮",
+        // url: new URL("https://shigu10.neocities.org/"),
+        url: new URL("https://shigureni.pages.dev/"),
+        description: "更新待ってます。",
+    },
+    {
         title: "みみの小屋",
         url: new URL("https://usa-mimi.net/"),
-        description: "Astro製。",
+        description: "23生もAstroを使っています。更新待ってます2",
     },
     {
         title: "Laddgeのページ",
         url: new URL("https://laddge.net/"),
-        description: "Astro製。",
-    },
-    {
-        title: "しぐれ煮",
-        url: new URL("https://shigu10.neocities.org/"),
-        description: "フルスクラッチ。",
+        description: "24生もAstroを使っています。",
     },
     {
         title: "はんかくくんのページ",
         url: new URL("https://kqiita.github.io/"),
-        description: "フルスクラッチ。にゃーん。",
+        description: "にゃーん。",
     },
     {
         title: "かとうのホームページ",
         url: new URL("https://kat0h.com/"),
-        description: "フルスクラッチ。平成のインターネット。",
+        description: "平成のインターネット。",
     },
     {
         title: "なかがわ電機サービス",
