@@ -4,12 +4,9 @@ export const description = "Webカメラ映像取得のパラメータをいろ�
 import BaseLayout from "@/layouts/BaseLayout.astro";
 const defaultConstraints: string = `
 {
-    "audio": false,
-    "video": {
-        "aspectRatio": 1.777777778,
-        "facingMode": "environment",
-        "height": 1080
-    }
+    "aspectRatio": 1.777777778,
+    "facingMode": "environment",
+    "height": 1080
 }
 `;
 // TODO: ボタンはボタンらしい見た目しててもいいのでは
@@ -29,23 +26,27 @@ const defaultConstraints: string = `
     const inputConstraints = document.getElementById("inputConstraints")! as HTMLTextAreaElement;
     const buttonConstraints = document.getElementById("buttonConstraints")! as HTMLButtonElement;
     const log = document.getElementById("log")!;
-
-    function activateLiveView() {
-        console.log(JSON.parse(inputConstraints.value));
-        navigator.mediaDevices.getUserMedia(JSON.parse(inputConstraints.value)).then(stream => {
-            if (liveView.srcObject == null) {
-                log.textContent += "---- Capabilities ----";
-                log.textContent += "\n" + JSON.stringify(stream.getVideoTracks()[0]?.getCapabilities(), undefined, 4) + "\n\n---- Settings ----";
-            } else {
-                liveView.pause();
-            }
-            log.textContent += "\n\n" + JSON.stringify(stream.getVideoTracks()[0]?.getSettings(), undefined, 4);
-            liveView.srcObject = stream;
-            liveView.play();
-        });
-    }
+    let track: MediaStreamTrack | undefined = undefined;
 
     buttonConstraints.addEventListener("click", activateLiveView);
+
+    async function activateLiveView() {
+        if (!track) {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: getConstraintsInput() });
+            track = stream.getVideoTracks()[0]!;
+            liveView.srcObject = stream;
+            liveView.play();
+            log.textContent += "---- Capabilities ----\n";
+            log.textContent += JSON.stringify(stream.getVideoTracks()[0]?.getCapabilities(), undefined, 4);
+            log.textContent += "\n\n---- Settings ----";
+        }
+        track.applyConstraints(getConstraintsInput()).then(() => {
+            log.textContent += "\n\n" + JSON.stringify(track?.getSettings(), undefined, 4);
+        });
+    }
+    function getConstraintsInput() {
+        return JSON.parse(inputConstraints.value);
+    }
 </script>
 <style lang="scss">
     textarea {
