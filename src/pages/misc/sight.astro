@@ -39,6 +39,12 @@ import Head from "@/components/Head.astro";
             const parallaxY = getInputElementById("parallaxY");
             const inputs = [focalLV, focalSight, ratioSight, distance, parallaxX, parallaxY];
 
+            new ResizeObserver(async () => {
+                sight.width = liveView.clientWidth;
+                sight.height = liveView.clientHeight;
+                await drawSight(); // キャンバスサイズが変わると描画が消えるので再描画
+            }).observe(liveView);
+
             addEventListener("load", async () => {
                 loadSettings();
                 await setLiveViewSource()
@@ -57,9 +63,6 @@ import Head from "@/components/Head.astro";
             });
 
             liveView.addEventListener("play", async () => {
-                message.textContent = "カメラ起動待機中";
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                await syncCanvasSize();
                 message.remove();
             });
 
@@ -70,10 +73,15 @@ import Head from "@/components/Head.astro";
                 });
             });
 
-            addEventListener("orientationchange", async () => {
-                await new Promise(resolve => setTimeout(resolve, 500)); // 待たないとiOSで回転が反映されない
-                await syncCanvasSize();
-            });
+            function loadSettings() {
+                inputs.forEach(input => {
+                    if (localStorage.getItem(input.id)) {
+                        input.value = localStorage.getItem(input.id)!;
+                    } else {
+                        localStorage.setItem(input.id, input.value);
+                    }
+                });
+            }
 
             async function setLiveViewSource() {
                 const stream = await navigator.mediaDevices.getUserMedia({
@@ -85,22 +93,6 @@ import Head from "@/components/Head.astro";
                     },
                 });
                 liveView.srcObject = stream;
-            }
-
-            async function syncCanvasSize() {
-                sight.width = liveView.clientWidth;
-                sight.height = liveView.clientHeight;
-                await drawSight(); // キャンバスサイズが変わると描画が消えるので再描画
-            }
-
-            function loadSettings() {
-                inputs.forEach(input => {
-                    if (localStorage.getItem(input.id)) {
-                        input.value = localStorage.getItem(input.id)!;
-                    } else {
-                        localStorage.setItem(input.id, input.value);
-                    }
-                });
             }
 
             async function drawSight() {
