@@ -29,7 +29,7 @@ import Head from "@/components/Head.astro";
             const liveView = document.getElementById("liveView")! as HTMLVideoElement;
             const sight = document.getElementById("sight")! as HTMLCanvasElement;
             const message = document.getElementById("message")! as HTMLDivElement;
-            
+
             const getInputElementById = (id: string) => document.getElementById(id)! as HTMLInputElement;
             const focalLV = getInputElementById("focalLV");
             const focalSight = getInputElementById("focalSight");
@@ -38,7 +38,7 @@ import Head from "@/components/Head.astro";
             const parallaxX = getInputElementById("parallaxX");
             const parallaxY = getInputElementById("parallaxY");
             const inputs = [focalLV, focalSight, ratioSight, distance, parallaxX, parallaxY];
-            
+
             addEventListener("load", async () => {
                 loadSettings();
                 await setLiveViewSource();
@@ -46,26 +46,26 @@ import Head from "@/components/Head.astro";
                     message.addEventListener("click", () => liveView.play()); // 自動再生が無効な場合はクリックで再生
                 });
             });
-            
+
             liveView.addEventListener("play", async () => {
                 message.textContent = "カメラ起動待機中";
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 await syncCanvasSize();
                 message.remove();
             });
-            
+
             inputs.forEach(input => {
                 input.addEventListener("input", async () => {
                     localStorage.setItem(input.id, input.value);
                     await drawSight();
                 });
             });
-            
+
             addEventListener("orientationchange", async () => {
                 await new Promise(resolve => setTimeout(resolve, 500)); // 待たないとiOSで回転が反映されない
                 await syncCanvasSize();
             });
-            
+
             async function setLiveViewSource() {
                 const stream = await navigator.mediaDevices.getUserMedia({
                     audio: false,
@@ -77,13 +77,13 @@ import Head from "@/components/Head.astro";
                 });
                 liveView.srcObject = stream;
             }
-            
+
             async function syncCanvasSize() {
                 sight.width = liveView.clientWidth;
                 sight.height = liveView.clientHeight;
                 await drawSight(); // キャンバスサイズが変わると描画が消えるので再描画
             }
-            
+
             function loadSettings() {
                 inputs.forEach(input => {
                     if (localStorage.getItem(input.id)) {
@@ -93,20 +93,20 @@ import Head from "@/components/Head.astro";
                     }
                 });
             }
-            
+
             async function drawSight() {
                 const focalLVMilimeter = Math.max(1, localStorageNumber.getItem("focalLV"));
                 const focalSightMilimeter = Math.max(1, localStorageNumber.getItem("focalSight"));
                 const ratioSight = localStorageNumber.getItem("ratioSight");
                 const distanceMeter = localStorageNumber.getItem("distance") > 0 ? localStorageNumber.getItem("distance") : Number.MAX_SAFE_INTEGER;
-                
+
                 const fovLV = getFullframeFovMilimeter(focalLVMilimeter, liveView.clientWidth / liveView.clientHeight, distanceMeter);
                 const fovSight = getFullframeFovMilimeter(focalSightMilimeter, ratioSight, distanceMeter);
                 const parallax = {
                     x: localStorageNumber.getItem("parallaxX"),
                     y: localStorageNumber.getItem("parallaxY"),
                 };
-                
+
                 const pxPerMilimeter = sight.width / fovLV.x;
                 const context = sight.getContext("2d")!;
                 context.clearRect(0, 0, sight.width, sight.height);
@@ -118,7 +118,7 @@ import Head from "@/components/Head.astro";
             }
 
             function getFullframeFovMilimeter(focalMilimeter: number, aspectRatio: number, distanceMeter: number): { x: number; y: number } {
-                const diagonalMilimeter = Math.sqrt((24 ^ 2) + (36 ^ 2)) * (distanceMeter * 1000 / focalMilimeter);
+                const diagonalMilimeter = Math.sqrt((24 ** 2) + (36 ** 2)) * ((distanceMeter * 1000) / focalMilimeter);
                 const diagonalRadian = Math.atan2(1, aspectRatio);
                 return {
                     x: diagonalMilimeter * Math.cos(diagonalRadian),
@@ -134,7 +134,7 @@ import Head from "@/components/Head.astro";
                     return Number(localStorage.getItem(key));
                 },
             };
-            </script>
+        </script>
         <style lang="scss">
             :root {
                 color-scheme: dark;
@@ -143,7 +143,7 @@ import Head from "@/components/Head.astro";
                 --main-color: var(--bwhite);
                 --sub-color: var(--white);
                 --link-color: var(--byellow);
-                
+
                 @media (prefers-color-scheme: light) {
                     color-scheme: light;
                     --background-color: var(--bwhite);
