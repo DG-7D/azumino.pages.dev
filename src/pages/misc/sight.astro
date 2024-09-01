@@ -14,7 +14,7 @@ import Head from "@/components/Head.astro";
     <body>
         <video id="liveView" muted playsinline> </video>
         <canvas id="sight" width="0" height="0"></canvas>
-        <div id="message" style="display:none;">ライブビューを開始するにはクリックしてください</div>
+        <div id="message">ライブビューを開始するにはクリックしてください</div>
         <div id="settings">
             <span>画角/換算mm</span>
             <label for="focalLV">表示</label><input type="number" inputmode="numeric" id="focalLV" value="30" />
@@ -45,6 +45,7 @@ import Head from "@/components/Head.astro";
 
             const liveView = document.getElementById("liveView")! as HTMLVideoElement;
             const sight = document.getElementById("sight")! as HTMLCanvasElement;
+            const message = document.getElementById("message")! as HTMLDivElement;
 
             const getInputElementById = (id: string) => document.getElementById(id)! as HTMLInputElement;
             const focalLV = getInputElementById("focalLV");
@@ -56,22 +57,18 @@ import Head from "@/components/Head.astro";
             const inputs = [focalLV, focalSight, ratioSight, distance, parallaxX, parallaxY];
 
             addEventListener("load", async () => {
-                await setLiveViewSource();
-                await liveView
-                    .play()
-                    .then(syncCanvasSize)
-                    .catch(() => {
-                        const message = document.getElementById("message")!;
-                        message.style.display = "block";
-                        message.addEventListener("click", async () => {
-                            await liveView.play().then(() => {
-                                message.remove();
-                            });
-                            await syncCanvasSize();
-                        });
-                    });
                 loadSettings();
-                await drawSight();
+                await setLiveViewSource();
+                await liveView.play().catch(() => {
+                    message.addEventListener("click", () => liveView.play()); // 自動再生が無効な場合はクリックで再生
+                });
+            });
+
+            liveView.addEventListener("play", async () => {
+                message.textContent = "カメラ起動待機中";
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                await syncCanvasSize();
+                message.remove();
             });
 
             inputs.forEach(input => {
