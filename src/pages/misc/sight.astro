@@ -24,7 +24,7 @@ import Head from "@/components/Head.astro";
             <label for="parallaxX">右</label><input type="number" inputmode="text" id="parallaxX" value="0" />
             <label for="parallaxY">上</label><input type="number" inputmode="text" id="parallaxY" value="0" />
         </div>
-        <div id="message">クリックしてカメラを起動</div>
+        <div id="message">カメラ起動中</div>
         <script>
             const liveView = document.getElementById("liveView")! as HTMLVideoElement;
             const sight = document.getElementById("sight")! as HTMLCanvasElement;
@@ -41,10 +41,19 @@ import Head from "@/components/Head.astro";
 
             addEventListener("load", async () => {
                 loadSettings();
-                await setLiveViewSource();
-                await liveView.play().catch(() => {
-                    message.addEventListener("click", () => liveView.play()); // 自動再生が無効な場合はクリックで再生
-                });
+                await setLiveViewSource()
+                    .then(async () => {
+                        await liveView.play().catch(() => {
+                            message.textContent = "クリックしてカメラを起動";
+                            message.addEventListener("click", () => liveView.play());
+                        });
+                    })
+                    .catch(() => {
+                        message.textContent = "クリックしてカメラを許可";
+                        message.addEventListener("click", async () => {
+                            await setLiveViewSource().then(() => liveView.play());
+                        });
+                    });
             });
 
             liveView.addEventListener("play", async () => {
@@ -118,7 +127,7 @@ import Head from "@/components/Head.astro";
             }
 
             function getFullframeFovMilimeter(focalMilimeter: number, aspectRatio: number, distanceMeter: number): { x: number; y: number } {
-                const diagonalMilimeter = Math.sqrt((24 ** 2) + (36 ** 2)) * ((distanceMeter * 1000) / focalMilimeter);
+                const diagonalMilimeter = Math.sqrt(24 ** 2 + 36 ** 2) * ((distanceMeter * 1000) / focalMilimeter);
                 const diagonalRadian = Math.atan2(1, aspectRatio);
                 return {
                     x: diagonalMilimeter * Math.cos(diagonalRadian),
