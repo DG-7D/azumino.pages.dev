@@ -103,6 +103,8 @@ import Head from "@/components/Head.astro";
                 sight.style.right = toStringPercent((margin.x + parallax.x) / fovLV.x);
                 sight.style.bottom = toStringPercent((margin.y - parallax.y) / fovLV.y);
                 sight.style.top = toStringPercent((margin.y + parallax.y) / fovLV.y);
+
+                liveView.play();
             }
 
             function toStringPercent(number: number) {
