@@ -4,8 +4,6 @@ export const description = "スマホなどを照準器にできるWebアプリ�
 import "@/styles/reset.css";
 import "@/styles/campbell.css";
 import Head from "@/components/Head.astro";
-
-// TODO: iOSでまともに動くようにする
 ---
 
 <!doctype html>
@@ -15,7 +13,8 @@ import Head from "@/components/Head.astro";
     </Head>
     <body>
         <video id="liveView" muted playsinline> </video>
-        <canvas id="sight"></canvas>
+        <canvas id="sight" width="0" height="0"></canvas>
+        <div id="message" style="display:none;">ライブビューを開始するにはクリックしてください</div>
         <div id="settings">
             <span>画角/換算mm</span>
             <label for="focalLV">表示</label><input type="number" inputmode="numeric" id="focalLV" value="30" />
@@ -56,19 +55,38 @@ import Head from "@/components/Head.astro";
             const parallaxY = getInputElementById("parallaxY");
             const inputs = [focalLV, focalSight, ratioSight, distance, parallaxX, parallaxY];
 
-            async function tryPlay() {
+            addEventListener("load", async () => {
+                await setLiveViewSource();
                 await liveView
                     .play()
-                    .then(() => {
-                        sight.width = liveView.clientWidth;
-                        sight.height = liveView.clientHeight;
-                    })
-                    .catch(e => {
-                        console.error(e);
+                    .then(syncCanvasSize)
+                    .catch(() => {
+                        const message = document.getElementById("message")!;
+                        message.style.display = "block";
+                        message.addEventListener("click", async () => {
+                            await liveView.play().then(() => {
+                                message.remove();
+                            });
+                            await syncCanvasSize();
+                        });
                     });
-            }
+                loadSettings();
+                await drawSight();
+            });
 
-            async function activateLiveView() {
+            inputs.forEach(input => {
+                input.addEventListener("input", async () => {
+                    localStorage.setItem(input.id, input.value);
+                    await drawSight();
+                });
+            });
+
+            addEventListener("orientationchange", async () => {
+                await new Promise(resolve => setTimeout(resolve, 500)); // 待たないとiOSで回転が反映されない
+                await syncCanvasSize();
+            });
+
+            async function setLiveViewSource() {
                 const stream = await navigator.mediaDevices.getUserMedia({
                     audio: false,
                     video: {
@@ -80,7 +98,13 @@ import Head from "@/components/Head.astro";
                 liveView.srcObject = stream;
             }
 
-            function initSettings() {
+            async function syncCanvasSize() {
+                sight.width = liveView.clientWidth;
+                sight.height = liveView.clientHeight;
+                await drawSight(); // キャンバスサイズが変わると描画が消えるので再描画
+            }
+
+            function loadSettings() {
                 inputs.forEach(input => {
                     if (localStorage.getItem(input.id)) {
                         input.value = localStorage.getItem(input.id)!;
@@ -90,9 +114,7 @@ import Head from "@/components/Head.astro";
                 });
             }
 
-            async function applySettings() {
-                await tryPlay();
-
+            async function drawSight() {
                 const focalLVMilimeter = Math.max(1, localStorageNumber.getItem("focalLV"));
                 const focalSightMilimeter = Math.max(1, localStorageNumber.getItem("focalSight"));
                 const ratioSight = localStorageNumber.getItem("ratioSight");
@@ -100,7 +122,6 @@ import Head from "@/components/Head.astro";
 
                 const fovLV = getFullframeFovMilimeter(focalLVMilimeter, liveView.clientWidth / liveView.clientHeight, distanceMeter);
                 const fovSight = getFullframeFovMilimeter(focalSightMilimeter, ratioSight, distanceMeter);
-
                 const parallax = {
                     x: localStorageNumber.getItem("parallaxX"),
                     y: localStorageNumber.getItem("parallaxY"),
@@ -115,23 +136,6 @@ import Head from "@/components/Head.astro";
                 context.rect((fovLV.x / 2 - fovSight.x / 2 - parallax.x) * pxPerMilimeter, (fovLV.y / 2 - fovSight.y / 2 - parallax.y) * pxPerMilimeter, fovSight.x * pxPerMilimeter, fovSight.y * pxPerMilimeter);
                 context.stroke();
             }
-
-            addEventListener("load", () => {
-                activateLiveView().then(async () => {
-                    initSettings();
-                    await applySettings();
-                });
-            });
-            inputs.forEach(input => {
-                input.addEventListener("input", async () => {
-                    localStorage.setItem(input.id, input.value);
-                    await applySettings();
-                });
-            });
-
-            window.addEventListener("orientationchange", async () => {
-                await applySettings();
-            });
         </script>
         <style lang="scss">
             :root {
@@ -168,9 +172,19 @@ import Head from "@/components/Head.astro";
                 left: 0;
                 z-index: 1;
             }
-            div#settings {
+            div#message {
                 position: absolute;
                 z-index: 2;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                text-align: center;
+                align-content: center;
+            }
+            div#settings {
+                position: absolute;
+                z-index: 3;
                 bottom: 0;
                 left: 0;
                 // display: none;
