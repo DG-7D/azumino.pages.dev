@@ -24,17 +24,17 @@ import Head from "@/components/Head.astro";
         <div id="message">カメラ起動中</div>
         <script>
             const liveView = document.getElementById("liveView")! as HTMLVideoElement;
-            const sight = document.getElementById("sight")! as HTMLCanvasElement;
+            const sightCanvas = document.getElementById("sight")! as HTMLCanvasElement;
             const message = document.getElementById("message")! as HTMLDivElement;
 
-            const focalLV = document.getElementById("focalLV") as HTMLInputElement;
-            const focalSight = document.getElementById("focalSight") as HTMLInputElement;
-            const ratioSight = document.getElementById("ratioSight") as HTMLInputElement;
-            const initOffset = document.getElementById("initOffset") as HTMLButtonElement;
+            const focalLVInput = document.getElementById("focalLV") as HTMLInputElement;
+            const focalSightInput = document.getElementById("focalSight") as HTMLInputElement;
+            const ratioSightInput = document.getElementById("ratioSight") as HTMLInputElement;
+            const initOffsetButton = document.getElementById("initOffset") as HTMLButtonElement;
 
             new ResizeObserver(async () => {
-                sight.width = liveView.clientWidth;
-                sight.height = liveView.clientHeight;
+                sightCanvas.width = liveView.clientWidth;
+                sightCanvas.height = liveView.clientHeight;
                 await drawSight(); // キャンバスサイズが変わると描画が消えるので再描画
             }).observe(liveView);
 
@@ -59,35 +59,35 @@ import Head from "@/components/Head.astro";
                 message.remove();
             });
 
-            focalLV.addEventListener("input", async () => {
-                Settings.focalLV = Number(focalLV.value);
+            focalLVInput.addEventListener("input", async () => {
+                Settings.focalLV = Number(focalLVInput.value);
                 await drawSight();
             });
-            focalSight.addEventListener("input", async () => {
-                Settings.focalSight = Number(focalSight.value);
+            focalSightInput.addEventListener("input", async () => {
+                Settings.focalSight = Number(focalSightInput.value);
                 await drawSight();
             });
-            ratioSight.addEventListener("input", async () => {
-                Settings.ratioSight = Number(ratioSight.value);
+            ratioSightInput.addEventListener("input", async () => {
+                Settings.ratioSight = Number(ratioSightInput.value);
                 await drawSight();
             });
-            initOffset.addEventListener("click", async () => {
+            initOffsetButton.addEventListener("click", async () => {
                 Settings.offset = { x: 0.5, y: 0.5 };
                 await drawSight();
             });
 
-            sight.addEventListener("click", async ev => {
+            sightCanvas.addEventListener("click", async ev => {
                 Settings.offset = {
-                    x: ev.offsetX / sight.width,
-                    y: ev.offsetY / sight.height,
+                    x: ev.offsetX / sightCanvas.width,
+                    y: ev.offsetY / sightCanvas.height,
                 };
                 await drawSight();
             });
 
             function loadSettings() {
-                Settings.focalLV ? (focalLV.value = Settings.focalLV.toString()) : (Settings.focalLV = Number(focalLV.value));
-                Settings.focalSight ? (focalSight.value = Settings.focalSight.toString()) : (Settings.focalSight = Number(focalSight.value));
-                Settings.ratioSight ? (ratioSight.value = Settings.ratioSight.toString()) : (Settings.ratioSight = Number(ratioSight.value));
+                Settings.focalLV ? (focalLVInput.value = Settings.focalLV.toString()) : (Settings.focalLV = Number(focalLVInput.value));
+                Settings.focalSight ? (focalSightInput.value = Settings.focalSight.toString()) : (Settings.focalSight = Number(focalSightInput.value));
+                Settings.ratioSight ? (ratioSightInput.value = Settings.ratioSight.toString()) : (Settings.ratioSight = Number(ratioSightInput.value));
                 Settings.offset ? undefined : (Settings.offset = { x: 0.5, y: 0.5 });
             }
 
@@ -104,24 +104,20 @@ import Head from "@/components/Head.astro";
             }
 
             async function drawSight() {
-                const focalLVMilimeter = Settings.focalLV;
-                const focalSightMilimeter = Settings.focalSight;
-                const ratioSight = Settings.ratioSight;
+                const sightDiagonal = Math.sqrt(sightCanvas.width ** 2 + sightCanvas.height ** 2) * (Settings.focalLV / Settings.focalSight);
+                const sightRadian = Math.atan2(1, Settings.ratioSight);
+                const sightSize = { x: sightDiagonal * Math.cos(sightRadian), y: sightDiagonal * Math.sin(sightRadian) };
 
-                const sightDiagonal = (Math.sqrt(sight.width ** 2 + sight.height ** 2) * focalLVMilimeter) / focalSightMilimeter;
-                const sightRadian = Math.atan2(1, ratioSight);
-                const sightPx = { x: sightDiagonal * Math.cos(sightRadian), y: sightDiagonal * Math.sin(sightRadian) };
-
-                const context = sight.getContext("2d")!;
-                context.clearRect(0, 0, sight.width, sight.height);
+                const context = sightCanvas.getContext("2d")!;
+                context.clearRect(0, 0, sightCanvas.width, sightCanvas.height);
                 context.strokeStyle = "red";
                 context.lineWidth = 2;
                 context.beginPath();
                 context.rect(
-                    sight.width * Settings.offset.x - sightPx.x / 2, //
-                    sight.height * Settings.offset.y - sightPx.y / 2, //
-                    sightPx.x,
-                    sightPx.y,
+                    sightCanvas.width * Settings.offset.x - sightSize.x / 2, //
+                    sightCanvas.height * Settings.offset.y - sightSize.y / 2, //
+                    sightSize.x,
+                    sightSize.y,
                 );
                 context.stroke();
             }
@@ -164,7 +160,6 @@ import Head from "@/components/Head.astro";
                     return JSON.parse(localStorage.getItem("settings") ?? "{}");
                 }
                 private static set localStorageSettings(settings) {
-                    console.log(settings);
                     localStorage.setItem("settings", JSON.stringify(settings));
                 }
             }
@@ -209,11 +204,8 @@ import Head from "@/components/Head.astro";
                 z-index: 2;
                 bottom: 0;
                 left: 0;
-                // display: none;
                 * {
                     margin: 0.25em;
-                }
-                label {
                     text-shadow: 0 0 2px var(--background-color);
                 }
                 input[type="number"] {
