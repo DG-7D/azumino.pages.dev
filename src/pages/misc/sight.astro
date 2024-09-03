@@ -19,7 +19,7 @@ import Head from "@/components/Head.astro";
             <label for="focalLV">表示</label><input type="number" inputmode="numeric" id="focalLV" value="30" />
             <label for="focalSight">照準</label><input type="number" inputmode="numeric" id="focalSight" value="100" />
             <label for="ratioSight">縦横比</label><input type="number" inputmode="decimal" id="ratioSight" value="1.5" />
-            <button id="initParallax">視差初期化</button>
+            <button id="initOffset">視差初期化</button>
         </div>
         <div id="message">カメラ起動中</div>
         <script>
@@ -30,7 +30,7 @@ import Head from "@/components/Head.astro";
             const focalLV = document.getElementById("focalLV") as HTMLInputElement;
             const focalSight = document.getElementById("focalSight") as HTMLInputElement;
             const ratioSight = document.getElementById("ratioSight") as HTMLInputElement;
-            const initParallax = document.getElementById("initParallax") as HTMLButtonElement;
+            const initOffset = document.getElementById("initOffset") as HTMLButtonElement;
 
             new ResizeObserver(async () => {
                 sight.width = liveView.clientWidth;
@@ -71,8 +71,16 @@ import Head from "@/components/Head.astro";
                 Settings.ratioSight = Number(ratioSight.value);
                 await drawSight();
             });
-            initParallax.addEventListener("click", async () => {
-                Settings.parallax = { x: 0, y: 0 };
+            initOffset.addEventListener("click", async () => {
+                Settings.offset = { x: 0.5, y: 0.5 };
+                await drawSight();
+            });
+
+            sight.addEventListener("click", async ev => {
+                Settings.offset = {
+                    x: ev.offsetX / sight.width,
+                    y: ev.offsetY / sight.height,
+                };
                 await drawSight();
             });
 
@@ -80,7 +88,7 @@ import Head from "@/components/Head.astro";
                 Settings.focalLV ? (focalLV.value = Settings.focalLV.toString()) : (Settings.focalLV = Number(focalLV.value));
                 Settings.focalSight ? (focalSight.value = Settings.focalSight.toString()) : (Settings.focalSight = Number(focalSight.value));
                 Settings.ratioSight ? (ratioSight.value = Settings.ratioSight.toString()) : (Settings.ratioSight = Number(ratioSight.value));
-                Settings.parallax ? undefined : (Settings.parallax = { x: 0, y: 0 });
+                Settings.offset ? undefined : (Settings.offset = { x: 0.5, y: 0.5 });
             }
 
             async function setLiveViewSource() {
@@ -110,9 +118,10 @@ import Head from "@/components/Head.astro";
                 context.lineWidth = 2;
                 context.beginPath();
                 context.rect(
-                    sight.width / 2 - sightPx.x / 2, //
-                    sight.height / 2 - sightPx.y / 2, //
-                    sightPx.x, sightPx.y,
+                    sight.width * Settings.offset.x - sightPx.x / 2, //
+                    sight.height * Settings.offset.y - sightPx.y / 2, //
+                    sightPx.x,
+                    sightPx.y,
                 );
                 context.stroke();
             }
@@ -142,12 +151,12 @@ import Head from "@/components/Head.astro";
                     newSettings.ratioSight = ratioSight;
                     this.localStorageSettings = newSettings;
                 }
-                public static get parallax(): { x: number; y: number } {
-                    return this.localStorageSettings.parallax;
+                public static get offset(): { x: number; y: number } {
+                    return this.localStorageSettings.offset;
                 }
-                public static set parallax(parallax: { x: number; y: number }) {
+                public static set offset(offset: { x: number; y: number }) {
                     const newSettings = this.localStorageSettings;
-                    newSettings.parallax = parallax;
+                    newSettings.offset = offset;
                     this.localStorageSettings = newSettings;
                 }
 
