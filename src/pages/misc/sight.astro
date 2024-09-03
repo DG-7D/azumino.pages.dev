@@ -31,7 +31,6 @@ import Head from "@/components/Head.astro";
             const focalSight = document.getElementById("focalSight") as HTMLInputElement;
             const ratioSight = document.getElementById("ratioSight") as HTMLInputElement;
             const initParallax = document.getElementById("initParallax") as HTMLButtonElement;
-            const inputs = [focalLV, focalSight, ratioSight];
 
             new ResizeObserver(async () => {
                 sight.width = liveView.clientWidth;
@@ -60,27 +59,28 @@ import Head from "@/components/Head.astro";
                 message.remove();
             });
 
-            inputs.forEach(input => {
-                input.addEventListener("input", async () => {
-                    localStorage.setItem(input.id, input.value);
-                    await drawSight();
-                });
+            focalLV.addEventListener("input", async () => {
+                Settings.focalLV = Number(focalLV.value);
+                await drawSight();
             });
-
+            focalSight.addEventListener("input", async () => {
+                Settings.focalSight = Number(focalSight.value);
+                await drawSight();
+            });
+            ratioSight.addEventListener("input", async () => {
+                Settings.ratioSight = Number(ratioSight.value);
+                await drawSight();
+            });
             initParallax.addEventListener("click", async () => {
-                localStorage.setItem("parallaxX", "0");
-                localStorage.setItem("parallaxY", "0");
+                Settings.parallax = { x: 0, y: 0 };
                 await drawSight();
             });
 
             function loadSettings() {
-                inputs.forEach(input => {
-                    if (localStorage.getItem(input.id)) {
-                        input.value = localStorage.getItem(input.id)!;
-                    } else {
-                        localStorage.setItem(input.id, input.value);
-                    }
-                });
+                Settings.focalLV ? (focalLV.value = Settings.focalLV.toString()) : (Settings.focalLV = Number(focalLV.value));
+                Settings.focalSight ? (focalSight.value = Settings.focalSight.toString()) : (Settings.focalSight = Number(focalSight.value));
+                Settings.ratioSight ? (ratioSight.value = Settings.ratioSight.toString()) : (Settings.ratioSight = Number(ratioSight.value));
+                Settings.parallax ? undefined : (Settings.parallax = { x: 0, y: 0 });
             }
 
             async function setLiveViewSource() {
@@ -96,17 +96,14 @@ import Head from "@/components/Head.astro";
             }
 
             async function drawSight() {
-                const focalLVMilimeter = Math.max(1, localStorageNumber.getItem("focalLV"));
-                const focalSightMilimeter = Math.max(1, localStorageNumber.getItem("focalSight"));
-                const ratioSight = localStorageNumber.getItem("ratioSight");
-                const distanceMeter = localStorageNumber.getItem("distance") > 0 ? localStorageNumber.getItem("distance") : Number.MAX_SAFE_INTEGER;
+                const focalLVMilimeter = Settings.focalLV;
+                const focalSightMilimeter = Settings.focalSight;
+                const ratioSight = Settings.ratioSight;
+                const distanceMeter = Number.MAX_SAFE_INTEGER;
 
                 const fovLV = getFullframeFovMilimeter(focalLVMilimeter, liveView.clientWidth / liveView.clientHeight, distanceMeter);
                 const fovSight = getFullframeFovMilimeter(focalSightMilimeter, ratioSight, distanceMeter);
-                const parallax = {
-                    x: localStorageNumber.getItem("parallaxX"),
-                    y: localStorageNumber.getItem("parallaxY"),
-                };
+                const parallax = Settings.parallax;
 
                 const pxPerMilimeter = sight.width / fovLV.x;
                 const context = sight.getContext("2d")!;
@@ -127,14 +124,48 @@ import Head from "@/components/Head.astro";
                 };
             }
 
-            const localStorageNumber = {
-                setItem: function (key: string, value: number): void {
-                    localStorage.setItem(key, value.toString());
-                },
-                getItem: function (key: string): number {
-                    return Number(localStorage.getItem(key));
-                },
-            };
+            class Settings {
+                public static get focalLV(): number {
+                    return this.localStorageSettings.focalLV;
+                }
+                public static set focalLV(focalLV: number) {
+                    const newSettings = this.localStorageSettings;
+                    newSettings.focalLV = Math.max(1, focalLV);
+                    this.localStorageSettings = newSettings;
+                }
+                public static get focalSight(): number {
+                    return this.localStorageSettings.focalSight;
+                }
+                public static set focalSight(focalSight: number) {
+                    const newSettings = this.localStorageSettings;
+                    newSettings.focalSight = Math.max(1, focalSight);
+                    this.localStorageSettings = newSettings;
+                }
+                public static get ratioSight(): number {
+                    return this.localStorageSettings.ratioSight;
+                }
+                public static set ratioSight(ratioSight: number) {
+                    const newSettings = this.localStorageSettings;
+                    newSettings.ratioSight = ratioSight;
+                    this.localStorageSettings = newSettings;
+                }
+                public static get parallax(): { x: number; y: number } {
+                    return this.localStorageSettings.parallax;
+                }
+                public static set parallax(parallax: { x: number; y: number }) {
+                    const newSettings = this.localStorageSettings;
+                    newSettings.parallax = parallax;
+                    this.localStorageSettings = newSettings;
+                }
+
+                private static get localStorageSettings() {
+                    return JSON.parse(localStorage.getItem("settings") ?? "{}");
+                }
+                private static set localStorageSettings(settings) {
+                    console.log(settings);
+                    localStorage.setItem("settings", JSON.stringify(settings));
+                }
+            }
         </script>
         <style lang="scss">
             :root {
