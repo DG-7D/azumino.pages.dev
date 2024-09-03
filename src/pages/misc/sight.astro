@@ -19,10 +19,7 @@ import Head from "@/components/Head.astro";
             <label for="focalLV">表示</label><input type="number" inputmode="numeric" id="focalLV" value="30" />
             <label for="focalSight">照準</label><input type="number" inputmode="numeric" id="focalSight" value="100" />
             <label for="ratioSight">縦横比</label><input type="number" inputmode="decimal" id="ratioSight" value="1.5" />
-            <label for="distance">撮影距離/m (0:無限遠)</label><input type="number" inputmode="decimal" id="distance" value="0" />
-            <span>視差/mm</span>
-            <label for="parallaxX">右</label><input type="number" inputmode="text" id="parallaxX" value="0" />
-            <label for="parallaxY">上</label><input type="number" inputmode="text" id="parallaxY" value="0" />
+            <button id="initParallax">視差初期化</button>
         </div>
         <div id="message">カメラ起動中</div>
         <script>
@@ -30,14 +27,11 @@ import Head from "@/components/Head.astro";
             const sight = document.getElementById("sight")! as HTMLCanvasElement;
             const message = document.getElementById("message")! as HTMLDivElement;
 
-            const getInputElementById = (id: string) => document.getElementById(id)! as HTMLInputElement;
-            const focalLV = getInputElementById("focalLV");
-            const focalSight = getInputElementById("focalSight");
-            const ratioSight = getInputElementById("ratioSight");
-            const distance = getInputElementById("distance");
-            const parallaxX = getInputElementById("parallaxX");
-            const parallaxY = getInputElementById("parallaxY");
-            const inputs = [focalLV, focalSight, ratioSight, distance, parallaxX, parallaxY];
+            const focalLV = document.getElementById("focalLV") as HTMLInputElement;
+            const focalSight = document.getElementById("focalSight") as HTMLInputElement;
+            const ratioSight = document.getElementById("ratioSight") as HTMLInputElement;
+            const initParallax = document.getElementById("initParallax") as HTMLButtonElement;
+            const inputs = [focalLV, focalSight, ratioSight];
 
             new ResizeObserver(async () => {
                 sight.width = liveView.clientWidth;
@@ -71,6 +65,12 @@ import Head from "@/components/Head.astro";
                     localStorage.setItem(input.id, input.value);
                     await drawSight();
                 });
+            });
+
+            initParallax.addEventListener("click", async () => {
+                localStorage.setItem("parallaxX", "0");
+                localStorage.setItem("parallaxY", "0");
+                await drawSight();
             });
 
             function loadSettings() {
