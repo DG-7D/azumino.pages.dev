@@ -99,29 +99,22 @@ import Head from "@/components/Head.astro";
                 const focalLVMilimeter = Settings.focalLV;
                 const focalSightMilimeter = Settings.focalSight;
                 const ratioSight = Settings.ratioSight;
-                const distanceMeter = Number.MAX_SAFE_INTEGER;
 
-                const fovLV = getFullframeFovMilimeter(focalLVMilimeter, liveView.clientWidth / liveView.clientHeight, distanceMeter);
-                const fovSight = getFullframeFovMilimeter(focalSightMilimeter, ratioSight, distanceMeter);
-                const parallax = Settings.parallax;
+                const sightDiagonal = (Math.sqrt(sight.width ** 2 + sight.height ** 2) * focalLVMilimeter) / focalSightMilimeter;
+                const sightRadian = Math.atan2(1, ratioSight);
+                const sightPx = { x: sightDiagonal * Math.cos(sightRadian), y: sightDiagonal * Math.sin(sightRadian) };
 
-                const pxPerMilimeter = sight.width / fovLV.x;
                 const context = sight.getContext("2d")!;
                 context.clearRect(0, 0, sight.width, sight.height);
                 context.strokeStyle = "red";
                 context.lineWidth = 2;
                 context.beginPath();
-                context.rect((fovLV.x / 2 - fovSight.x / 2 - parallax.x) * pxPerMilimeter, (fovLV.y / 2 - fovSight.y / 2 - parallax.y) * pxPerMilimeter, fovSight.x * pxPerMilimeter, fovSight.y * pxPerMilimeter);
+                context.rect(
+                    sight.width / 2 - sightPx.x / 2, //
+                    sight.height / 2 - sightPx.y / 2, //
+                    sightPx.x, sightPx.y,
+                );
                 context.stroke();
-            }
-
-            function getFullframeFovMilimeter(focalMilimeter: number, aspectRatio: number, distanceMeter: number): { x: number; y: number } {
-                const diagonalMilimeter = Math.sqrt(24 ** 2 + 36 ** 2) * ((distanceMeter * 1000) / focalMilimeter);
-                const diagonalRadian = Math.atan2(1, aspectRatio);
-                return {
-                    x: diagonalMilimeter * Math.cos(diagonalRadian),
-                    y: diagonalMilimeter * Math.sin(diagonalRadian),
-                };
             }
 
             class Settings {
