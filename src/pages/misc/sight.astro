@@ -19,29 +19,22 @@ import Head from "@/components/Head.astro";
             <label for="focalLV">表示</label><input type="number" inputmode="numeric" id="focalLV" value="30" />
             <label for="focalSight">照準</label><input type="number" inputmode="numeric" id="focalSight" value="100" />
             <label for="ratioSight">縦横比</label><input type="number" inputmode="decimal" id="ratioSight" value="1.5" />
-            <label for="distance">撮影距離/m (0:無限遠)</label><input type="number" inputmode="decimal" id="distance" value="0" />
-            <span>視差/mm</span>
-            <label for="parallaxX">右</label><input type="number" inputmode="text" id="parallaxX" value="0" />
-            <label for="parallaxY">上</label><input type="number" inputmode="text" id="parallaxY" value="0" />
+            <button id="initOffset">視差初期化</button>
         </div>
         <div id="message">カメラ起動中</div>
         <script>
             const liveView = document.getElementById("liveView")! as HTMLVideoElement;
-            const sight = document.getElementById("sight")! as HTMLCanvasElement;
+            const sightCanvas = document.getElementById("sight")! as HTMLCanvasElement;
             const message = document.getElementById("message")! as HTMLDivElement;
 
-            const getInputElementById = (id: string) => document.getElementById(id)! as HTMLInputElement;
-            const focalLV = getInputElementById("focalLV");
-            const focalSight = getInputElementById("focalSight");
-            const ratioSight = getInputElementById("ratioSight");
-            const distance = getInputElementById("distance");
-            const parallaxX = getInputElementById("parallaxX");
-            const parallaxY = getInputElementById("parallaxY");
-            const inputs = [focalLV, focalSight, ratioSight, distance, parallaxX, parallaxY];
+            const focalLVInput = document.getElementById("focalLV") as HTMLInputElement;
+            const focalSightInput = document.getElementById("focalSight") as HTMLInputElement;
+            const ratioSightInput = document.getElementById("ratioSight") as HTMLInputElement;
+            const initOffsetButton = document.getElementById("initOffset") as HTMLButtonElement;
 
             new ResizeObserver(async () => {
-                sight.width = liveView.clientWidth;
-                sight.height = liveView.clientHeight;
+                sightCanvas.width = liveView.clientWidth;
+                sightCanvas.height = liveView.clientHeight;
                 await drawSight(); // キャンバスサイズが変わると描画が消えるので再描画
             }).observe(liveView);
 
@@ -66,21 +59,36 @@ import Head from "@/components/Head.astro";
                 message.remove();
             });
 
-            inputs.forEach(input => {
-                input.addEventListener("input", async () => {
-                    localStorage.setItem(input.id, input.value);
-                    await drawSight();
-                });
+            focalLVInput.addEventListener("input", async () => {
+                Settings.focalLV = Number(focalLVInput.value);
+                await drawSight();
+            });
+            focalSightInput.addEventListener("input", async () => {
+                Settings.focalSight = Number(focalSightInput.value);
+                await drawSight();
+            });
+            ratioSightInput.addEventListener("input", async () => {
+                Settings.ratioSight = Number(ratioSightInput.value);
+                await drawSight();
+            });
+            initOffsetButton.addEventListener("click", async () => {
+                Settings.offset = { x: 0.5, y: 0.5 };
+                await drawSight();
+            });
+
+            sightCanvas.addEventListener("click", async ev => {
+                Settings.offset = {
+                    x: ev.offsetX / sightCanvas.width,
+                    y: ev.offsetY / sightCanvas.height,
+                };
+                await drawSight();
             });
 
             function loadSettings() {
-                inputs.forEach(input => {
-                    if (localStorage.getItem(input.id)) {
-                        input.value = localStorage.getItem(input.id)!;
-                    } else {
-                        localStorage.setItem(input.id, input.value);
-                    }
-                });
+                Settings.focalLV ? (focalLVInput.value = Settings.focalLV.toString()) : (Settings.focalLV = Number(focalLVInput.value));
+                Settings.focalSight ? (focalSightInput.value = Settings.focalSight.toString()) : (Settings.focalSight = Number(focalSightInput.value));
+                Settings.ratioSight ? (ratioSightInput.value = Settings.ratioSight.toString()) : (Settings.ratioSight = Number(ratioSightInput.value));
+                Settings.offset ? undefined : (Settings.offset = { x: 0.5, y: 0.5 });
             }
 
             async function setLiveViewSource() {
@@ -96,45 +104,65 @@ import Head from "@/components/Head.astro";
             }
 
             async function drawSight() {
-                const focalLVMilimeter = Math.max(1, localStorageNumber.getItem("focalLV"));
-                const focalSightMilimeter = Math.max(1, localStorageNumber.getItem("focalSight"));
-                const ratioSight = localStorageNumber.getItem("ratioSight");
-                const distanceMeter = localStorageNumber.getItem("distance") > 0 ? localStorageNumber.getItem("distance") : Number.MAX_SAFE_INTEGER;
+                const sightDiagonal = Math.sqrt(sightCanvas.width ** 2 + sightCanvas.height ** 2) * (Settings.focalLV / Settings.focalSight);
+                const sightRadian = Math.atan2(1, Settings.ratioSight);
+                const sightSize = { x: sightDiagonal * Math.cos(sightRadian), y: sightDiagonal * Math.sin(sightRadian) };
 
-                const fovLV = getFullframeFovMilimeter(focalLVMilimeter, liveView.clientWidth / liveView.clientHeight, distanceMeter);
-                const fovSight = getFullframeFovMilimeter(focalSightMilimeter, ratioSight, distanceMeter);
-                const parallax = {
-                    x: localStorageNumber.getItem("parallaxX"),
-                    y: localStorageNumber.getItem("parallaxY"),
-                };
-
-                const pxPerMilimeter = sight.width / fovLV.x;
-                const context = sight.getContext("2d")!;
-                context.clearRect(0, 0, sight.width, sight.height);
+                const context = sightCanvas.getContext("2d")!;
+                context.clearRect(0, 0, sightCanvas.width, sightCanvas.height);
                 context.strokeStyle = "red";
                 context.lineWidth = 2;
                 context.beginPath();
-                context.rect((fovLV.x / 2 - fovSight.x / 2 - parallax.x) * pxPerMilimeter, (fovLV.y / 2 - fovSight.y / 2 - parallax.y) * pxPerMilimeter, fovSight.x * pxPerMilimeter, fovSight.y * pxPerMilimeter);
+                context.rect(
+                    sightCanvas.width * Settings.offset.x - sightSize.x / 2, //
+                    sightCanvas.height * Settings.offset.y - sightSize.y / 2, //
+                    sightSize.x,
+                    sightSize.y,
+                );
                 context.stroke();
             }
 
-            function getFullframeFovMilimeter(focalMilimeter: number, aspectRatio: number, distanceMeter: number): { x: number; y: number } {
-                const diagonalMilimeter = Math.sqrt(24 ** 2 + 36 ** 2) * ((distanceMeter * 1000) / focalMilimeter);
-                const diagonalRadian = Math.atan2(1, aspectRatio);
-                return {
-                    x: diagonalMilimeter * Math.cos(diagonalRadian),
-                    y: diagonalMilimeter * Math.sin(diagonalRadian),
-                };
-            }
+            class Settings {
+                public static get focalLV(): number {
+                    return this.localStorageSettings.focalLV;
+                }
+                public static set focalLV(focalLV: number) {
+                    const newSettings = this.localStorageSettings;
+                    newSettings.focalLV = Math.max(1, focalLV);
+                    this.localStorageSettings = newSettings;
+                }
+                public static get focalSight(): number {
+                    return this.localStorageSettings.focalSight;
+                }
+                public static set focalSight(focalSight: number) {
+                    const newSettings = this.localStorageSettings;
+                    newSettings.focalSight = Math.max(1, focalSight);
+                    this.localStorageSettings = newSettings;
+                }
+                public static get ratioSight(): number {
+                    return this.localStorageSettings.ratioSight;
+                }
+                public static set ratioSight(ratioSight: number) {
+                    const newSettings = this.localStorageSettings;
+                    newSettings.ratioSight = ratioSight;
+                    this.localStorageSettings = newSettings;
+                }
+                public static get offset(): { x: number; y: number } {
+                    return this.localStorageSettings.offset;
+                }
+                public static set offset(offset: { x: number; y: number }) {
+                    const newSettings = this.localStorageSettings;
+                    newSettings.offset = offset;
+                    this.localStorageSettings = newSettings;
+                }
 
-            const localStorageNumber = {
-                setItem: function (key: string, value: number): void {
-                    localStorage.setItem(key, value.toString());
-                },
-                getItem: function (key: string): number {
-                    return Number(localStorage.getItem(key));
-                },
-            };
+                private static get localStorageSettings() {
+                    return JSON.parse(localStorage.getItem("settings") ?? "{}");
+                }
+                private static set localStorageSettings(settings) {
+                    localStorage.setItem("settings", JSON.stringify(settings));
+                }
+            }
         </script>
         <style lang="scss">
             :root {
@@ -176,11 +204,8 @@ import Head from "@/components/Head.astro";
                 z-index: 2;
                 bottom: 0;
                 left: 0;
-                // display: none;
                 * {
                     margin: 0.25em;
-                }
-                label {
                     text-shadow: 0 0 2px var(--background-color);
                 }
                 input[type="number"] {
