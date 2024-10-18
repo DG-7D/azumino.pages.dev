@@ -10,6 +10,10 @@ interface Props {
     hideThread?: boolean;
 }
 
+function generateToken() {
+    return (Math.random() * 1000).toFixed();
+}
+
 // 使わないのは書いてない
 const tweetSchemeWithoutParent = z.object({
     created_at: z.string(),
@@ -91,7 +95,7 @@ console.log("Tweet: " + Astro.props.id)
 
 const urlSearchParams = new URLSearchParams({
     id: Astro.props.id,
-    token: Math.random().toString(),
+    token: generateToken(),
 });
 const url = new URL("https://cdn.syndication.twimg.com/tweet-result?" + urlSearchParams.toString());
 const tweet = tweetScheme.parse(await (async ()=>{
@@ -101,6 +105,7 @@ const tweet = tweetScheme.parse(await (async ()=>{
             return await fetch(url).then(response => response.json())
         } catch (error) {
             console.error(error);
+            urlSearchParams.set("token", generateToken());
             if (errorCount < 2) {
                 await new Promise(resolve => setTimeout(resolve, 10000));
             } else {
