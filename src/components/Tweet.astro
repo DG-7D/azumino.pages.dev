@@ -99,6 +99,7 @@ const urlSearchParams = new URLSearchParams({
 });
 const url = new URL("https://cdn.syndication.twimg.com/tweet-result?" + urlSearchParams.toString());
 const tweet = tweetScheme.parse(await (async ()=>{
+    await new Promise(resolve => setTimeout(resolve, 1000));   
     let errorCount = 0;
     while (true) {
         try {
