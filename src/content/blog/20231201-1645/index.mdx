@@ -31,6 +31,20 @@ ffplay -i 'https://www.city.chofu.lg.jp/documents/221/wagamachichofu_1.mp3' -af 
 
 なお、`ffmpeg`はWindows環境では`winget install ffmpeg`で容易にインストール可能である。パスも勝手に通る。音源を再配布するのはどうかと思うので、聞きたい方は各自で実行してみてほしい。また、公式サイト上のファイルを直接取りに行くコマンドなので、短時間で繰り返し実行する場合はローカルに保存してそのパスを指定したほうがいいと思う。耳に支障をきたしても責任は負わない。
 
+## パソコン上で時報を鳴らす
+
+Windowsでダウンロードした音源を毎日16時45分にffmpegで再生するには、以下のコマンドでタスクスケジューラに登録すればよい。`/np`をつけることでGUI上での設定でいう「ユーザーがログオンしているかどうかにかかわらず実行する」が有効になり、コンソールウィンドウが表示されなくなる。`ffplay`の引数を先述のように変更すると音割れさせることもできる。一度`cmd.exe`を介しているのは、なぜか`ffplay`はフルパスを記述しないと動かなかったためである。
+
+```powershell
+schtasks /create /sc daily /tn 1645 /tr "cmd.exe /c ffplay -nodisp -autoexit 'D:\wagamachichofu.mp3'" /st 16:45 /np
+```
+
+毎時45分に鳴らすには以下。
+
+```powershell
+schtasks /create /sc hourly /tn 1645 /tr "cmd.exe /c ffplay -nodisp -autoexit 'D:\wagamachichofu.mp3'" /st 00:45 /np
+```
+
 ## 1645の変遷
 
 実はコロナ禍は「1645」にも影響を及ぼしている。自分は電通大入学前、コロナ禍前からちょくちょく調布を訪れる機会があり、先のような音割れ1645(とは呼んでいなかったが)を聞く機会があった。しかし、入学後に聞いてみると記憶と違うものになっていた。いつのまにか短縮バージョンになっており、さらに音量が下げられていたのである。信憑性は謎だが、YouTubeの[コメント](https://www.youtube.com/watch?v=06I6gvmeToo)によれば、『テレワークで働く方への配慮として』が理由らしい。最近元に戻った。
