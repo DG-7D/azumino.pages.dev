@@ -1,8 +1,10 @@
 ---
 import { z } from "astro/zod";
+import { getCollection } from "astro:content";
 import Center from "./Center.astro";
 import TwitterIcon from "./TwitterIcon.astro";
 import { toJpDateTimeString } from "@/utils/Date.mjs";
+import {promises as fs} from "fs";
 
 interface Props {
     id: string;
@@ -98,24 +100,21 @@ const urlSearchParams = new URLSearchParams({
     token: generateToken(),
 });
 const url = new URL("https://cdn.syndication.twimg.com/tweet-result?" + urlSearchParams.toString());
-const tweet = tweetScheme.parse(await (async ()=>{
-    await new Promise(resolve => setTimeout(resolve, 1000));   
-    let errorCount = 0;
-    while (true) {
-        try {
-            return await fetch(url).then(response => response.json())
-        } catch (error) {
-            console.error(error);
-            urlSearchParams.set("token", generateToken());
-            if (errorCount < 2) {
-                await new Promise(resolve => setTimeout(resolve, 10000));
-            } else {
-                throw error;
-            }
-            errorCount++;
+const tweet = tweetScheme.parse(await (async ()=>{ 
+    try {
+        return await fetch(url).then(response => response.json())
+    } catch (error) {
+        console.error(error);
+        const cachedTweet = (await getCollection("tweet-cache", tweet => tweet.data.id_str == Astro.props.id)).at(0)?.data;
+        if (cachedTweet) {
+            return cachedTweet;
+        } else {
+            throw error;
         }
     }
 })());
+
+await fs.writeFile(`./src/content/tweet-cache/${tweet.id_str}.json`, JSON.stringify(tweet));
 
 textToHtml(tweet, tweet.parent ? true : false, !Astro.props.hideMedia); // 返信先がある場合は先頭@id非表示
 tweet.parent && textToHtml(tweet.parent);

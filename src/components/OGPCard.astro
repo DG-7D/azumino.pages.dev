@@ -1,6 +1,8 @@
 ---
-import fetchSiteMetadata from "fetch-site-metadata";
+import fetchSiteMetadata, {type Metadata} from "fetch-site-metadata";
 import Center from "./Center.astro";
+import { getCollection } from "astro:content";
+import { promises as fs } from "fs";
 
 interface Props {
     url: string;
@@ -16,23 +18,21 @@ fetch(url, { method: "HEAD" }).then(response => {
 });
 
 const metadata = await (async () => {
-    let errorCount = 0;
-    while (true) {
-        try {
-            return await fetchSiteMetadata(url, { suppressAdditionalRequest: true });
-        } catch (error) {
-            console.error(error);
-            if (errorCount < 2) {
-                await new Promise(resolve => setTimeout(resolve, 10000));
-            } else {
-                throw error;
-                // return { title: undefined, description: undefined, icon: undefined, image: undefined };
-            }
-            errorCount++;
+    try {
+        return await fetchSiteMetadata(url, { suppressAdditionalRequest: true });
+    } catch (error) {
+        console.error(error);
+        const cachedMetadata = (await getCollection("ogp-cache", metadata => metadata.data.url == Astro.props.url)).at(0)?.data;
+        if (cachedMetadata) {
+            return cachedMetadata as Metadata;
+        } else {
+            throw error;
         }
     }
 })();
-    
+
+await fs.writeFile(`./src/content/ogp-cache/${encodeURIComponent(Astro.props.url)}.json`, JSON.stringify(metadata));
+
 metadata.image && (metadata.image.alt ??= "");
 ---
 

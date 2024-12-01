@@ -11,4 +11,13 @@ export const collections = {
             // tags: z.array(z.string()),
         })
     }),
+    // TODO: anyをどうにかする
+    "tweet-cache": defineCollection({
+        type: "data",
+        schema: z.any(),
+    }),
+    "ogp-cache": defineCollection({
+        type: "data",
+        schema: z.any(),
+    }),
 };
