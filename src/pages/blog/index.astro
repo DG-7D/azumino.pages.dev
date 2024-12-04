@@ -3,6 +3,8 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 import { getState } from "./_functions";
 const allPosts = await getCollection("blog");
+allPosts.sort((a, b) => (a.data.publishDate < b.data.publishDate ? 1 : -1));
+
 // TODO: 表示をなんとかする
 import { toJpDateString, toJpISODateString } from "@/utils/Date.mjs";
 ---
