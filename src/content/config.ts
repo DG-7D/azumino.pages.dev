@@ -1,3 +1,4 @@
+// TODO: 新仕様にする
 import { defineCollection, z } from "astro:content";
 
 export const collections = {
