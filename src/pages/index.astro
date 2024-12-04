@@ -5,7 +5,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 
 const blogCollection = await getCollection("blog");
-const blogPickups = ["20231201-1645", "20231225-changes", "20240004-destroyed-keio"].map(slug => blogCollection.find(post => post.slug == slug));
+const blogPickups = ["20231201-1645", "20231225-changes", "20240004-destroyed-keio"].map(slug => blogCollection.find(post => post.id == slug));
 
 // TODO: タイトル・説明を自動取得にする(importするとこわれる)
 const miscPickups = [
@@ -131,7 +131,7 @@ const links: { title: string; url: URL; description: string }[] = [
             // prettier-ignore
             blogPickups.map(post => (
                 <>
-                    <dt><a href={`/blog/${post!.slug}/`}>{post!.data.title}</a></dt>
+                    <dt><a href={`/blog/${post!.id}/`}>{post!.data.title}</a></dt>
                     <dd>{post!.data.description}</dd>
                 </>
             ))

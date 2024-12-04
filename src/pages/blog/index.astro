@@ -20,7 +20,7 @@ import { toJpDateString, toJpISODateString } from "@/utils/Date.mjs";
                         // prettier-ignore
                         <>
                             <dt>
-                                <a href={"/blog/" + post.slug + "/"}>{state != "published" && `${state}: `}{title}</a>
+                                <a href={"/blog/" + post.id + "/"}>{state != "published" && `${state}: `}{title}</a>
                                 <time datetime={toJpISODateString(publishDate)}>{toJpDateString(publishDate)}</time>
                             </dt>
                             <dd>{description}</dd>

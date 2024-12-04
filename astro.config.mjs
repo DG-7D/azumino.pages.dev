@@ -9,9 +9,6 @@ import rehypeUnwrapImages from 'rehype-unwrap-images';
 
 // https://astro.build/config
 export default defineConfig({
-  legacy: {
-    collections: true,
-  },
   site: "https://azumino.pages.dev/",
   markdown: {
     shikiConfig: {
