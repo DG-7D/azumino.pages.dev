@@ -3,6 +3,8 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
 import { getState } from "./_functions";
 const allPosts = await getCollection("blog");
+allPosts.sort((a, b) => (a.data.publishDate < b.data.publishDate ? 1 : -1));
+
 // TODO: 表示をなんとかする
 import { toJpDateString, toJpISODateString } from "@/utils/Date.mjs";
 ---
@@ -20,7 +22,7 @@ import { toJpDateString, toJpISODateString } from "@/utils/Date.mjs";
                         // prettier-ignore
                         <>
                             <dt>
-                                <a href={"/blog/" + post.slug + "/"}>{state != "published" && `${state}: `}{title}</a>
+                                <a href={"/blog/" + post.id + "/"}>{state != "published" && `${state}: `}{title}</a>
                                 <time datetime={toJpISODateString(publishDate)}>{toJpDateString(publishDate)}</time>
                             </dt>
                             <dd>{description}</dd>

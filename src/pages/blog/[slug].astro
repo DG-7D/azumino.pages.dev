@@ -1,6 +1,6 @@
 ---
 import { execSync } from "child_process";
-import { getCollection } from "astro:content";
+import { getCollection, render } from "astro:content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getState } from "./_functions";
 import Img from "@/components/Img.astro";
@@ -11,13 +11,13 @@ export async function getStaticPaths() {
         return import.meta.env.DEV || getState(post) == "published";
     });
     return blogEntries.map(entry => ({
-        params: { slug: entry.slug },
+        params: { slug: entry.id },
         props: { entry },
     }));
 }
 
 const { entry } = Astro.props;
-const { Content } = await entry.render();
+const { Content } = await render(entry);
 
 const publish = entry.data.publishDate;
 const lastUpdate = (() => {
