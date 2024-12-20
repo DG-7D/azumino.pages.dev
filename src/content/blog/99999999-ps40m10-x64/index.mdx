@@ -1,0 +1,54 @@
+---
+publish: false
+title: "64bitのWindowsでいにしえのUSBオシロスコープPS40M10を使う"
+publishDate: 9999-12-31 00:00:00 +09:00
+description: "どうでもいいコスパを考える記事。"
+# TODO: こすぱ
+---
+
+後輩が突然USBオシロスコープを譲ってくれた。インストールCDも付属しており、Windowsの互換性なら動くだろうと思いもらってみたが、一筋縄ではいかなかった。
+
+## とりあえず32bitで動かしてみる
+
+64bitという概念がない時代のもので、当然64bitのドライバなど入っていなかった。
+
+ひとまず32bitのWindows 10を[以前の記事](/blog/20240011-svp132-clean-install/)でWindows 11をインストールしたVAIOを破壊してインストールし、動作を確認した。UEFIでは64bitのOSしか動作しないのでレガシBIOSモードに切り替える必要があるなど面倒だったが、32bit版のOSでは問題なく動作することを確認した。
+
+<Tweet id="1865447171103084869" />
+
+## 64bitのWindowsで使う
+
+なんと普通にWindows Updateでドライバが降ってきた。バージョンは2.8.14.0(2011-03-18)。これと付属CDのソフトウェアの組み合わせで普通に動作した。
+
+もうすこし新しいバージョンを探してみる。
+
+2.08.28(2013-01-18)が最新っぽい。
+
+なんとこれも[Microsoft Update Catalog](https://catalog.update.microsoft.com/Search.aspx?q=ps40m10%202013)上に存在していた。なぜかインストール対象がWindows 8までになっている。
+
+1.2.4 トリガー設定の自由度などが向上していた。
+
+使うためにいちいち32bitのWindowsを用意しなければならないのは面倒なので、なんとかして64bitのWindowsで使いたい。まず、公式サイトで配布されていないかと探してみたが、付属のドキュメントに記載のusb-instruments.comは滅びていた。Interet Archiveをあたってみると、[配布ページ](https://web.archive.org/web/20090411095322/http://www.usb-instruments.com/drivers.html)は残っており、64bit版ドライバの存在が確認できたが、本体のzipファイルはアーカイブされていなかった。
+
+現在は別の会社になっているのかもしれないと考え沿革を調べようとしたが、社名が一般名詞すぎて検索が困難だった。
+
+秋月電子の販売ページをよく見ると、メーカーはUSB InstrumentsではなくEasySYNCと書いてある。どうやらUSB InstrumentsはEasySYNCの子会社のようで、[EasySYNCの公式サイト](https://web.archive.org/web/20190320000947/https://easysync-ltd.com/)は2019年まで生きていたようである。
+
+[EasyScope IIの配布ページ](https://web.archive.org/web/20181009091207/http://www.easysync-ltd.com/page/13/software.html)
+
+[本体のアーカイブの最新](https://web.archive.org/web/20121105000000*/http://www.easysync-ltd.com/userfiles/editor/file/support/software/PS40M10_Setup.zip)(というかこの1つしかない)は2012年だった。バージョンはどちらも1.2.4だった。
+
+EasyScope IIに同梱されているので不要だが、[ドライバの配布ページ](https://web.archive.org/web/20181006045140/http://www.easysync-ltd.com/page/8/certified-drivers.html)もあり、[本体のアーカイブの最新](https://web.archive.org/web/20170304000000*/http://www.easysync-ltd.com/userfiles/editor/file/support/drivers/EasySYNC_CDM20828_Windows_Certified.zip)は2017年だった。2012年と変わりないバージョン2.08.28だった。
+{/* TODO: ↑ほんとに？ */}
+
+easysync-ltd.comが[滅びる瞬間のアーカイブ](https://web.archive.org/web/20210306185007/https://www.easysync-ltd.com/)によると、後継はconnectiveperipherals.comらしい。またまた一般名詞な名前で血脈を感じる。このサイトは現在も生きており、さらに[ドライバも配布](https://connectiveperipherals.com/pages/drivers)されていた。これは後継らしきDS60M10のドライバが共通で使えるだけであり、専用のEasyScope IIの配布はなかった。ドライバのバージョンは2.08.28で変わりないのでこちらから入れる必要性はない。
+
+FDTI
+
+そんなこんなでドライバを入手することができたので、あとはこれをインストールすれば解決……とはいかなかった。
+
+<Tweet id="1865734258234655075" />
+
+デバイスに対応するドライバとして認識されてインストールが試みられたものの、「%hsはWindows上では実行できないか、エラーを含んでいます」などという怪文書が現れた。
+
+「コア分離」の「メモリ整合性」を無効にすることで使うことができるようになった。
