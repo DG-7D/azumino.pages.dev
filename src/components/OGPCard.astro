@@ -38,7 +38,7 @@ metadata.image && (metadata.image.alt ??= "");
 
 <Center>
     <a href={url.toString()} target={url.hostname == Astro.site?.hostname ? "" : "_blank"}>
-        {metadata.image && <img {...metadata.image} decoding="async" loading="lazy" />}
+        {metadata.image && <img {...metadata.image} decoding="async" loading="lazy" /> || metadata.icon && <img src={metadata.icon} alt="" decoding="async" loading="lazy" />}
         <div class="detail">
             <div class="title">{metadata.title}</div>
             {metadata.description && <div class="description">{metadata.description}</div>}
