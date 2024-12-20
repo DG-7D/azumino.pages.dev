@@ -1,0 +1,22 @@
+---
+publish: false
+title: "Arch LinuxからWindowsをインストールしてみた"
+publishDate: 9999-12-31 00:00:00 +09:00
+description: ""
+---
+
+ISOをダウンロード
+マウント
+
+```
+pacman -S wimlib chntpw
+```
+
+```
+wiminfo /path/to/install.wim
+wimapply /path/to/install.wim 3 /dev/sdXY
+```
+
+Windowsが起動さえすればあとはそこから`bcdboot`がしばけるようになるので、最低限のBCDエントリを作成
+
+<Tweet id="1869756790977777719" />
