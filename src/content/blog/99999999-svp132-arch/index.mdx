@@ -1,0 +1,26 @@
+---
+publish: false
+title: "SONY VAIO Pro 13にArch Linuxをインストールしてみた"
+publishDate: 9999-12-31 00:00:00 +09:00
+description: "SONY VAIO Pro 13にArch Linuxをインストールした話。"
+---
+
+以前SONY VAIO Pro 13にWindows 11をインストールしたが、このWindowsはいにしえのUSBオシロの動作確認のために32bitのWindows 10に上書きされた。その後、USBオシロが32bit環境でなくても動かせるようになったのでこの32bit環境は不要になった。今回は、32bitのWindowsを吹き飛ばすついでにArch Linuxをインストールしてみることにした。
+
+## インストールメディアの準備
+
+公式ミラーからISOイメージをダウンロードし、すでにポータブルSSDに用意してあった[Ventoy](https://www.ventoy.net/en/index.html)のフォルダにぶちこんだ。
+
+## カーネルパラメータの調整
+
+そのままインストール環境を起動しようとしたところ、以下のようなエラーが無限に出力され、起動することができなかった。
+
+```
+ACPI Error: No handler or method for GE xx, disabling event (20140827/evgpe-839)
+ACPI Error: No installed handler for fixed event - PM_Timer (0), disabling (20140827/evevent-255)
+ACPI Error: No installed handler for fixed event - PowerButton (2), disabling (20140827/evevent-255)
+ACPI Error: No installed handler for fixed event - SleepButton (3), disabling (20140827/evevent-255)
+ACPI Error: Could not disable RealTimeClock events (20140827/evxfevnt-243)
+```
+
+カーネルパラメータに`pci=hpiosize=0`を追加することで起動できるようになった。`pci=nomsi`, `pci=noaer`, `pci=nomm`, `pci=nommconf`あたりは効果がなかった。`acpi=off`でもエラーは出なくなるが、キーボードやSSDを認識しなくなるので無意味だった。
