@@ -24,3 +24,42 @@ ACPI Error: Could not disable RealTimeClock events (20140827/evxfevnt-243)
 ```
 
 カーネルパラメータに`pci=hpiosize=0`を追加することで起動できるようになった。`pci=nomsi`, `pci=noaer`, `pci=nomm`, `pci=nommconf`あたりは効果がなかった。`acpi=off`でもエラーは出なくなるが、キーボードやSSDを認識しなくなるので無意味だった。
+
+## インストール
+
+基本的に公式wikiのインストールガイドに従うだけなのだが、日本語版は若干情報が古い部分があるので英語版を参照したほうがいいかもしれない。変な環境を作りたいとかでない限り、どこの誰が書いたのか分からんような記事だとか他人のメモだとかを見る必要は全くないと思われる。以下は自分用のメモ。
+
+`loadkeys jp106`でキーボードレイアウトをJISにする(インストール環境だけなのでUS配列で耐えられるなら飛ばしてよい)。
+
+ブートモードはx64のUEFIであることが自明なので確認するまでもないが、日本語版と英語版で方法が異なっている。UEFIブートとレガシBIOSブートが同時に使えるタイプのUEFIは滅びたほうがよいとされる(もうレガシBIOS互換自体が滅びてるが)。
+
+`iwctl --passphrase PASS station wlan0 connect SSID`でWi-Fiに接続する。`ping twitter.com`で一応疎通確認。
+
+`fdisk -l`で対象のドライブを確認して`gdisk /dev/sdX`なりなんなり好きなものを使ってパーティションを切る。推奨の容量はESPが1 GiB、ルートが32 GiBらしい。スワップ領域も4 GiB求められているがなんか嫌なので無視した。ルートは開始セクタを`-32G`と指定して末尾に作った。ESPを`mkfs.fat -F 32 -n ESP /dev/sdXY`、ルートを`mkfs.ext4 -L ArchRoot /dev/sdXY`でフォーマットする。ラベルをつけておくと後で幸せになれるかもしれない。ルートを`mount /dev/sdXY /mnt`で、ESPを`mount --mkdir /dev/sdXY /mnt/boot`でマウントする。
+
+`reflector --save /etc/pacman.d/mirrorlist -c jp -l 5`などとしてpacmanのミラーを設定する。これはインストール後の環境にも複製されるため真面目に設定するとよいらしい。`pacstrap -K /mnt base linux linux-firmware intel-ucode networkmanager iwd nano otf-ipafont`でもろもろを好きなようにインストールする。
+
+`genfstb -L /mnt > /mnt/etc/fstab`でfstabを生成する。`-L`か`-U`か何も指定しないかはお好みで。
+
+`arch-chroot /mnt`でインストールした環境に入る。`ln -sf /usr/share/zoneinfo/Asia/Tokyo /etc/localtime`でタイムゾーンを設定し、`hwclock --systohc`でハードウェアクロックを(UTCに)設定する。`nano /etc/locale.gen`で`en_US.UTF-8`と`ja_JP.UTF-8`のコメントアウトを解除し、`locale-gen`でロケールを生成する。`echo LANG=ja_JP.UTF-8 > /etc/locale.conf`でデフォルトのロケールを設定する(GUI導入前に文字化けするのが嫌なら英語にしたほうがいいかもしれない)。`echo KEYMAP=jp106 > /etc/vconsole.conf`でキーボードレイアウトを設定する。`echo HOSTNAME=SVP132 > /etc/hostname`でホスト名を設定する。`passwd`でrootパスワードを設定する。
+
+ブートローダとしてはEFIブートスタブを使いたいところだが、このVAIOのUEFIは馬鹿でブートエントリを無視したり忘れたりするので今回は使わない。無難に`bootctl install`でsystemd-bootをインストールする。また、systemd-bootにはLinuxの自動検出機能がないので、`pacman -S refind`からの`refind-install`でrEFIndもインストールしておく。
+
+`nano /boot/loader/entries/arch.conf`で以下の内容を記述する。ラベルを付けていたおかげでUUIDを書く必要がなく楽で保守性が高い。
+
+```conf
+title Arch Linux
+linux /vmlinuz-linux
+initrd /intel-ucode.img
+initrd /initramfs-linux.img
+options root=LABEL=ArchRoot rw pci=hpiosize=0
+```
+
+`nano /boot/loader/entries/refind.conf`で以下の内容を記述する。
+
+```conf
+title rEFInd
+efi /EFI/refind/refind_x64.efi
+```
+
+ちなみに、GRUBは設定をOS上から行うことを前提としている融通の利かないアホのため使わないほうがよい。
