@@ -23,11 +23,11 @@ ACPI Error: No installed handler for fixed event - SleepButton (3), disabling (2
 ACPI Error: Could not disable RealTimeClock events (20140827/evxfevnt-243)
 ```
 
-カーネルパラメータに`pci=hpiosize=0`を追加することで起動できるようになった。`pci=nomsi`, `pci=noaer`, `pci=nomm`, `pci=nommconf`あたりは効果がなかった。`acpi=off`でもエラーは出なくなるが、キーボードやSSDを認識しなくなるので無意味だった。
+ブートエントリの選択画面で「e」を押し、カーネルパラメータに`pci=hpiosize=0`を追加することで起動できるようになった。`pci=nomsi`, `pci=noaer`, `pci=nomm`, `pci=nommconf`あたりは効果がなかった。`acpi=off`でもエラーは出なくなるが、キーボードやSSDを認識しなくなるので無意味だった。`libata.force=noncq`がないとSSDを認識しないみたいな情報があったが、そこは問題なかった。
 
 ## インストール
 
-基本的に公式wikiのインストールガイドに従うだけなのだが、日本語版は若干情報が古い部分があるので英語版を参照したほうがいいかもしれない。変な環境を作りたいとかでない限り、どこの誰が書いたのか分からんような記事だとか他人のメモだとかを見る必要は全くないと思われる。以下は自分用のメモ。
+基本的に公式wikiのインストールガイドに従うだけなのだが、[日本語版](https://wiki.archlinux.jp/index.php/%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E3%82%AC%E3%82%A4%E3%83%89)は若干情報が古い部分があるので[英語版](https://wiki.archlinux.org/title/Installation_guide)を参照したほうがいいかもしれない。変な環境を作りたいとかでない限り、どこの誰が書いたのか分からんような記事だとか他人のメモだとかを見る必要は全くないと思われる。以下は自分用のメモ。
 
 `loadkeys jp106`でキーボードレイアウトをJISにする(インストール環境だけなのでUS配列で耐えられるなら飛ばしてよい)。
 
@@ -35,7 +35,7 @@ ACPI Error: Could not disable RealTimeClock events (20140827/evxfevnt-243)
 
 `iwctl --passphrase PASS station wlan0 connect SSID`でWi-Fiに接続する。`ping twitter.com`で一応疎通確認。
 
-`fdisk -l`で対象のドライブを確認して`gdisk /dev/sdX`なりなんなり好きなものを使ってパーティションを切る。推奨の容量はESPが1 GiB、ルートが32 GiBらしい。スワップ領域も4 GiB求められているがなんか嫌なので無視した。ルートは開始セクタを`-32G`と指定して末尾に作った。ESPを`mkfs.fat -F 32 -n ESP /dev/sdXY`、ルートを`mkfs.ext4 -L ArchRoot /dev/sdXY`でフォーマットする。ラベルをつけておくと後で幸せになれるかもしれない。ルートを`mount /dev/sdXY /mnt`で、ESPを`mount --mkdir /dev/sdXY /mnt/boot`でマウントする。
+`fdisk -l`で対象のドライブを確認して`gdisk /dev/sdX`なりなんなり好きなものを使ってパーティションを切る。推奨の容量はESPが1 GiB、ルートが32 GiBらしい(日本語版だと残り全部とかいう何の役にも立たない表現だった)。スワップ領域も4 GiB求められているがなんか嫌なので無視した。ルートは開始セクタを`-32G`と指定して末尾に作った。ESPを`mkfs.fat -F 32 -n ESP /dev/sdXY`、ルートを`mkfs.ext4 -L ArchRoot /dev/sdXY`でフォーマットする。ラベルをつけておくと後で幸せになれるかもしれない。ルートを`mount /dev/sdXY /mnt`で、ESPを`mount --mkdir /dev/sdXY /mnt/boot`でマウントする。
 
 `reflector --save /etc/pacman.d/mirrorlist -c jp -l 5`などとしてpacmanのミラーを設定する。これはインストール後の環境にも複製されるため真面目に設定するとよいらしい。`pacstrap -K /mnt base linux linux-firmware intel-ucode networkmanager iwd nano otf-ipafont`でもろもろを好きなようにインストールする。
 
@@ -43,9 +43,9 @@ ACPI Error: Could not disable RealTimeClock events (20140827/evxfevnt-243)
 
 `arch-chroot /mnt`でインストールした環境に入る。`ln -sf /usr/share/zoneinfo/Asia/Tokyo /etc/localtime`でタイムゾーンを設定し、`hwclock --systohc`でハードウェアクロックを(UTCに)設定する。`nano /etc/locale.gen`で`en_US.UTF-8`と`ja_JP.UTF-8`のコメントアウトを解除し、`locale-gen`でロケールを生成する。`echo LANG=ja_JP.UTF-8 > /etc/locale.conf`でデフォルトのロケールを設定する(GUI導入前に文字化けするのが嫌なら英語にしたほうがいいかもしれない)。`echo KEYMAP=jp106 > /etc/vconsole.conf`でキーボードレイアウトを設定する。`echo HOSTNAME=SVP132 > /etc/hostname`でホスト名を設定する。`passwd`でrootパスワードを設定する。
 
-ブートローダとしてはEFIブートスタブを使いたいところだが、このVAIOのUEFIは馬鹿でブートエントリを無視したり忘れたりするので今回は使わない。無難に`bootctl install`でsystemd-bootをインストールする。また、systemd-bootにはLinuxの自動検出機能がないので、`pacman -S refind`からの`refind-install`でrEFIndもインストールしておく。
+ブートローダとしてはEFIブートスタブを使いたいところだが、このVAIOのUEFIは馬鹿でブートエントリを無視したり忘れたりするので今回は使わない。無難に`bootctl install`でsystemd-bootをインストールする。また、systemd-bootには同じESP以外から起動する機能はないので、USBメモリから起動したい時とかのために`pacman -S refind`からの`refind-install`でrEFIndもインストールしておく。
 
-`nano /boot/loader/entries/arch.conf`で以下の内容を記述する。ラベルを付けていたおかげでUUIDを書く必要がなく楽で保守性が高い。
+`nano /boot/loader/entries/arch.conf`でArch Linuxのエントリを作成する。ラベルを付けていたおかげでUUIDを書く必要がなく楽で保守性が高い。
 
 ```conf
 title Arch Linux
@@ -55,11 +55,11 @@ initrd /initramfs-linux.img
 options root=LABEL=ArchRoot rw pci=hpiosize=0
 ```
 
-`nano /boot/loader/entries/refind.conf`で以下の内容を記述する。
+`nano /boot/loader/entries/refind.conf`でrEFIndのエントリも用意する。
 
 ```conf
 title rEFInd
 efi /EFI/refind/refind_x64.efi
 ```
 
-ちなみに、GRUBは設定をOS上から行うことを前提としている融通の利かないアホのため使わないほうがよい。
+ちなみに、GRUBは設定をOS上から行うことを前提としている融通の利かない旧時代の遺物のため使わないほうがよい。systemd-bootは機能を絞っている代わりに高速かつ簡潔な設定ファイルで管理でき、rEFIndは自動検出機能をもっており細かく設定することなく高い柔軟性を持つので、この2つを使えるようにしておけばだいたいなんとかなる。レガシBIOS? 知らん。
