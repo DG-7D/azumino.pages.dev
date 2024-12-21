@@ -1,22 +1,136 @@
 ---
 publish: false
-title: "Arch LinuxからWindowsをインストールしてみた"
+title: "Linux上からWindowsをインストールしてみた"
 publishDate: 9999-12-31 00:00:00 +09:00
-description: ""
+description: "Linux上からWindows環境を起動することなくWindowsをインストールしてみた話。"
 ---
 
-ISOをダウンロード
-マウント
+以前VAIO Pro 13にArch Linuxをインストールした。続けてWindowsもインストールし直すが、ただインストールするのでは面白くないので、Windowsのインストール環境や回復環境を起動することなく、Linux上からWindowsをインストールしてみた。
 
-```
-pacman -S wimlib chntpw
-```
+## 準備
 
-```
-wiminfo /path/to/install.wim
-wimapply /path/to/install.wim 3 /dev/sdXY
+まずは[公式サイト](https://www.microsoft.com/ja-jp/software-download/windows11)からWindows 11のISOイメージをダウンロードし、適当にマウントする。
+
+```bash
+sudo mount -m win11.iso /mnt/cdrom
 ```
 
-Windowsが起動さえすればあとはそこから`bcdboot`がしばけるようになるので、最低限のBCDエントリを作成
+インストールイメージを展開するための`wimlib`とブート構成データ(BCD)を書き込むための`hivex`をインストールする。
 
-<Tweet id="1869756790977777719" />
+```bash
+sudo pacman -S wimlib hivex
+```
+
+## パーティション作成
+
+EFIシステムパーティションはすでにあるので、Windowsのパーティションのみ用意する。
+
+```bash
+sudo gdisk /dev/sdX
+sudo mkfs.ntfs -Q -L Windows /dev/sdXY
+```
+
+## 展開
+
+`wiminfo`で目的のエディションのインデックスを確認し、`wimapply`で展開する。このとき、展開先はマウントしたファイルシステムではなく、デバイスファイルを指定する必要がある。
+
+```bash
+wiminfo /mnt/cdrom/sources/install.wim
+sudo wimapply /mnt/cdrom/sources/install.wim 3 /dev/sdXY
+```
+
+## ブートローダ
+
+Windows内のブートローダのファイル群をESP(`/boot`にマウントされているものとする)にコピーする。
+
+```bash
+sudo mount -m /dev/sdXY /mnt/c
+sudo mkdir -p /boot/EFI/Microsoft/Boot
+sudo cp -r /mnt/c/Windows/Boot/EFI/. /boot/EFI/Microsoft/Boot/
+sudo cp /mnt/c/Windows/System32/config/BCD-Template /boot/EFI/Microsoft/Boot/BCD
+```
+
+これだけではシステム固有の情報がなく起動できないのでBCDを編集する必要がある。完全なものを作るのは非常に面倒なので、[最低限起動ができるもの](https://twitter.com/DG_7D/status/1869756790977777719)を作る。まずはパーティションGUIDとディスクGUIDを調べる。
+
+```bash
+sudo blkid -s PARTUUID /dev/sdXY
+sudo blkid -s PTUUID /dev/sdX
+```
+
+以下の内容でregファイルを作成する。`PP`の部分にパーティションGUID、`DD`の部分にディスクGUIDを、前半のバイト順を区切りごとに逆にして書き込む。たとえば`{00112233-4455-6677-8899-aabbccddeeff}`の場合、`33,22,11,00,55,44,77,66,88,99,aa,bb,cc,dd,ee,ff`となる。2ヶ所あるがどちらもまったく同じでよい。かなり打ち間違えやすいので注意。
+
+```reg
+Windows Registry Editor Version 5.00
+
+[\Description]
+"System"=dword:00000001
+
+[\Objects\{01234567-89ab-cdef-0123-456789abcdef}]
+
+[\Objects\{01234567-89ab-cdef-0123-456789abcdef}\Description]
+"Type"=dword:10200003
+
+[\Objects\{01234567-89ab-cdef-0123-456789abcdef}\Elements]
+
+[\Objects\{01234567-89ab-cdef-0123-456789abcdef}\Elements\11000001]
+"Element"=hex:00,00,00,00,00,00,00,00,\
+  00,00,00,00,00,00,00,00,\
+  06,00,00,00,00,00,00,00,\
+  48,00,00,00,00,00,00,00,\
+  PP,PP,PP,PP,PP,PP,PP,PP,\
+  PP,PP,PP,PP,PP,PP,PP,PP,\
+  00,00,00,00,00,00,00,00,\
+  DD,DD,DD,DD,DD,DD,DD,DD,\
+  DD,DD,DD,DD,DD,DD,DD,DD,\
+  00,00,00,00,00,00,00,00,\
+  00,00,00,00,00,00,00,00
+
+[\Objects\{01234567-89ab-cdef-0123-456789abcdef}\Elements\12000002]
+"Element"="\\windows\\system32\\winload.efi"
+
+[\Objects\{01234567-89ab-cdef-0123-456789abcdef}\Elements\12000004]
+"Element"="Windows 11"
+
+[\Objects\{01234567-89ab-cdef-0123-456789abcdef}\Elements\21000001]
+"Element"=hex:00,00,00,00,00,00,00,00,\
+  00,00,00,00,00,00,00,00,\
+  06,00,00,00,00,00,00,00,\
+  48,00,00,00,00,00,00,00,\
+  PP,PP,PP,PP,PP,PP,PP,PP,\
+  PP,PP,PP,PP,PP,PP,PP,PP,\
+  00,00,00,00,00,00,00,00,\
+  DD,DD,DD,DD,DD,DD,DD,DD,\
+  DD,DD,DD,DD,DD,DD,DD,DD,\
+  00,00,00,00,00,00,00,00,\
+  00,00,00,00,00,00,00,00
+
+[\Objects\{01234567-89ab-cdef-0123-456789abcdef}\Elements\22000002]
+"Element"="\\windows"
+
+[\Objects\{9dea862c-5cdd-4e70-acc1-f32b344d4795}\Elements\23000003]
+"Element"="{01234567-89ab-cdef-0123-456789abcdef}"
+```
+
+regファイルができたら、`hivexregedit`でBCDに書き込む。
+
+```bash
+sudo hivexregedit --merge /boot/EFI/Microsoft/Boot/BCD BCD.reg
+```
+
+ちなみに、BCDの構造については[このページ](http://www.mistyprojects.co.uk/documents/BCDEdit/files/object_element_codes.htm)が詳しい。
+
+## 起動
+
+再起動してWindowsを起動する。systemd-bootは何も設定しなくても勝手に同じESPの`bootmgfw.efi`を検出してくれるので、起動時に「w」キーを押下していればWindowsが起動する。
+
+少々時間がかかったり再起動がかかったり(Linuxに戻らないように注意)するが、操作できるようになったら「Shift+F10」でコマンドプロンプトを起動し、ちゃんとしたBCDを生成し直す。
+
+```cmd
+bcdboot C:\Windows /l ja-jp
+```
+
+あとは通常通りにWindowsをセットアップして終了。
+
+## あとがき
+
+マジで何の役にも立たない技術だが、BCDの構造とか役に立たない知識を得る機会になっておもしろかった。
