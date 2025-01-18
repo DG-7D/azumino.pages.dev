@@ -7,37 +7,43 @@ interface Props {
     inline?: boolean;
 }
 
-// TODO: groupByがきたら使ってもいいかも
 const separator = "\uF8FF";
-const history = new Map<string, Set<string>>();
-let overflow: boolean = false;
-execSync(`git log --format=%ad${separator}%s --date=short --first-parent`)
+const commits = execSync(`git log --format=%ad${separator}%s --date=short --first-parent`)
     .toString()
     .split("\n")
-    .forEach(line => {
+    .map(line => {
         const [date, message] = line.split(separator);
-        if (!date || !message || message.startsWith("_") || message.startsWith("Merge")) {
-            return;
-        }
-        if (!history.has(date) && history.size == Astro.props.count) {
-            overflow = true;
-            return;
-        }
-        history.set(date, new Set([...(history.get(date) ?? []), message]));
+        return {
+            date: date,
+            message: message,
+        };
     });
+const history = Object.groupBy(
+    commits.filter(commit => commit.date && commit.message && !commit.message.startsWith("_") && !commit.message.startsWith("Merge")),
+    commit => commit.date!,
+);
+const dates = Object.keys(history);
+
+let overflow = false;
+if (dates.length > Astro.props.count) {
+    overflow = true;
+    dates.splice(Astro.props.count);
+}
 ---
 
 <dl class={Astro.props.inline ? "inline" : ""}>
     {
         // prettier-ignore
-        [...history].map(([date, messages]) =>
+        dates.map(date => (
             <>
                 <dt><time datetime={date}>{toJpDateString(date)}</time></dt>
-                {[...messages].map(message => (
-                    <dd>{message}</dd>
-                ))}
+                {
+                    history[date]!.map(commit => (
+                        <dd>{commit.message}</dd>
+                    ))
+                }
             </>
-        )
+        ))
     }
     {
         // prettier-ignore
