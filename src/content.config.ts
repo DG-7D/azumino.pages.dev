@@ -33,6 +33,6 @@ export const collections = {
     }),
     "ogp-cache": defineCollection({
         loader: glob({ pattern: "**/*.json", base: "./src/content/ogp-cache" }),
-        schema: zodMetadata,
+        schema: zodMetadata.extend({url: z.string()}),
     }),
 };

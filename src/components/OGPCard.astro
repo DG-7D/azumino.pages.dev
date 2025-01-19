@@ -1,5 +1,5 @@
 ---
-import fetchSiteMetadata, { type Metadata } from "fetch-site-metadata";
+import fetchSiteMetadata from "fetch-site-metadata";
 import Center from "./Center.astro";
 import { getCollection } from "astro:content";
 import { promises as fs } from "fs";
@@ -19,15 +19,13 @@ fetch(url, { method: "HEAD" }).then(response => {
 const metadata = await (async () => {
     try {
         const metadata = await fetchSiteMetadata(url, { suppressAdditionalRequest: true });
-        fs.writeFile(`./src/content/ogp-cache/${encodeURIComponent(Astro.props.url)}.json`, JSON.stringify(metadata));
+        fs.writeFile(`./src/content/ogp-cache/${encodeURIComponent(Astro.props.url)}.json`, JSON.stringify({ url: Astro.props.url, ...metadata }));
         return metadata;
     } catch (error) {
         console.error(error);
-        // TODO: まともにslugfy(?)できるのか
-        const slugfiedId = encodeURIComponent(Astro.props.url).toLowerCase().replaceAll("%", "").replaceAll(".", "");
-        const cachedMetadata = (await getCollection("ogp-cache", metadata => metadata.id == slugfiedId)).at(0)?.data;
+        const cachedMetadata = (await getCollection("ogp-cache", metadata => metadata.data.url === Astro.props.url)).at(0)?.data;
         if (cachedMetadata) {
-            return cachedMetadata as Metadata;
+            return cachedMetadata;
         } else {
             throw error;
         }
