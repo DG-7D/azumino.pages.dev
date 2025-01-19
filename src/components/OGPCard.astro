@@ -1,5 +1,5 @@
 ---
-import fetchSiteMetadata, {type Metadata} from "fetch-site-metadata";
+import fetchSiteMetadata, { type Metadata } from "fetch-site-metadata";
 import Center from "./Center.astro";
 import { getCollection } from "astro:content";
 import { promises as fs } from "fs";
@@ -12,17 +12,20 @@ console.log("OGPCard: " + Astro.props.url);
 
 const url = new URL(Astro.props.url);
 fetch(url, { method: "HEAD" }).then(response => {
-    if (response.status == 404){
+    if (response.status == 404) {
         throw new Error(`[${response.status}] ${url.toString()}`);
     }
 });
-
 const metadata = await (async () => {
     try {
-        return await fetchSiteMetadata(url, { suppressAdditionalRequest: true });
+        const metadata = await fetchSiteMetadata(url, { suppressAdditionalRequest: true });
+        fs.writeFile(`./src/content/ogp-cache/${encodeURIComponent(Astro.props.url)}.json`, JSON.stringify(metadata));
+        return metadata;
     } catch (error) {
         console.error(error);
-        const cachedMetadata = (await getCollection("ogp-cache", metadata => metadata.data.url == Astro.props.url)).at(0)?.data;
+        // TODO: まともにslugfy(?)できるのか
+        const slugfiedId = encodeURIComponent(Astro.props.url).toLowerCase().replaceAll("%", "").replaceAll(".", "");
+        const cachedMetadata = (await getCollection("ogp-cache", metadata => metadata.id == slugfiedId)).at(0)?.data;
         if (cachedMetadata) {
             return cachedMetadata as Metadata;
         } else {
@@ -31,14 +34,12 @@ const metadata = await (async () => {
     }
 })();
 
-await fs.writeFile(`./src/content/ogp-cache/${encodeURIComponent(Astro.props.url)}.json`, JSON.stringify(metadata));
-
 metadata.image && (metadata.image.alt ??= "");
 ---
 
 <Center>
     <a href={url.toString()} target={url.hostname == Astro.site?.hostname ? "" : "_blank"}>
-        {metadata.image && <img {...metadata.image} decoding="async" loading="lazy" /> || metadata.icon && <img src={metadata.icon} alt="" decoding="async" loading="lazy" />}
+        {(metadata.image && <img {...metadata.image} decoding="async" loading="lazy" />) || (metadata.icon && <img src={metadata.icon} alt="" decoding="async" loading="lazy" />)}
         <div class="detail">
             <div class="title">{metadata.title}</div>
             {metadata.description && <div class="description">{metadata.description}</div>}
