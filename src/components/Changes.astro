@@ -1,5 +1,4 @@
 ---
-import { $ } from "bun";
 import { toJpDateString } from "@/utils/Date.mjs";
 
 interface Props {
@@ -9,7 +8,7 @@ interface Props {
 
 const separator = "\uF8FF";
 const commits: { date: string; message: string }[] = [];
-for await (const line of $`git log --format=%ad${separator}%s --date=short --first-parent`.lines()) {
+for await (const line of Bun.$`git log --format=%ad${separator}%s --date=short --first-parent`.lines()) {
     const [date, message] = line.split(separator);
     if (date && message && !message.startsWith("_") && !message.startsWith("Merge")) {
         commits.push({ date: date, message: message });

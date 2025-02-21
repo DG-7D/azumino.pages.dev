@@ -1,5 +1,4 @@
 ---
-import { $ } from "bun";
 import { getCollection, render } from "astro:content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getState } from "./_functions";
@@ -21,7 +20,7 @@ const { Content } = await render(entry);
 
 const publish = entry.data.publishDate;
 const lastUpdate = await (async () => {
-    const lastUpdateISO = await $`git log -1 --format="%ad" --date="iso" ./src/content/${entry.collection}/${entry.id}`.text();
+    const lastUpdateISO = await Bun.$`git log -1 --format="%ad" --date="iso" ./src/content/${entry.collection}/${entry.id}`.text();
     return lastUpdateISO.length != 0 ? new Date(lastUpdateISO) : undefined;
 })();
 
