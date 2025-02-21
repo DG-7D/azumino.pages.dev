@@ -64,6 +64,7 @@ const tweetSchemeWithoutParent = z.object({
 const tweetScheme = tweetSchemeWithoutParent.extend({parent: tweetSchemeWithoutParent.optional()})
 
 function textToHtml(tweet: z.infer<typeof tweetScheme>, removeFirstMention = false, removeMediaUrl = false) {
+    tweet.text = tweet.text.replaceAll("\n", "<br>");
     for (const hashtag of tweet.entities.hashtags) {
         const hashtagText = "#" + hashtag.text;
         tweet.text = tweet.text.replaceAll(hashtagText, toATag("https://twitter.com/hashtag/" + hashtag.text, hashtagText));
