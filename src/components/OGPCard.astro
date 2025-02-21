@@ -2,7 +2,6 @@
 import fetchSiteMetadata from "fetch-site-metadata";
 import Center from "./Center.astro";
 import { getCollection } from "astro:content";
-import { promises as fs } from "fs";
 
 interface Props {
     url: string;
@@ -19,7 +18,7 @@ fetch(url, { method: "HEAD" }).then(response => {
 const metadata = await (async () => {
     try {
         const metadata = await fetchSiteMetadata(url, { suppressAdditionalRequest: true });
-        fs.writeFile(`./src/content/ogp-cache/${encodeURIComponent(Astro.props.url)}.json`, JSON.stringify({ url: Astro.props.url, ...metadata }));
+        await Bun.write(`./src/content/ogp-cache/${encodeURIComponent(Astro.props.url)}.json`, JSON.stringify({ url: Astro.props.url, ...metadata }));
         return metadata;
     } catch (error) {
         console.error(error);

@@ -4,7 +4,6 @@ import { getCollection } from "astro:content";
 import Center from "./Center.astro";
 import TwitterIcon from "./TwitterIcon.astro";
 import { toJpDateTimeString } from "@/utils/Date.mjs";
-import {promises as fs} from "fs";
 
 interface Props {
     id: string;
@@ -114,7 +113,7 @@ const tweet = tweetScheme.parse(await (async ()=>{
     }
 })());
 
-await fs.writeFile(`./src/content/tweet-cache/${tweet.id_str}.json`, JSON.stringify(tweet));
+await Bun.write(`./src/content/tweet-cache/${tweet.id_str}.json`, JSON.stringify(tweet));
 
 textToHtml(tweet, tweet.parent ? true : false, !Astro.props.hideMedia); // 返信先がある場合は先頭@id非表示
 tweet.parent && textToHtml(tweet.parent);
