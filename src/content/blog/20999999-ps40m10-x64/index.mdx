@@ -27,16 +27,13 @@ description: "20年前のUSBオシロスコープPS40M10を入手したが、同
 
 現在は別の会社になっていてそっちの公式サイトは生きている、という可能性を考え沿革を調べようとしたが、「USB Instruments」などという一般名詞すぎる名前のために検索が困難だった。幸い、Internet Archiveは302リダイレクトも記録してくれていて、2010年9月30日時点でEasySYNCのサイトwww.easysync-ltd.comに飛ばされていることが分かった。どうやらUSB Instrumentsは会社ではなくEasySYNCのブランドの一つのようである。言われてみれば、秋月電子のページではメーカーはUSB InstrumentsではなくEasySYNCと書いてあるし、ドキュメントにもEasySYNCの名前があった。
 
-これも滅びていたが、アーカイブは[ドライバの配布ページ](https://web.archive.org/web/20181006045140/http://www.easysync-ltd.com/page/8/certified-drivers.html)、[ソフトウェアの配布ページ](htps://web.archive.org/wetb/20181009091207/http://www.easysync-ltd.com/page/13/software.html)に加え、[ドライバ(2.08.28(2013年))](https://web.archive.org/web/20170304000000*/http://www.easysync-ltd.com/userfiles/editor/file/support/drivers/EasySYNC_CDM20828_Windows_Certified.zip)と[EasyScope II(1.2.4)](https://web.archive.org/web/20121105000000*/http://www.easysync-ltd.com/userfiles/editor/file/support/software/PS40M10_Setup.zip)の本体も残っていた。なお、EasyScope IIのインストーラの実行ファイルを7-zipを用いて展開しようとすると、Linux用のファイル群のみが出現する奇妙な現象が発生した。また、EasyScope IIのインストール先にしれっとドライバのファイルも存在するが、64bit対応こそしているものの古い2.00.00(2006年)であった。
+これも滅びていたが、アーカイブは[ドライバの配布ページ](https://web.archive.org/web/20181006045140/http://www.easysync-ltd.com/page/8/certified-drivers.html)、[ソフトウェアの配布ページ](https://web.archive.org/web/20181009091207/http://www.easysync-ltd.com/page/13/software.html)に加え、[ドライバ(2.08.28(2013年))](https://web.archive.org/web/20170304000000*/http://www.easysync-ltd.com/userfiles/editor/file/support/drivers/EasySYNC_CDM20828_Windows_Certified.zip)と[EasyScope II(1.2.4)](https://web.archive.org/web/20121105000000*/http://www.easysync-ltd.com/userfiles/editor/file/support/software/PS40M10_Setup.zip)の本体も残っていた。なお、EasyScope IIのインストーラの実行ファイルを7-zipを用いて展開しようとすると、Linux用のファイル群のみが出現する奇妙な現象が発生した。また、EasyScope IIのインストール先にしれっとドライバのファイルも存在するが、64bit対応こそしているものの古い2.00.00(2006年)であった。
 
 EasySYNCの成れの果ても探ってみる。easysync-ltd.comが[滅びる瞬間のアーカイブ](https://web.archive.org/web/20210120200603/https://www.easysync-ltd.com/)によると、EasySYNCのサイトは技術的な問題で滅び、"our global company"の[Connective Peripherals](connectiveperipherals.com)のほうに統一されたらしい。またまた一般名詞な名前で血脈を感じる。このサイトは現在も生きており、さらに[ドライバも配布](https://connectiveperipherals.com/pages/drivers)されていた。これは若干新しい製品のDS60M10のドライバが共通で使えるだけであり、専用のEasyScope IIの配布はなかった。バージョンは2.08.28で変わりない。
 
 そして、先述したようにWindows Updateにもドライバが存在していた。オプションの更新プログラムとしてインストールできるバージョンは若干古めの2.08.14(2011年)だが、[Microsoft Update Catalog](https://catalog.update.microsoft.com/Search.aspx?q=ps40m10%202013)によれば最新の2.08.28も存在しており、インストール対象がWindows 8までになっているために降ってこないだけのようである。
 
-
-
-
-FDTI
+純正ドライバのinfファイル等を確認すると、PS40M10ではFDTI製のUSBシリアル変換器、FT2232Cを使用しているっぽい。これに対応したドライバはFDTIからも[直接提供](https://ftdichip.com/drivers/d2xx-drivers/)されている。デバイスIDが異なっているためこれをインストールしても自動的には適用されないが、「USB Serial Converter A/B」を無理矢理適用すると使えるようになる。
 
 1.2.4 トリガー設定の自由度などが向上していた。
 
@@ -50,6 +47,14 @@ FDTI
 
 「コア分離」の「メモリ整合性」を無効にすることで使うことができるようになった。
 いろいろ試行錯誤した後で気付いたことなのだが、なんとWindows Updateのオプションの更新プログラムでドライバが降ってきていた。バージョンは2.8.14.0(2011-03-18)。これと付属CDのソフトウェアの組み合わせで普通に動作した。もうすこし新しいバージョンを探してみる。2.08.28(2013-01-18)が最新っぽい。なんとこれも上に存在していた。なぜかインストール対象がWindows 8までになっている。
+
+### 使う
+
+EasyScope IIでは通常のオシロスコープのようにトリガをかけ、その前後の波形を表示することができる。しかし、バッファの更新頻度が低く、垂直軸、水平軸の設定の反映も時間がかかる(何か一ついじるたびに秒単位で待たされる)ため使いにくい。それぞれを自動設定する「Auto」も存在するが、遅すぎて使い物にならない。さすがに仕様とは思えない実用性の低さのため、正常に動作していない可能性がある。[20年前のレビュー](https://nis-lab.moo.jp/mcalcHome/otherDoc/SwordFish/index.html)によれば、「波形もリアルタイムで表示されるので普通のオシロを使っている感じです」とのこと。
+
+EasyLogger IIではリアルタイムにパソコンに電圧が送信され、パソコン側のバッファに記録される。サンプリングレートを高くしすぎると転送が間に合わず欠測が生じるが、2.5 μs/S(400 kS/s)以下であればほぼ問題ない。バッファは最大で1,000,000サンプルで、2.5 μs/Sでも2.5秒間の波形を記録できる(超えてもファイルに記録してくれるようだが、負荷が増えるためか欠測が増える)ため、波形によらずこの設定のままにできる。トリガの概念もないため、設定するのは垂直軸だけで済み、EasyScopeに比べ使いやすい。400 kS/sというサンプリングレートは低いが、サーボモータのPWM波形などの観測には十分である。
+
+<Tweet id="1892554171045359623"  hideThread />
 
 ## あとがき
 
