@@ -1,5 +1,4 @@
 ---
-import { execSync } from "child_process";
 import { toJpDateString } from "@/utils/Date.mjs";
 
 interface Props {
@@ -8,20 +7,14 @@ interface Props {
 }
 
 const separator = "\uF8FF";
-const commits = execSync(`git log --format=%ad${separator}%s --date=short --first-parent`)
-    .toString()
-    .split("\n")
-    .map(line => {
-        const [date, message] = line.split(separator);
-        return {
-            date: date,
-            message: message,
-        };
-    });
-const history = Object.groupBy(
-    commits.filter(commit => commit.date && commit.message && !commit.message.startsWith("_") && !commit.message.startsWith("Merge")),
-    commit => commit.date!,
-);
+const commits: { date: string; message: string }[] = [];
+for await (const line of Bun.$`git log --format=%ad${separator}%s --date=short --first-parent`.lines()) {
+    const [date, message] = line.split(separator);
+    if (date && message && !message.startsWith("_") && !message.startsWith("Merge")) {
+        commits.push({ date: date, message: message });
+    }
+}
+const history = Object.groupBy(commits, commit => commit.date!);
 const dates = Object.keys(history);
 
 let overflow = false;
