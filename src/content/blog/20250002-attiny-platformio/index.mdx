@@ -1,0 +1,125 @@
+---
+publish: true
+title: "PlatformIOを使ってATtinyにOptibootを焼いてUARTで書き込んでみた"
+publishDate: 2025-04-20 16:45:00 +09:00
+description: "Arduino IDEを使わずにPlatformIOだけでATtiny44へのブートローダ(Optiboot)の書き込みとブートローダ経由での書き込みをやってみた話。"
+---
+
+ちょっとした基板にATtiny44を載せて使うにあたり、いちいち外さなくてもプログラムを書き込めるようにしたい。ISCPヘッダを生やすのは面倒で、また、もともとUARTの端子を別のマイコンとの通信に使うため生やしていたので、ここから書き込めるのが理想である。Arduinoボードでも使用されているOptibootを使うことでこれは実現できる。Arduio IDEを使うと簡単にできるが、開発環境としてはお粗末であまり使いたくない。しかし、PlatformIOから扱う情報はなぜかほぼなかったので、ここにまとめておく。
+
+## Arduinoとは
+
+そもそも単品のATtinyとArduinoとの違いとは何かを確認する。Arduinoボードは、ブートローダ書き込み済みのAVRマイコン(UNOではATmega328P)のほか、5Vレギュレータ、水晶発振器やUSBシリアル変換器(公式ではATmega16U2、互換機ではCH340等)などを搭載したひとまとまりの基板であり、PCとUSB接続するだけでプログラム(スケッチと呼ばれる)を書き込むことができる状態になっている。また、レジスタを直接叩くなどせずにマイコンの操作を記述できるようなフレームワークも整備されている。
+
+逆に言えば、ATtinyであっても、ブートローダを書き込み、USBシリアル変換器を介してPCと接続すれば、Arduinoボードのように使うことができる。
+
+## ブートローダとは
+
+ブートローダとは、マイコンへのプログラム書き込みを容易にするためにマイコン上に書き込まれるプログラムで、PCからの通信を受け付け、その内容を自身のフラッシュメモリに書き込む。Arduinoでは[Optiboot](https://github.com/Optiboot/optiboot)というブートローダが使われており、通常は外部リセット後の1秒間UART接続を待機し、なにもなければ書き込み済みのスケッチを実行するという動作をする。
+
+Arduinoボードには「外部リセット」を自動で実行するための回路があり、USBシリアル変換器のDTRピン(通常は送信側の準備ができている間LOWになる)をコンデンサ経由(立ち下がり時のみLOWにする)でリセットピンに接続することで、PC側からリセットをかけられるようになっている。
+
+## ブートローダを書き込む
+
+ブートローダは外部書き込み器を用いて書き込む必要がある。ArduinoをISP書き込み器として機能するようにすることで書き込めるのは[以前紹介した](/blog/20240009-platformio-bootloader/)通り。違うのはヒューズビットが自動計算されないので具体的に指定する必要がある点で、ATtiny44を内蔵発振器で8MHz動作させる場合は以下のように`platformio.ini`を記述する。なお、ピン配置はArduino側は`ArduinoISP.ino`のコメントを、ATtiny側はATTinyCore(ATtiny用のArduinoフレームワーク)の[ドキュメント](https://github.com/SpenceKonde/ATTinyCore/blob/1.5.2/avr/extras/ATtiny_x4.md)を確認するのが手っ取り早い(何度もやってたら覚えてしまった)。
+
+```ini
+[env:attiny44_via_ArduinoISP]
+platform = atmelavr
+board = attiny44
+framework = arduino
+board_build.f_cpu = 8000000L
+board_build.oscillator = internal
+
+upload_protocol = custom
+upload_speed = 19200
+upload_flags =
+    -C
+    ${platformio.packages_dir}/tool-avrdude/avrdude.conf
+    -p
+    $BOARD_MCU
+    -c
+    stk500v1
+    -P
+    $UPLOAD_PORT
+    -b
+    $UPLOAD_SPEED
+upload_command = avrdude $UPLOAD_FLAGS -U flash:w:$SOURCE:i
+
+board_bootloader.file = optiboot/optiboot_attiny44_8000000L.hex
+board_bootloader.lfuse = 0xe2
+board_bootloader.hfuse = 0xdf
+board_bootloader.efuse = 0xfe
+board_bootloader.lock_bits = 0xff
+```
+
+スケッチもISPにより書き込めるため、Arduinoを書き込み器として一枚占有することと、基板にISCPヘッダを個別に生やすことを厭わないのであれば、ブートローダを書き込む必要はあまりないかもしれない。なお、ISPでもブートローダでもリセットピンによるリセットが必要なため、ヒューズビットを間違えてリセットピンを無効にしてしまうと、高電圧書き込み器でしか救えなくなる。
+
+## ArduinoボードをUSBシリアル変換器として使う
+
+あとはUSBシリアル変換器があれば電源と通信線2本を繋ぐだけで書き込みができるのだが、単品のUSBシリアル変換器などそのへんにほいほい転がっているものではない。しかし、単品でない実装済みのやつならArduinoボードに乗っかっている。幸いにも、こいつのRX/TXピンはご丁寧にピンソケットに出てきている。リセットピンとGNDピンを接続しリセット状態にすることでマイコンの自我を失わせ、RX/TXピンをATtinyとつなぐことでシリアル変換器のみ使うことができる。印字されている「RX」「TX」は変換器ではなくマイコンにとってのRX/TXなので、ATtinyのRXに「RX」、TXに「TX」を接続する。自動リセットに用いられるDTRピンは引き出されていないため、手動リセットを行う。
+
+## Optiboot経由で書き込む
+
+Optiboot経由で書き込むための`platformio.ini`は以下。`upload_protocol`を`arduino`にすると、なぜかポート指定が`avrdude`に渡らなくなってしまうため、`custom`ですべて記述している。また、手動リセットしやすいように書き込み直前に`pause`を挟んでいる。リセットを解除(リセットピンとGNDの接続を外す)した直後にキーを叩くことでほぼ確実にタイミングを合わせることができる。
+
+```ini
+[env:attiny44_via_optiboot]
+platform = atmelavr
+board = attiny44
+framework = arduino
+board_build.f_cpu = 8000000L
+board_build.oscillator = internal
+
+upload_protocol = custom
+upload_speed = 19200
+upload_flags =
+    -C
+    ${platformio.packages_dir}/tool-avrdude/avrdude.conf
+    -p
+    $BOARD_MCU
+    -c
+    arduino
+    -P
+    $UPLOAD_PORT
+    -b
+    $UPLOAD_SPEED
+    -D
+upload_command = echo Release reset and press key . . . && pause > nul && avrdude $UPLOAD_FLAGS -U flash:w:$SOURCE:i
+```
+
+## 基板上での不具合
+
+単品の状態では以上の方法で書き込むことができたのだが、いざ基板に乗せたまま書き込もうとすると接続がうまくいかなかった。今回の基板ではTX/RX以外の端子は1 kΩを介してモータドライバに接続されているが、マイコンとモータドライバのVCCの間にスイッチをつけてあったので、これを切ると書き込むことができた。パスコンこそつけているが、そもそもマイコンとモータとで電源を共有するのがかなりよくないので、独立した基板として電源も信号も切断しやすいようにしたい。
+
+## 参考: Arduino IDEでの書き込み時のコマンド
+
+ATTinyCoreではArduino IDEの使用のみが想定されている。[公式ドキュメント](https://github.com/SpenceKonde/ATTinyCore/blob/1.5.2/Programming.md)に従ってArduino IDEを使った際に実行されたコマンドを以下に示す。紹介した`platformio.ini`の内容はこれを参考にしている。
+
+### ブートローダ書き込み
+
+ヒューズビットに関わる設定はB.O.D.を無効、クロックを内蔵発振器で8MHzとした。拡張、上位、下位バイトがそれぞれ0xFE, 0xDF, 0xE2となっている。
+
+```bash
+"\path\to\avrdude" "-C\path\to\avrdude.conf" -v -pattiny44 -cstk500v1 -PCOMn -b19200 -e -Uefuse:w:0xFE:m -Uhfuse:w:0b11011111:m -Ulfuse:w:0xE2:m "-Uflash:\path\to\optiboot_attiny44_8000000L.hex:i"
+```
+
+### Arduino as ISPでの書き込み
+
+```bash
+"\path\to\avrdude" "-C\path\to\avrdude.conf" -v -pattiny44 -cstk500v1 -PCOMn -b19200 "-Uflash:w:\path\to\sketch.ino.hex:i"
+```
+
+### 通常書き込み
+
+ボーレートが通常のArduinoボード(115200)と異なる。`-D`は書き込み時にフラッシュを消去しないオプションで、おそらく高速化のためにある。指定しなくてもブートローダが消し飛ぶわけではなさそう。
+
+```bash
+"\path\to\avrdude" "-C\path\to\avrdude.conf" -v -pattiny44 -carduino -PCOMn -b19200 -D "-Uflash:w:\path\to\sketch.ino.hex:i"
+```
+
+## あとがき
+
+もうちょっと公式ドキュメントを充実させてくれてもいいのになぁという気持ちがある。Arduino IDEもPlatformIOも実行してみないと挙動が読めない部分が多い。そうでなくとも面倒なので、何もしなくてもUPDIとやらで接続できるらしい新しいATtinyも使ってみたい。DIPパッケージがないので嫌厭していたが、最近は基板加工機を使うようになって表面実装への抵抗感もほぼなくなったのでいいかもしれない。
+
+なるべく月イチ更新を心がけていたはずが、なんだか久しぶりの記事になってしまった。11月、4月は工研部報を書いたのでいいとして、1月、3月は何も書いてないので巻き返さねばならない。
