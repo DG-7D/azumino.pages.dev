@@ -28,7 +28,7 @@ CH341AのVCCピンを基板から剥がし、このVCCピンとV3ピンを3.3 V�
 
 ROM焼き器ではよく怪しいソフトウェアに同梱されたドライバをインストールするよう促されるが、実際には[WCH公式のドライバ](https://www.wch-ic.com/search?t=all&k=CH341)を使うことができる。ドライバは`CH341SER.EXE`と`CH341PAR.EXE`の2つがある。
 
-`CH341SER.EXE`はCH340やUARTモードのCH341のドライバであり、仮想COMポートが作成される。わざわざダウンロードしなくてもWindows Updateから自動でインストールされる。一方、`CH341PAR.EXE`はCH341の独自APIモードのドライバである。Windows Updateからはインストールされない。また、アプリケーションによってはWinUSBやlibusbドライバが必要なこともある。これらはUSB機器をほぼ直接触ることのできる汎用のドライバで、WCHが用意したライブラリを用いず、アプリケーションが比較的低レイヤな操作まで担当する場合に使うようである。
+`CH341SER.EXE`はCH340やUARTモードのCH341のドライバであり、仮想COMポートが作成される。わざわざダウンロードしなくてもWindows Updateから自動でインストールされる。一方、`CH341PAR.EXE`はCH341の独自APIモードのドライバである。Windows Updateからはインストールされない。また、アプリケーションによってはWinUSBやlibusbドライバが必要なこともある。これらはUSB機器をほぼ直接触ることのできる汎用のドライバで、WCHが用意したライブラリを用いず、アプリケーションが比較的低レイヤな操作まで担当する場合に使うようである。[Zadig](https://zadig.akeo.ie/)を使うことで、簡単にこれらのドライバを適用することができる。
 
 ## UARTで書き込み
 
@@ -36,16 +36,14 @@ ROM焼き器ではよく怪しいソフトウェアに同梱されたドライ�
 
 ## SPIで書き込み?
 
-Optiboot自体の書き込みに用いられるISPもフラッシュメモリ同様SPIによる通信で行われるため、理論上はCH341から直接行うことができる。SPIはCOMポートのように汎用的には扱えないためアプリケーション側での個別対応が必要であるが、幸い通常AVRマイコンの書き込みに使われるAVRDUDEはCH341Aにも対応している。ドライバにlibusb-1.0を使用し、[AVRDUDE](https://github.com/avrdudes/avrdude/releases)のMSYS2 mingwビルドを使うことで書き込めるはずである。しかしながら、接続が確立せず失敗した。
+Optiboot自体の書き込みに用いられるISPも、フラッシュメモリ同様SPIによる通信で行われるため、理論上はCH341から直接行うことができる。SPIはCOMポートのように汎用的には扱えないためアプリケーション側での個別対応が必要であるが、幸い通常AVRマイコンの書き込みに使われる[AVRDUDE](https://github.com/avrdudes/avrdude/releases)はCH341Aにも対応している。PlatformIOに同梱されているものやwingetでインストールできるMSVCビルドではCH341Aに対応していないため、MSYS2 mingwビルドをダウンロードしてくる必要がある。また、CH341Aのドライバも公式ではなく汎用ドライバをZadigで適用する必要がある。WinUSB、libusb-win32、libusbKのいずれかを選択できるが、どれでも動作するようである(libusb.hしか使ってなくてもWinUSBでもlibusbKでもいけるものなんだ)。
 
 ## ROM焼き
 
-本来の使い方であるROM焼きについても触れておく。
+本来の使い方であるROM焼きについても触れておく。CH341AからROMを焼くためのソフトウェアはいくつも存在するが、[AsProgrammer](https://github.com/nofeletru/UsbAsp-flash)というものがオープンソースで素性が知れているため無難かもしれない。
 
-flashromの[Windows版](https://github.com/therealdreg/flashrom_build_windows_x64) 
-
-[AsProgrammer](https://github.com/nofeletru/UsbAsp-flash)
+また、コマンドラインツールとしてはLinuxでよく使われるflashromの[Windows版](https://github.com/therealdreg/flashrom_build_windows_x64)もCH341Aに対応している。ドライバはZadigのものを適用する必要がある。
 
 ## あとがき
 
-ROM焼き専用に使われがちなCH341搭載ボードが一般的なシリアル変換器としても使える汎用性を持っていることを知ることができたのは、まあまあ大きな収穫である。
+ROM焼き専用に使われがちなCH341搭載ボードが一般的なシリアル変換器やISP書き込み器としても使える汎用性を持っていることを知ることができたのは、まあまあ大きな収穫である。特に、Arduino UNOを一台潰す必要があり取り回しの悪いArduino as ISPを使わなくても済むようになるのは便利である。
