@@ -1,12 +1,11 @@
 ---
 publish: false
-title: "CH341A搭載プログラマをUART接続のUSBシリアル変換器として使ってArduinoに書き込んでみた"
+title: "CH341A搭載ROM焼き機をUSBシリアル変換器として使ってArduinoに書き込んでみた"
 publishDate: 9999-12-31 00:00:00 +09:00
-description: "せつめい"
-
+description: "ROM焼き器として使われるCH341A搭載基板をUSBからUARTやSPIへの変換器として使い、ATtinyにスケッチやブートローダを書き込んでみた話。"
 ---
 
-[前回](/blog/20250002-attiny-platformio/)紹介した通り、Optibootを書き込み「Arduino化」したAVRマイコンはUARTで書き込むことができる。UART接続にはArduino互換機に搭載されているWCHのUSB‐シリアル変換IC CH340を用いた。ところで、マザーボードのBIOS等のROM(フラッシュメモリやEEPROM)を読み書きする(ROM焼き)ためによく使われるものとして、CH341Aと呼ばれるものがある。パソコンとUSB接続でき、ROMチップを接続するZIFソケットがついている基板で、特に「CH341A Mini Programmer」と書かれているもの(以下「ROM焼き器」と呼称)がよくアリエク等で出回っている。
+[前回](/blog/20250002-attiny-platformio/)紹介した通り、Optibootを書き込み「Arduino化」したAVRマイコンはUARTで書き込むことができる。UART接続にはArduino互換機に搭載されているWCHのUSBシリアル変換IC、CH340を用いた。ところで、マザーボードのBIOS等のROM(フラッシュメモリやEEPROM)を読み書きする(ROM焼き)ためによく使われるものとして、CH341Aと呼ばれるものがある。パソコンとUSB接続でき、ROMチップを接続するZIFソケットがついている基板で、特に「CH341A Mini Programmer」と書かれているもの(以下「ROM焼き器」と呼称)がよくアリエク等で出回っている。
 
 ## CH341Aとは
 
@@ -16,7 +15,7 @@ PDF直リンクではないため発見されにくいが、[公式サイト](ht
 
 CH341は、起動時にACT#ピンが2 kΩ抵抗を介してGNDに落とされていれば独自APIモードで起動し、浮いていればSDA, SCLピンの配線によってモードを切り替える。SDA, SCLピンを浮かせるとUARTモード、SDAをGNDに落とすと独自APIモード、SDAとSCLを接続するとプリンタポートモードになる。また、SDAとSCLを外部EEPROMに接続することでその他の設定を読み込むこともできるようである。BIOS ROMはSPIインタフェースのフラッシュメモリ(25なんちゃら)やI2CインタフェースのEEPROM(24なんちゃら)であることが多く、ROM焼き器として使う際は独自APIを介して同期式シリアル通信が使用される。
 
-ROM焼き器は製造元すら不明であるため公式の情報を得ることは難しいが、[有志が作成した回路図](https://www.onetransistor.eu/2017/08/ch341a-mini-programmer-schematic.html)が存在する。これを見れば分かる通り、ROM焼き器ではACT#ピンをGNDに落とすかをジャンパピンで切り替えることができるようになっている。通常はGNDに落とされていて問答無用で独自APIモードで起動するが、ジャンパを切り替えて浮かせてSDA, SCLも浮かせておけばUARTモードで起動する。さらに、UARTのRX/TXピンもご丁寧にピンヘッダに引き出されている。
+ROM焼き器は製造元すら不明であるため公式の情報を得ることは難しいが、[有志が作成した回路図](https://www.onetransistor.eu/2017/08/ch341a-mini-programmer-schematic.html)が存在する。これを見れば分かる通り、ROM焼き器ではACT#ピンをGNDに落とすかをジャンパピンで切り替えることができるようになっている。通常はACT#は「1-2」に刺さったジャンパピンでGNDに落とされていて、問答無用で独自APIモードで起動する。ジャンパを「2-3」に刺しかえるとモード切替ができるようになり、SDA, SCLを浮かせる(ソケットに何も接続しない)状態で起動すればUARTモードになる。使うことはほぼないと思われるが、SDAもSCLもソケットに出てきているため、両者を接続すればプリンタポートモードで、SDAをGNDに落とせば独自APIモードで起動することもできる。
 
 ## 電圧修正
 
@@ -28,21 +27,27 @@ CH341AのVCCピンを基板から剥がし、このVCCピンとV3ピンを3.3 V�
 
 ROM焼き器ではよく怪しいソフトウェアに同梱されたドライバをインストールするよう促されるが、実際には[WCH公式のドライバ](https://www.wch-ic.com/search?t=all&k=CH341)を使うことができる。ドライバは`CH341SER.EXE`と`CH341PAR.EXE`の2つがある。
 
-`CH341SER.EXE`はCH340やUARTモードのCH341のドライバであり、仮想COMポートが作成される。わざわざダウンロードしなくてもWindows Updateから自動でインストールされる。一方、`CH341PAR.EXE`はCH341の独自APIモードのドライバである。Windows Updateからはインストールされない。また、アプリケーションによってはWinUSBやlibusbドライバが必要なこともある。これらはUSB機器をほぼ直接触ることのできる汎用のドライバで、WCHが用意したライブラリを用いず、アプリケーションが比較的低レイヤな操作まで担当する場合に使うようである。[Zadig](https://zadig.akeo.ie/)を使うことで、簡単にこれらのドライバを適用することができる。
+`CH341SER.EXE`はCH340やUARTモードのCH341のドライバであり、仮想COMポートが作成される。わざわざダウンロードしなくてもWindows Updateから自動でインストールされる。一方、`CH341PAR.EXE`はCH341の独自APIモードのドライバである。Windows Updateからはインストールされない。また、アプリケーションによってはWinUSBやlibusbドライバが必要なこともある。これらはUSB機器をほぼ直接触ることのできる汎用のドライバで、WCHが用意したライブラリを用いず、アプリケーションが比較的低レイヤな操作まで担当する場合に使うようである。[Zadig](https://zadig.akeo.ie/)を使うことで、簡単にこれらのドライバを適用することができる。なお、プリンタポートモードではWindows標準の`usbprint.sys`が使われる。
 
 ## UARTで書き込み
 
-ジャンパピンを差し替えてUARTモードにしたら、あとはCH340と同じように使うことができる。前回と異なり、RX/TXの印字はCH341にとってのRX/TXなので、RXをATtinyのTXに、TXをRXに接続する。自動リセットに使うDTRはピンヘッダには出ていない。しかし、UARTモードでのDTRピン(20番)は、SPIモードでのMOSIピンであり、反対側のピンヘッダのMOSIかROM接続部分の5番ピンから引き出すことができる。これを0.1 μFのコンデンサを介してATtinyのRESETピン(プルアップは内蔵されている)に接続することで自動リセットが可能になる。
+ジャンパピンを「2-3」に差し替えてソケットに何も接続しない状態で起動するとUARTモードになり、CH340と同じように使うことができる。
+
+UARTのピンはソケットにこそ出てきていないものの、ソケットの横のピンヘッダに出てきている。配置は裏面に印字されている。3.3 V、GNDはそのままVCC、GNDに接続し、RX/TXはCH341にとってのRX/TXなので、RXをATtinyのTXに、TXをRXに接続する。
+
+自動リセットに使うDTRはピンヘッダには出ていないが、UARTモードでのDTRピンは、SPIモードでのMOSIピンと共通であり、反対側のピンヘッダのMOSIかSPI ROMのソケットの5番ピンから引き出すことができる。これを0.1 μFのコンデンサを介してATtinyのRESETピン(プルアップは内蔵されている)に接続することで自動リセットが可能になる。
 
 ## SPIで書き込み?
 
-Optiboot自体の書き込みに用いられるISPも、フラッシュメモリ同様SPIによる通信で行われるため、理論上はCH341から直接行うことができる。SPIはCOMポートのように汎用的には扱えないためアプリケーション側での個別対応が必要であるが、幸い通常AVRマイコンの書き込みに使われる[AVRDUDE](https://github.com/avrdudes/avrdude/releases)はCH341Aにも対応している。PlatformIOに同梱されているものやwingetでインストールできるMSVCビルドではCH341Aに対応していないため、MSYS2 mingwビルドをダウンロードしてくる必要がある。また、CH341Aのドライバも公式ではなく汎用ドライバをZadigで適用する必要がある。WinUSB、libusb-win32、libusbKのいずれかを選択できるが、どれでも動作するようである(libusb.hしか使ってなくてもWinUSBでもlibusbKでもいけるものなんだ)。
+Optiboot自体の書き込みに用いられるISPも、フラッシュメモリ同様SPIによる通信で行われるため、CH341から直接行うことができる。SPIはCOMポートのように汎用的には扱えないためアプリケーション側での個別対応が必要であるが、幸い通常AVRマイコンの書き込みに使われる[AVRDUDE](https://github.com/avrdudes/avrdude/releases)はCH341Aにも対応している。PlatformIOに同梱されているものやwingetでインストールできるMSVCビルドではCH341Aに対応していないため、MSYS2 mingwビルドをダウンロードしてくる必要がある。また、CH341Aのドライバも公式ではなく汎用ドライバをZadigで適用する必要がある。WinUSB、libusb-win32、libusbKのいずれかを選択できるが、どれでも動作するようである(libusb.hしか使ってなくてもWinUSBでもlibusbKでもいけるものなんだ)。
+
+SPIの各ピンもソケットだけでなくピンヘッダにも出てきてくれているため、UARTと同様にジャンパ線で接続できる。ピン配置はほぼArduino as ISPと同じであるが、ATtinyのRESETピンに接続するのがCH341AのCSピンである点のみ異なる。
 
 ## ROM焼き
 
 本来の使い方であるROM焼きについても触れておく。CH341AからROMを焼くためのソフトウェアはいくつも存在するが、[AsProgrammer](https://github.com/nofeletru/UsbAsp-flash)というものがオープンソースで素性が知れているため無難かもしれない。
 
-また、コマンドラインツールとしてはLinuxでよく使われるflashromの[Windows版](https://github.com/therealdreg/flashrom_build_windows_x64)もCH341Aに対応している。ドライバはZadigのものを適用する必要がある。
+また、コマンドラインツールとしてはLinuxでよく使われるflashromの[Windows版](https://github.com/therealdreg/flashrom_build_windows_x64)もCH341Aに対応している。ドライバはZadigから適用する必要がある。
 
 ## あとがき
 
