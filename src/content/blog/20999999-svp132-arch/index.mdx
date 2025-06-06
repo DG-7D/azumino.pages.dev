@@ -37,15 +37,15 @@ ACPI Error: Could not disable RealTimeClock events (20140827/evxfevnt-243)
 
 `fdisk -l`で対象のドライブを確認して`gdisk /dev/sdX`なりなんなり好きなものを使ってパーティションを切る。推奨の容量はESPが1 GiB、ルートが32 GiBらしい(日本語版だと残り全部とかいう何の役にも立たない表現だった)。スワップ領域も4 GiB求められているがなんか嫌なので無視した。ルートは開始セクタを`-32G`と指定して末尾に作った。ESPを`mkfs.fat -F 32 -n ESP /dev/sdXY`、ルートを`mkfs.ext4 -L ArchRoot /dev/sdXY`でフォーマットする。ラベルをつけておくと後で幸せになれるかもしれない。ルートを`mount /dev/sdXY /mnt`で、ESPを`mount --mkdir /dev/sdXY /mnt/boot`でマウントする。
 
-`reflector --save /etc/pacman.d/mirrorlist -c jp -l 5`などとしてpacmanのミラーを設定する。これはインストール後の環境にも複製されるため真面目に設定するとよいらしい。`pacstrap -K /mnt base linux linux-firmware intel-ucode networkmanager iwd nano otf-ipafont`でもろもろを好きなようにインストールする。
+`reflector --save /etc/pacman.d/mirrorlist -c jp -l 5`などとしてpacmanのミラーを設定する。これはインストール後の環境にも複製されるため真面目に設定するとよいらしい。`pacstrap -K /mnt base linux linux-firmware intel-ucode networkmanager iwd ms-edit otf-ipafont sudo`でもろもろを好きなようにインストールする。
 
 `genfstb -L /mnt > /mnt/etc/fstab`でfstabを生成する。`-L`か`-U`か何も指定しないかはお好みで。
 
-`arch-chroot /mnt`でインストールした環境に入る。`ln -sf /usr/share/zoneinfo/Asia/Tokyo /etc/localtime`でタイムゾーンを設定し、`hwclock --systohc`でハードウェアクロックを(UTCに)設定する。`nano /etc/locale.gen`で`en_US.UTF-8`と`ja_JP.UTF-8`のコメントアウトを解除し、`locale-gen`でロケールを生成する。`echo LANG=ja_JP.UTF-8 > /etc/locale.conf`でデフォルトのロケールを設定する(GUI導入前に文字化けするのが嫌なら英語にしたほうがいいかもしれない)。`echo KEYMAP=jp106 > /etc/vconsole.conf`でキーボードレイアウトを設定する。`echo HOSTNAME=SVP132 > /etc/hostname`でホスト名を設定する。`passwd`でrootパスワードを設定する。
+`arch-chroot /mnt`でインストールした環境に入る。`ln -sf /usr/share/zoneinfo/Asia/Tokyo /etc/localtime`でタイムゾーンを設定し、`hwclock --systohc`でハードウェアクロックを(UTCに)設定する。`ms-edit /etc/locale.gen`で`en_US.UTF-8`と`ja_JP.UTF-8`のコメントアウトを解除し、`locale-gen`でロケールを生成する。`echo LANG=ja_JP.UTF-8 > /etc/locale.conf`でデフォルトのロケールを設定する(GUI導入前に文字化けするのが嫌なら英語にしたほうがいいかもしれない)。`echo KEYMAP=jp106 > /etc/vconsole.conf`でキーボードレイアウトを設定する。`echo HOSTNAME=SVP132 > /etc/hostname`でホスト名を設定する。`passwd`でrootパスワードを設定する。
 
 ブートローダとしてはEFIブートスタブを使いたいところだが、このVAIOのUEFIは馬鹿でブートエントリを無視したり忘れたりするので今回は使わない。無難に`bootctl install`でsystemd-bootをインストールする。また、systemd-bootには同じESP以外から起動する機能はないので、USBメモリから起動したい時とかのために`pacman -S refind`からの`refind-install`でrEFIndもインストールしておく。
 
-`nano /boot/loader/entries/arch.conf`でArch Linuxのエントリを作成する。ラベルを付けていたおかげでUUIDを書く必要がなく楽で保守性が高い。
+`ms-edit /boot/loader/entries/arch.conf`でArch Linuxのエントリを作成する。ラベルを付けていたおかげでUUIDを書く必要がなく楽で保守性が高い。
 
 ```conf
 title Arch Linux
@@ -55,7 +55,7 @@ initrd /initramfs-linux.img
 options root=LABEL=ArchRoot rw pci=hpiosize=0
 ```
 
-`nano /boot/loader/entries/refind.conf`でrEFIndのエントリも用意する。
+`ms-edit /boot/loader/entries/refind.conf`でrEFIndのエントリも用意する。
 
 ```conf
 title rEFInd
@@ -63,3 +63,89 @@ efi /EFI/refind/refind_x64.efi
 ```
 
 ちなみに、GRUBは設定をOS上から行うことを前提としている融通の利かない旧時代の遺物のため使わないほうがよい。systemd-bootは機能を絞っている代わりに高速かつ簡潔な設定ファイルで管理でき、rEFIndは自動検出機能をもっており細かく設定することなく高い柔軟性を持つので、この2つを使えるようにしておけばだいたいなんとかなる。レガシBIOS? 知らん。
+
+`exit`からの`umount -R /mnt`でアンマウントして、`reboot`で再起動する。
+
+## インストール後の設定
+
+これもだいたい公式wikiのガイドに従うだけでよいが、細切れになっているので自分用のメモを残しておく。
+
+rootでログインし、まだGUIを導入していなくてコンソールが文字化けするので`LANG=C`で一時的に英語にする。
+
+### ユーザの追加
+
+```
+useradd -m -G wheel -s /bin/bash (ユーザ名)
+passwd (ユーザ名)
+```
+
+### sudoの設定
+
+`wheel`グループのユーザが`sudo`を使えるようにする。
+
+```bash
+EDITOR=ms-edit visudo
+```
+
+`%wheel ALL=(ALL) ALL`のコメントアウトを解除し、保存したらrootから抜け、追加したユーザでログインし直す。
+
+rootアカウントを直接使えないようにする。rootにログインしたままやると`sudo`の設定を間違えていても気付けず詰む可能性がある。
+
+```bash
+sudo passwd -l root
+```
+
+### ネットワーク
+
+`NetworkManager`を有効化し、Wi-Fiの設定を行う。
+
+```bash
+sudo systemctl enable --now NetworkManager
+nmtui
+```
+
+## デスクトップ環境の設定
+
+Wayland対応で見た目が「普通」なKDE Plasmaを使う。ディスプレイマネージャは公式推奨らしく一緒に入ってきた`SDDM`を使う。
+
+```bash
+sudo pacman -S plasma-meta
+sudo systemctl enable --now sddm.service
+```
+
+### 日本語入力
+
+IMフレームワークとしてFcitx5を、IMエンジンとしてSKKを使う。レガシなX11環境を積極的に切り捨てるため、IMモジュール(互換レイヤ的なやつ?)の`fcitx5-gtk`と`fcitx5-qt`はインストールしない。XWaylandも見捨てるため`XMODIFIER=fcitx`も設定しない。なお、もしIMモジュールを使用する場合でも、`GTK_IM_MODULE=fcitx`や`QT_IM_MODULE=fcitx`といった環境変数はグローバルには設定しない(X11時代の記事に惑わされないよう注意)。
+
+```bash
+sudo pacman -S fcitx5 fcitx5-configtool fcitx5-skk
+systemctl soft-reboot
+```
+
+KDEシステム設定を開き、仮想キーボードとして`Fcitx 5`を選択する。
+
+`fcitx5-configtool`で入力メソッド設定画面に移動する(個別にウィンドウが開くわけではない)。「入力メソッドオフ」に「キーボード - 日本語」を、「入力メソッドオン」に「SKK」を追加する。
+
+また、「グローバルオプションを設定…」→「ホットキー」→「入力メソッドの切り替え」に「英数トグル」を追加し、Windowsと同様に英数キー(Shiftと同時押しでCaps Lockになるキー)でIMEオンオフができるようにする。
+
+SKKの設定も行う。
+
+Chromium系ブラウザでは`chrome://flags`で「Preferred Ozone Platform」を「Auto」か「Wayland」に設定するとWaylandネイティブの入力ができるようになる。Microsoft EdgeではGUIに設定は無いが、`~/.config/microsoft-edge-stable-flags.conf`に`--ozone-platform-hint=auto`を書いておくことで同様の効果が得られる。それ以外のElectronなどの場合はデスクトップエントリを編集するなどしてコマンドラインオプションを追加する。他にも違ったオプションが必要なこともあるらしい。
+
+### その他デスクトップ設定
+
+フォントレンダリングでサブピクセルレンダリングを無効化し、ヒンティングを最強にする。これで解像度の低いFHD液晶でも文字が読みやすくなる。
+
+先ほどIPAフォントをインストールしたが、ヒンティングとの相性があまり良くないようなので、実績のあるWindowsのフォントを拝借する。ついでにCascadia Code(CodeとMono)もインストールしておく。
+
+```bash
+sudo mount -rm /dev/sda2 /mnt/c/
+sudo mkdir /usr/local/share/fonts/
+sudo mkdir /usr/local/share/fonts/Windows/
+sudo cp /mnt/c/Windows/Fonts/YuGoth*.ttc /usr/local/share/fonts/Windows/
+sudo cp /mnt/c/Windows/Fonts/yumin*.ttf /usr/local/share/fonts/Windows/
+sudo pacman -S ttf-cascadia-code
+sudo fc-cache --force
+```
+
+システムフォントもYu Gothic UIとかにしておく。
