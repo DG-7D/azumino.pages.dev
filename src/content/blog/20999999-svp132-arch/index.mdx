@@ -9,74 +9,167 @@ description: "SONY VAIO Pro 13にArch Linuxをインストールした話。"
 
 ## インストールメディアの準備
 
-公式ミラーからISOイメージをダウンロードし、すでにポータブルSSDに用意してあった[Ventoy](https://www.ventoy.net/en/index.html)のフォルダにぶちこんだ。
+[公式ミラー](https://archlinux.org/download/#download-mirrors)からISOイメージをダウンロードし、すでにポータブルSSDに用意してあった[Ventoy](https://www.ventoy.net/en/index.html)のフォルダにぶちこんだ。
 
-## カーネルパラメータの調整
+ちなみにこのISOの項目選択画面はなぜかクソほど重いので、余計なキーは押さず画面が出たらEnterを押すだけに留めるとよい。
 
-そのままインストール環境を起動しようとしたところ、以下のようなエラーが無限に出力され、起動することができなかった。
-
-```
-ACPI Error: No handler or method for GE xx, disabling event (20140827/evgpe-839)
-ACPI Error: No installed handler for fixed event - PM_Timer (0), disabling (20140827/evevent-255)
-ACPI Error: No installed handler for fixed event - PowerButton (2), disabling (20140827/evevent-255)
-ACPI Error: No installed handler for fixed event - SleepButton (3), disabling (20140827/evevent-255)
-ACPI Error: Could not disable RealTimeClock events (20140827/evxfevnt-243)
-```
-
-ブートエントリの選択画面で「e」を押し、カーネルパラメータに`pci=hpiosize=0`を追加することで起動できるようになった。`pci=nomsi`, `pci=noaer`, `pci=nomm`, `pci=nommconf`あたりは効果がなかった。`acpi=off`でもエラーは出なくなるが、キーボードやSSDを認識しなくなるので無意味だった。`libata.force=noncq`がないとSSDを認識しないみたいな情報があったが、そこは問題なかった。
+また、ISOが古いとPGPがどうこうというエラーでパッケージがインストールできないことがあるので、最新のISOを使うことをおすすめする。エラーの対処は可能ではあるが、色々なコマンドがありそれぞれ効いたり効かなかったりしてかなり面倒。
 
 ## インストール
 
-基本的に公式wikiのインストールガイドに従うだけなのだが、[日本語版](https://wiki.archlinux.jp/index.php/%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E3%82%AC%E3%82%A4%E3%83%89)は若干情報が古い部分があるので[英語版](https://wiki.archlinux.org/title/Installation_guide)を参照したほうがいいかもしれない。変な環境を作りたいとかでない限り、どこの誰が書いたのか分からんような記事だとか他人のメモだとかを見る必要は全くないと思われる。以下は自分用のメモ。
+基本的に公式wikiのインストールガイドに従うだけなのだが、[日本語版](https://wiki.archlinux.jp/index.php/%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E3%82%AC%E3%82%A4%E3%83%89)は若干情報が古い部分があるので[英語版](https://wiki.archlinux.org/title/Installation_guide)を参照したほうがいいかもしれない。変な環境を作りたいとかでない限り、どこの誰が書いたのか分からんような記事だとか他人のメモだとかを見る必要は全くないと思われる。以下は自分用のメモ。とりあえず動けばいいという構成なのでちゃんと使いたい人はあまり参考にしないほうがいい。
 
-`loadkeys jp106`でキーボードレイアウトをJISにする(インストール環境だけなのでUS配列で耐えられるなら飛ばしてよい)。
+### インストール環境の設定
 
-ブートモードはx64のUEFIであることが自明なので確認するまでもないが、日本語版と英語版で方法が異なっている。UEFIブートとレガシBIOSブートが同時に使えるタイプのUEFIは滅びたほうがよいとされる(もうレガシBIOS互換自体が滅びてるが)。
+キーボードレイアウトをJISにする。インストール環境だけなのでUS配列で耐えられるなら飛ばしてよい。
 
-`iwctl --passphrase PASS station wlan0 connect SSID`でWi-Fiに接続する。`ping twitter.com`で一応疎通確認。
+```bash
+loadkeys jp106
+```
 
-`fdisk -l`で対象のドライブを確認して`gdisk /dev/sdX`なりなんなり好きなものを使ってパーティションを切る。推奨の容量はESPが1 GiB、ルートが32 GiBらしい(日本語版だと残り全部とかいう何の役にも立たない表現だった)。スワップ領域も4 GiB求められているがなんか嫌なので無視した。ルートは開始セクタを`-32G`と指定して末尾に作った。ESPを`mkfs.fat -F 32 -n ESP /dev/sdXY`、ルートを`mkfs.ext4 -L ArchRoot /dev/sdXY`でフォーマットする。ラベルをつけておくと後で幸せになれるかもしれない。ルートを`mount /dev/sdXY /mnt`で、ESPを`mount --mkdir /dev/sdXY /mnt/boot`でマウントする。
+Wi-Fiに接続する。
 
-`reflector --save /etc/pacman.d/mirrorlist -c jp -l 5`などとしてpacmanのミラーを設定する。これはインストール後の環境にも複製されるため真面目に設定するとよいらしい。`pacstrap -K /mnt base linux linux-firmware intel-ucode networkmanager iwd ms-edit otf-ipafont sudo`でもろもろを好きなようにインストールする。
+```bash
+iwctl --passphrase (パスワード) station wlan0 connect (SSID)
+```
 
-`genfstb -L /mnt > /mnt/etc/fstab`でfstabを生成する。`-L`か`-U`か何も指定しないかはお好みで。
+一応`ping`でインターネットに接続できることを確認しておく。
 
-`arch-chroot /mnt`でインストールした環境に入る。`ln -sf /usr/share/zoneinfo/Asia/Tokyo /etc/localtime`でタイムゾーンを設定し、`hwclock --systohc`でハードウェアクロックを(UTCに)設定する。`ms-edit /etc/locale.gen`で`en_US.UTF-8`と`ja_JP.UTF-8`のコメントアウトを解除し、`locale-gen`でロケールを生成する。`echo LANG=ja_JP.UTF-8 > /etc/locale.conf`でデフォルトのロケールを設定する(GUI導入前に文字化けするのが嫌なら英語にしたほうがいいかもしれない)。`echo KEYMAP=jp106 > /etc/vconsole.conf`でキーボードレイアウトを設定する。`echo HOSTNAME=SVP132 > /etc/hostname`でホスト名を設定する。`passwd`でrootパスワードを設定する。
+### ファイルシステムの準備
 
-ブートローダとしてはEFIブートスタブを使いたいところだが、このVAIOのUEFIは馬鹿でブートエントリを無視したり忘れたりするので今回は使わない。無難に`bootctl install`でsystemd-bootをインストールする。また、systemd-bootには同じESP以外から起動する機能はないので、USBメモリから起動したい時とかのために`pacman -S refind`からの`refind-install`でrEFIndもインストールしておく。
+パーティションを切る。推奨の容量はESPが1 GiB、ルートが32 GiBらしい(日本語版だと残り全部とかいう何の役にも立たない表現だった)。スワップ領域も4 GiB求められているがなんか嫌なので無視した。ルートは末尾に作った。
 
-`ms-edit /boot/loader/entries/arch.conf`でArch Linuxのエントリを作成する。ラベルを付けていたおかげでUUIDを書く必要がなく楽で保守性が高い。
+```bash
+fdisk -l # 対象のドライブを確認
+gdisk /dev/sda
+# n     新規パーティション
+# Enter 開始セクタ: デフォルト(2048)
+# +1G   終了セクタ: 開始セクタから1 GiB
+# ef00  パーティションタイプ: ESP
+# n     新規パーティション
+# -32G  開始セクタ: 末尾から32 GiB
+# Enter 終了セクタ: デフォルト(末尾)
+# Enter パーティションタイプ: デフォルト(8300)
+# w     書き込み
+# y     確認
+```
 
-```conf
+フォーマットしてマウントする。ラベルをつけておくと後で幸せになれるかもしれない。
+
+```bash
+fdisk -l # 切ったパーティションを確認
+mkfs.fat -F 32 -n ESP /dev/sda1
+mkfs.ext4 -L ArchRoot /dev/sda2
+mount /dev/sda2 /mnt
+mount -m /dev/sda1 /mnt/boot # -mはmkdir
+```
+
+### 本体のインストール
+
+パッケージをインストールする。
+
+```bash
+reflector --save /etc/pacman.d/mirrorlist -c jp -l 5 # ミラー設定 (インストール後の環境に引き継がれる)
+pacstrap -K /mnt base linux linux-firmware intel-ucode networkmanager iwd ms-edit sudo # お好きなように
+```
+
+## 設定
+
+### 基本設定
+
+fstabを生成する。`-L`か`-U`か何も指定しないかはお好みで。
+
+```bash
+genfstab -L /mnt > /mnt/etc/fstab
+```
+
+`arch-chroot /mnt`でインストールした環境に入る。
+
+タイムゾーン設定、ハードウェアクロックをUTCとして同期。
+
+```bash
+ln -sf /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
+hwclock --systohc
+```
+
+ロケール、キーボードレイアウト設定。
+
+```bash
+ms-edit /etc/locale.conf
+# en_US.UTF-8とja_JP.UTF-8のコメントアウトを解除
+locale-gen
+echo LANG=ja_JP.UTF-8 > /etc/locale.conf
+echo KEYMAP=jp106 > /etc/vconsole.conf
+```
+
+ホスト名を設定。
+
+```bash
+echo (ホスト名) > /etc/hostname
+```
+
+rootパスワードを設定。
+
+```bash
+passwd
+# パスワード入力
+```
+
+### ブートローダのインストール
+
+ブートローダとしてはEFIブートスタブを使いたいところだが、このVAIOのUEFIは馬鹿でブートエントリを無視したり忘れたりするので今回は使わず、無難にsystemd-bootをインストールする。また、systemd-bootには同じESP以外から起動する機能はないので、USBメモリから起動したい時とかのためにrEFIndもインストールしておく。systemd-bootを後からインストールすることでUEFIのブートエントリでsystemd-bootが先に来るようにする。
+
+```bash
+pacman -S refind
+refind-install
+bootctl install
+```
+
+systemd-bootの設定を行う。最後に起動したエントリで起動するようにする。
+
+```bash
+echo default @saved >> /boot/loader/loader.conf
+```
+
+Arch Linux本体のエントリを作成する。ラベルを付けていたおかげでUUIDを書く必要がなく楽で保守性が高い。
+
+```bash
+# /boot/loader/entries/arch.conf
 title Arch Linux
 linux /vmlinuz-linux
 initrd /intel-ucode.img
 initrd /initramfs-linux.img
-options root=LABEL=ArchRoot rw pci=hpiosize=0
+options root=LABEL=ArchRoot rw
 ```
 
-`ms-edit /boot/loader/entries/refind.conf`でrEFIndのエントリも用意する。
+rEFIndのエントリも用意する。
 
-```conf
+```bash
+# /boot/loader/entries/refind.conf
 title rEFInd
 efi /EFI/refind/refind_x64.efi
 ```
 
-ちなみに、GRUBは設定をOS上から行うことを前提としている融通の利かない旧時代の遺物のため使わないほうがよい。systemd-bootは機能を絞っている代わりに高速かつ簡潔な設定ファイルで管理でき、rEFIndは自動検出機能をもっており細かく設定することなく高い柔軟性を持つので、この2つを使えるようにしておけばだいたいなんとかなる。レガシBIOS? 知らん。
+`bootctl`や`bootctl list`で設定を確認できる。
+
+ちなみに、GRUBは融通の利かない旧時代の遺物のためおすすめしない。systemd-bootは機能を絞っている代わりに高速かつ簡潔な設定ファイルで管理でき、rEFIndは自動検出機能をもっており細かく設定することなく高い柔軟性を持つので、この2つを使えるようにしておけばだいたいなんとかなる。レガシBIOS? 知らん。
+
+### インストール環境終了
 
 `exit`からの`umount -R /mnt`でアンマウントして、`reboot`で再起動する。
 
 ## インストール後の設定
 
-これもだいたい公式wikiのガイドに従うだけでよいが、細切れになっているので自分用のメモを残しておく。
+これもだいたい公式wikiのガイドに従うだけでよい。自分用にまとめておく。
 
 rootでログインし、まだGUIを導入していなくてコンソールが文字化けするので`LANG=C`で一時的に英語にする。
 
 ### ユーザの追加
 
-```
+```bash
 useradd -m -G wheel -s /bin/bash (ユーザ名)
 passwd (ユーザ名)
+# パスワード入力
 ```
 
 ### sudoの設定
@@ -85,9 +178,10 @@ passwd (ユーザ名)
 
 ```bash
 EDITOR=ms-edit visudo
+# %wheel ALL=(ALL) ALL のコメントアウトを解除
 ```
 
-`%wheel ALL=(ALL) ALL`のコメントアウトを解除し、保存したらrootから抜け、追加したユーザでログインし直す。
+保存したらrootから抜け、追加したユーザでログインし直す。`LANG=C`をもう一度。
 
 rootアカウントを直接使えないようにする。rootにログインしたままやると`sudo`の設定を間違えていても気付けず詰む可能性がある。
 
@@ -102,14 +196,16 @@ sudo passwd -l root
 ```bash
 sudo systemctl enable --now NetworkManager
 nmtui
+# Wi-Fi設定
 ```
 
 ## デスクトップ環境の設定
 
-Wayland対応で見た目が「普通」なKDE Plasmaを使う。ディスプレイマネージャは公式推奨らしく一緒に入ってきた`SDDM`を使う。
+Wayland対応で見た目が「普通」なKDE Plasmaを使う。ディスプレイマネージャは公式推奨らしく一緒に入ってくるSDDMを使う。日本語フォントはNoto CJKを使う。特に好きなわけではないが、英数フォントの選択肢にもNotoがあるので統一感を出すために選ぶ。ついでにWindowsでお馴染みCascadia Mono/Codeも入れておく。
 
 ```bash
-sudo pacman -S plasma-meta
+sudo pacman -S plasma-meta konsole dolphin noto-fonts-cjk ttf-cascadia-code
+# フォントでnoto-fontsを選ぶ以外はデフォルト
 sudo systemctl enable --now sddm.service
 ```
 
@@ -119,24 +215,30 @@ IMフレームワークとしてFcitx5を、IMエンジンとしてSKKを使う�
 
 ```bash
 sudo pacman -S fcitx5 fcitx5-configtool fcitx5-skk
-systemctl soft-reboot
 ```
 
-KDEシステム設定を開き、仮想キーボードとして`Fcitx 5`を選択する。
+KDEシステム設定の「仮想キーボード」を開き、「Fcitx 5」を選択する。
 
-`fcitx5-configtool`で入力メソッド設定画面に移動する(個別にウィンドウが開くわけではない)。「入力メソッドオフ」に「キーボード - 日本語」を、「入力メソッドオン」に「SKK」を追加する。
+```bash
+systemsettings kcm_virtualkeyboard &
+# Fcitx 5を選んで適用
+```
 
-また、「グローバルオプションを設定…」→「ホットキー」→「入力メソッドの切り替え」に「英数トグル」を追加し、Windowsと同様に英数キー(Shiftと同時押しでCaps Lockになるキー)でIMEオンオフができるようにする。
+KDEシステム設定の「入力メソッド」を開き、もろもろ設定する。
 
-SKKの設定も行う。
+```bash
+fcitx5-configtool & # 画面が遷移する
+```
 
-Chromium系ブラウザでは`chrome://flags`で「Preferred Ozone Platform」を「Auto」か「Wayland」に設定するとWaylandネイティブの入力ができるようになる。Microsoft EdgeではGUIに設定は無いが、`~/.config/microsoft-edge-stable-flags.conf`に`--ozone-platform-hint=auto`を書いておくことで同様の効果が得られる。それ以外のElectronなどの場合はデスクトップエントリを編集するなどしてコマンドラインオプションを追加する。他にも違ったオプションが必要なこともあるらしい。
+「入力メソッドオフ」から「キーボード - 英語」を消して「キーボード - 日本語」を追加し、「入力メソッドオン」に「SKK」を追加する。入力メソッドがレイアウトと一致しないという警告が上に出るので「修正」を押し、適用する。
 
-### その他デスクトップ設定
+Chromiumでは`chrome://flags`で「Preferred Ozone Platform」を「Auto」か「Wayland」に設定するとWaylandネイティブの入力ができるようになる。Microsoft EdgeではGUIに設定は無いが、設定ファイルを配置することで同様の効果が得られる(後述)。それ以外のElectronなどの場合はデスクトップエントリを編集するなどしてコマンドラインオプションを追加する。他にも違ったオプションが必要なこともあるらしい。
 
-フォントレンダリングでサブピクセルレンダリングを無効化し、ヒンティングを最強にする。これで解像度の低いFHD液晶でも文字が読みやすくなる。
+## 個人的な設定
 
-先ほどIPAフォントをインストールしたが、ヒンティングとの相性があまり良くないようなので、実績のあるWindowsのフォントを拝借する。ついでにCascadia Code(CodeとMono)もインストールしておく。
+### Windowsフォントのインストール
+
+Notoを使い続けるのは癪なのでWindows(後からインストールした)のフォントを拝借する。
 
 ```bash
 sudo mount -rm /dev/sda2 /mnt/c/
@@ -144,8 +246,82 @@ sudo mkdir /usr/local/share/fonts/
 sudo mkdir /usr/local/share/fonts/Windows/
 sudo cp /mnt/c/Windows/Fonts/YuGoth*.ttc /usr/local/share/fonts/Windows/
 sudo cp /mnt/c/Windows/Fonts/yumin*.ttf /usr/local/share/fonts/Windows/
-sudo pacman -S ttf-cascadia-code
 sudo fc-cache --force
 ```
 
-システムフォントもYu Gothic UIとかにしておく。
+### UIとかの設定
+
+個人的な好みの設定をメモしておく。
+
+タスクバー的なやつを右クリック→「代替を表示…」→下の説明が「アイコンとテキストを表示するウィンドウバー」のやつ(上の名前は嘘)を選ぶ。
+
+もう一度右クリック→「アイコンだけのタスクマネージャを設定…」
+- 外観
+    - タスクの最大幅: 狭い
+- 挙動
+    - 1つのボタンに結合する: 解除
+    - ランチャーを分離して配置する: 解除
+
+もう一度右クリック→「パネル設定を表示」→フローティングを無効にする。
+
+KDEシステム設定
+- クイック設定
+    - テーマ: Breeze Dark
+    - アニメーションの速度: 即時の1つ手前 (スムーススクロールが無効にならないように)
+- マウスとタッチパッド
+    - マウス
+        - ポインタの速度: いい感じに
+        - 加速: なし
+        - スクロールの速さ: いい感じに
+    - タッチパッド
+        - いい感じに
+- ディスプレイとモニタ
+    - スケール: 100%
+- 色とテーマ
+    - ログイン画面(SDDM): Breeze
+    - スプラッシュスクリーン: なし
+- テキストとフォント
+    - フォント
+        - すべてのフォントを調整: Font: Yu Gothic UI
+        - 等幅: Font: Cascadia Mono
+        - サブピクセルレンダリング: なし
+        - ヒンティング: 完全に
+- 入力メソッド
+    - SKK
+        - 確定時にリターンキーを押しても改行を挿入しない: チェック
+        - 候補の選択に使用するキー: Qwertyキーボード中央行
+        - 辞書: `jinmei` `geo` `station` `propernoun`を追加
+    - グローバルオプションを設定…
+        - 入力メソッドの切り替え: 「英数トグル」を追加
+
+SKKの`;`でSticky Shiftとか`Esc`で取り消しとかの設定はGUIではできないっぽい。
+
+### Microsoft Edgeのインストール
+
+Windowsで使っている環境を同期できるようEdgeを使う。公式リポジトリには無いのでAURからインストールする。
+
+```bash
+pacman -S base-devel git
+git clone https://aur.archlinux.org/microsoft-edge-stable-bin.git
+cd microsoft-edge-stable-bin
+makepkg -sirc
+echo --ozone-platform-hint=auto > ~/.config/microsoft-edge-stable-flags.conf # Wayland対応
+```
+
+## 過去にあった不具合
+
+`archlinux-2024.12.01-x86_64.iso`を起動しようとしたところ、以下のようなエラーが無限に出力され、起動することができなかった。
+
+```
+ACPI Error: No handler or method for GE xx, disabling event (20140827/evgpe-839)
+ACPI Error: No installed handler for fixed event - PM_Timer (0), disabling (20140827/evevent-255)
+ACPI Error: No installed handler for fixed event - PowerButton (2), disabling (20140827/evevent-255)
+ACPI Error: No installed handler for fixed event - SleepButton (3), disabling (20140827/evevent-255)
+ACPI Error: Could not disable RealTimeClock events (20140827/evxfevnt-243)
+```
+
+ブートエントリの選択画面で「e」を押し、カーネルパラメータに`pci=hpiosize=0`を追加することで起動できるようになった。`pci=nomsi`, `pci=noaer`, `pci=nomm`, `pci=nommconf`あたりは効果がなかった。`acpi=off`でもエラーは出なくなるが、キーボードやSSDを認識しなくなるので無意味だった。`libata.force=noncq`がないとSSDを認識しないみたいな情報があったが、そこは問題なかった。
+
+毎回の起動時にこれを適用するには、`arch.conf`の`options`に`pci=hpiosize=0`を追加すればよい。
+
+`archlinux-2025.06.01-x86_64.iso`では何もしなくても起動できるようになっていた。古いISOでインストール済の環境も、カーネルがアップデートされたのか同様に起動できるようになった。
