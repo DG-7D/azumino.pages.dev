@@ -3,9 +3,9 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "bunx --bun astro dev --host",
-    "build": "bunx --bun astro build",
-    "preview": "bunx --bun astro preview",
+    "dev": "bun x --bun astro dev --host",
+    "build": "bun x --bun astro build",
+    "preview": "bun x --bun astro preview",
     "astro": "astro"
   },
   "dependencies": {
