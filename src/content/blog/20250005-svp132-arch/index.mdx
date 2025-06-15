@@ -5,7 +5,7 @@ publishDate: 9999-12-31 00:00:00 +09:00
 description: "SONY VAIO Pro 13にArch Linuxをインストールし、最低限WaylandのGUIで日本語入力ができるところまで育ててみた話。"
 ---
 
-以前SONY VAIO Pro 13にWindows 11をインストールしたが、このWindowsはいにしえのUSBオシロの動作確認のために32bitのWindows 10に上書きされた。その後、USBオシロが32bit環境でなくても動かせるようになったのでこの32bit環境は不要になった。今回は、32bitのWindowsを吹き飛ばすついでにArch Linuxをインストールしてみることにした。
+以前SONY VAIO Pro 13に[Windows 11をインストール](../20240011-svp132-crean-install/)したが、このWindowsは[いにしえのUSBオシロ](../20250004-ps40m10-x64/)の動作確認のために32bitのWindows 10に上書きされた。その後、USBオシロが32bit環境でなくても動かせるようになったのでこの32bit環境は不要になった。今回は、32bitのWindowsを吹き飛ばすついでに、以前からやるやる詐欺を[連発していた](https://twitter.com/search?q=from%3Adg_7d%20arch%20until%3A2024-12-14_19%3A30%3A00_JST&src=typed_query&f=live)𝐴𝑟𝑐ℎ 𝐿𝑖𝑛𝑢𝑥 𝐼𝑛𝑠𝑡𝑎𝑙𝑙 𝐵𝑎𝑡𝑡𝑙𝑒を決行することにした。
 
 ## インストールメディアの準備
 
@@ -251,7 +251,7 @@ sudo fc-cache --force
 
 ### UIとかの設定
 
-個人的な好みの設定をメモしておく。
+個人的な好みの設定をメモしておく。ちゃんと使うならdotfilesを用意しておくとかするのだろうが、遊ぶだけなのでGUIでぽちぽちする。
 
 タスクバー的なやつを右クリック→「代替を表示…」→下の説明が「アイコンとテキストを表示するウィンドウバー」のやつ(上の名前は嘘)を選ぶ。
 
