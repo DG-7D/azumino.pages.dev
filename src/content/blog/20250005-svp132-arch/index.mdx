@@ -70,7 +70,7 @@ mount -m /dev/sda1 /mnt/boot # -mはmkdir
 
 ```bash
 reflector --save /etc/pacman.d/mirrorlist -c jp -l 5 # ミラー設定 (インストール後の環境に引き継がれる)
-pacstrap -K /mnt base linux linux-firmware intel-ucode networkmanager iwd ms-edit sudo # お好きなように
+pacstrap -K /mnt base linux linux-firmware intel-ucode networkmanager iwd msedit sudo # お好きなように
 ```
 
 ## 設定
@@ -95,7 +95,7 @@ hwclock --systohc
 ロケール、キーボードレイアウト設定。
 
 ```bash
-ms-edit /etc/locale.conf
+msedit /etc/locale.conf
 # en_US.UTF-8とja_JP.UTF-8のコメントアウトを解除
 locale-gen
 echo LANG=ja_JP.UTF-8 > /etc/locale.conf
@@ -177,7 +177,7 @@ passwd (ユーザ名)
 `wheel`グループのユーザが`sudo`を使えるようにする。
 
 ```bash
-EDITOR=ms-edit visudo
+EDITOR=msedit visudo
 # %wheel ALL=(ALL) ALL のコメントアウトを解除
 ```
 
