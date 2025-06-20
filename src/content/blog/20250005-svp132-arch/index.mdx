@@ -66,10 +66,10 @@ mount -m /dev/sda1 /mnt/boot # -mはmkdir
 
 ### 本体のインストール
 
-パッケージをインストールする。
+パッケージをインストールする。ミラーはインストール後の環境に引き継がれるが、どうせ自動更新するようにするので適当でいいかも。
 
 ```bash
-reflector --save /etc/pacman.d/mirrorlist -c jp -l 5 # ミラー設定 (インストール後の環境に引き継がれる)
+reflector --save /etc/pacman.d/mirrorlist -p https -c JP -l 5 --sort age # ミラー設定
 pacstrap -K /mnt base linux linux-firmware intel-ucode networkmanager iwd msedit sudo # お好きなように
 ```
 
@@ -197,6 +197,21 @@ sudo passwd -l root
 sudo systemctl enable --now NetworkManager
 nmtui
 # Wi-Fi設定
+```
+
+### pacmanのミラー更新の自動化
+
+Reflectorの設定を行う。インストール時に実行したときの引数をそのまま設定すればよいが、実はほぼ元々書いてあるままなので追加するのは地域指定くらい。
+
+```bash
+sudo msedit /etc/xdg/reflector/reflector.conf
+# --save /etc/pacman.d/mirrorlist --protocol https --country Japan --latest 5 --sort age
+```
+
+タイマを有効化する。
+
+```bash
+sudo systemctl enable --now reflector.timer
 ```
 
 ## デスクトップ環境の設定
