@@ -37,7 +37,7 @@ iwctl --passphrase (パスワード) station wlan0 connect (SSID)
 
 ### ファイルシステムの準備
 
-パーティションを切る。推奨の容量はESPが1 GiB、ルートが32 GiBらしい(日本語版だと残り全部とかいう何の役にも立たない表現だった)。スワップ領域も4 GiB求められているがなんか嫌なので無視した。ルートは末尾に作った。
+パーティションを切る。推奨の容量はESPが1 GiB、ルートが32 GiBらしい(日本語版だと残り全部とかいう何の役にも立たない表現だった)。スワップ領域も4 GiB求められているが無視した。もし必要になってもスワップファイルのほうが柔軟でよいと思われる。ルートは末尾に作った。
 
 ```bash
 fdisk -l # 対象のドライブを確認
@@ -117,11 +117,12 @@ passwd
 
 ### ブートローダのインストール
 
-ブートローダとしてはEFIブートスタブを使いたいところだが、このVAIOのUEFIは馬鹿でブートエントリを無視したり忘れたりするので今回は使わず、無難にsystemd-bootをインストールする。また、systemd-bootには同じESP以外から起動する機能はないので、USBメモリから起動したい時とかのためにrEFIndもインストールしておく。systemd-bootを後からインストールすることでUEFIのブートエントリでsystemd-bootが先に来るようにする。
+ブートローダとしては、Windowsとのデュアルブートに対応するため、無難にsystemd-bootをインストールする。また、systemd-bootには同じESP以外から起動する機能はないので、USBメモリから起動したい時とかのためにrEFIndとEFI Shellのどちらかまたは両方もインストールしておく。rEFIndをインストールする際は、systemd-bootを後からインストールすることでUEFIのブートエントリでsystemd-bootが先に来るようにする。
 
 ```bash
-pacman -S refind
+pacman -S refind edk2-shell
 refind-install
+cp /usr/share/edk2-shell/x64/Shell.efi /boot/shellx64.efi
 bootctl install
 ```
 
@@ -150,9 +151,9 @@ title rEFInd
 efi /EFI/refind/refind_x64.efi
 ```
 
-`bootctl`や`bootctl list`で設定を確認できる。
+WindowsやEFI Shellは自動で検出されるため何も書かなくてよい。
 
-ちなみに、GRUBは融通の利かない旧時代の遺物のためおすすめしない。systemd-bootは機能を絞っている代わりに高速かつ簡潔な設定ファイルで管理でき、rEFIndは自動検出機能をもっており細かく設定することなく高い柔軟性を持つので、この2つを使えるようにしておけばだいたいなんとかなる。レガシBIOS? 知らん。
+Linux単品であれば[EFIブートスタブ](https://wiki.archlinux.jp/index.php/EFI_%E3%83%96%E3%83%BC%E3%83%88%E3%82%B9%E3%82%BF%E3%83%96)を使いたいところだが、このVAIOのUEFIは馬鹿でブートエントリを無視したり忘れたりするので、引数とかを埋め込める(?)[Unified Kernel Image](https://wiki.archlinux.jp/index.php/%E3%83%A6%E3%83%8B%E3%83%95%E3%82%A1%E3%82%A4%E3%83%89%E3%82%AB%E3%83%BC%E3%83%8D%E3%83%AB%E3%82%A4%E3%83%A1%E3%83%BC%E3%82%B8)みたいなのを使うべきかもしれない。他に有名なブートローダにはGRUB2があるが、融通の利かない遺物のためおすすめしない。systemd-bootは機能を絞っている代わりに高速かつ簡潔な設定ファイルで管理でき、rEFIndは自動検出機能、EFI Shellは手動操作によって設定なしで柔軟性を持たせられるので、これらを使えるようにしておけばだいたいなんとかなる。レガシBIOS? 知らん。
 
 ### インストール環境終了
 
