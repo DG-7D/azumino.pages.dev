@@ -1,7 +1,7 @@
 ---
-publish: false
+publish: true
 title: "SONY VAIO Pro 13にArch Linuxをインストールしてみた"
-publishDate: 9999-12-31 00:00:00 +09:00
+publishDate: 2025-06-28 13:45:01 +09:00
 description: "SONY VAIO Pro 13にArch Linuxをインストールし、最低限WaylandのGUIで日本語入力ができるところまで育ててみた話。"
 ---
 
@@ -9,7 +9,7 @@ description: "SONY VAIO Pro 13にArch Linuxをインストールし、最低限W
 
 ## インストールメディアの準備
 
-[公式ミラー](https://archlinux.org/download/#download-mirrors)からISOイメージをダウンロードし、すでにポータブルSSDに用意してあった[Ventoy](https://www.ventoy.net/en/index.html)のフォルダにぶちこんだ。
+[公式ミラー](https://archlinux.org/download/#download-mirrors)からISOイメージをダウンロードし、すでに外付けSSDに用意してあった[Ventoy](https://www.ventoy.net/en/index.html)のフォルダにぶちこんだ。
 
 ちなみにこのISOの項目選択画面はなぜかクソほど重いので、余計なキーは押さず画面が出たらEnterを押すだけに留めるとよい。
 
@@ -17,7 +17,9 @@ description: "SONY VAIO Pro 13にArch Linuxをインストールし、最低限W
 
 ## インストール
 
-基本的に公式wikiのインストールガイドに従うだけなのだが、[日本語版](https://wiki.archlinux.jp/index.php/%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E3%82%AC%E3%82%A4%E3%83%89)は若干情報が古い部分があるので[英語版](https://wiki.archlinux.org/title/Installation_guide)を参照したほうがいいかもしれない。変な環境を作りたいとかでない限り、どこの誰が書いたのか分からんような記事だとか他人のメモだとかを見る必要は全くないと思われる。以下は自分用のメモ。とりあえず動けばいいという構成なのでちゃんと使いたい人はあまり参考にしないほうがいい。
+基本的に公式wikiのインストールガイドに従うだけなのだが、[日本語版](https://wiki.archlinux.jp/index.php/%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E3%82%AC%E3%82%A4%E3%83%89)は若干情報が古い部分があるので[英語版](https://wiki.archlinux.org/title/Installation_guide)を参照したほうがいいかもしれない。他の記事を参考にする場合も公式ドキュメントを合わせて読むとよい。
+
+以下は自分用のメモ。とりあえず動けばいいという構成。たぶんどこかしらにガバがある。
 
 ### ライブ環境の設定
 
@@ -173,6 +175,8 @@ exit
 umount -R /mnt
 reboot
 ```
+
+なお、環境によっては(?)chroot環境では`bootctl`が[正しく動作しないことがある](https://qiita.com/McbeEringi/items/56b45cdd50bb7e8be271#%E3%83%96%E3%83%BC%E3%83%88%E3%83%AD%E3%83%BC%E3%83%80%E3%81%AE%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB)ようなので、起動できなかったらライブ環境に戻って頑張ってなんとかする。
 
 ## インストール後の設定
 
@@ -356,3 +360,9 @@ ACPI Error: Could not disable RealTimeClock events (20140827/evxfevnt-243)
 毎回の起動時にこれを適用するには、`arch.conf`の`options`に`pci=hpiosize=0`を追加すればよい。
 
 `archlinux-2025.06.01-x86_64.iso`では何もしなくても起動できるようになっていた。古いISOでインストール済の環境も、カーネルがアップデートされたのか同様に起動できるようになった。
+
+## あとがき
+
+実用に耐えるかは怪しいが、とりあえず動くようにするだけであれば𝐵𝑎𝑡𝑡𝑙𝑒というほどでもない難易度だった。公式ドキュメントが充実しているというのはとてもありがたいことである。むしろ非自明な挙動の多いWindowsのインストーラ(使わないけど)やUbuntu等のインストーラのほうが難しい。
+
+GUI環境についてはいろいろと選択肢があるが、自由()なLinuxの惨状を目の当たりにすると、改悪されまくったWindows 11でも最低限製品としての体裁は保たれているのだなという気持ちになってしまった。不自由なソフトウェアに依存することは決して素晴らしいことではないが、実用性が第一なので……。
