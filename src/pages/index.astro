@@ -3,9 +3,12 @@ import A from "@/components/A.astro";
 import Changes from "@/components/Changes.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
+import { getState } from "./blog/_functions";
 
-const blogCollection = await getCollection("blog");
-const blogPickups = ["20231201-1645", "20231225-changes", "20240004-destroyed-keio"].map(slug => blogCollection.find(post => post.id == slug));
+const blogPickups = (await getCollection("blog"))
+    .sort((a, b) => (a.data.publishDate < b.data.publishDate ? 1 : -1))
+    .filter(post => getState(post) == "published")
+    .slice(0, 3);
 
 // TODO: タイトル・説明を自動取得にする(importするとこわれる)
 const miscPickups = [
