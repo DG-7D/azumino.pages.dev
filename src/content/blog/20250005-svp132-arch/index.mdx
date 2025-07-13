@@ -44,11 +44,15 @@ iwctl --passphrase (パスワード) station wlan0 connect (SSID)
 ```bash
 fdisk -l # 対象のドライブを確認
 gdisk /dev/sda
+# o     新規パーティションテーブル
+# y     確認
 # n     新規パーティション
+# Enter パーティション番号: デフォルト
 # Enter 開始セクタ: デフォルト(2048)
 # +1G   終了セクタ: 開始セクタから1 GiB
 # ef00  パーティションタイプ: ESP
 # n     新規パーティション
+# Enter パーティション番号: デフォルト
 # -32G  開始セクタ: 末尾から32 GiB
 # Enter 終了セクタ: デフォルト(末尾)
 # Enter パーティションタイプ: デフォルト(8300)
@@ -109,7 +113,7 @@ hwclock --systohc
 ロケール、キーボードレイアウト設定。
 
 ```bash
-msedit /etc/locale.conf
+msedit /etc/locale.gen
 # en_US.UTF-8とja_JP.UTF-8のコメントアウトを解除
 locale-gen
 echo LANG=ja_JP.UTF-8 > /etc/locale.conf
