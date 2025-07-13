@@ -3,9 +3,12 @@ import A from "@/components/A.astro";
 import Changes from "@/components/Changes.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
+import { getState } from "./blog/_functions";
 
-const blogCollection = await getCollection("blog");
-const blogPickups = ["20231201-1645", "20231225-changes", "20240004-destroyed-keio"].map(slug => blogCollection.find(post => post.id == slug));
+const blogPickups = (await getCollection("blog"))
+    .sort((a, b) => (a.data.publishDate < b.data.publishDate ? 1 : -1))
+    .filter(post => getState(post) == "published")
+    .slice(0, 3);
 
 // TODO: タイトル・説明を自動取得にする(importするとこわれる)
 const miscPickups = [
@@ -42,14 +45,13 @@ const otakuSites: { title: string; url: URL; description: string }[] = [
     },
     {
         title: "しぐれ煮",
-        // url: new URL("https://shigu10.neocities.org/"),
         url: new URL("https://shigureni.pages.dev/"),
         description: "更新待ってます。",
     },
     {
         title: "みみちゃんの部屋",
         url: new URL("https://mimifuwa.cc/"),
-        description: "23生もAstroを使っています。更新待ってます2",
+        description: "Astro製ではなくなってしまった🥺",
     },
     {
         title: "Laddgeのページ",
@@ -58,8 +60,8 @@ const otakuSites: { title: string; url: URL; description: string }[] = [
     },
     {
         title: "はんかくくんのページ",
-        url: new URL("https://kqiita.github.io/"),
-        description: "にゃーん。",
+        url: new URL("https://hnkk.me/"),
+        description: "更新待ってます2。",
     },
     {
         title: "かとうのホームページ",
@@ -122,7 +124,7 @@ const links: { title: string; url: URL; description: string }[] = [
         <dt>すきなもの</dt><dd>いぬねこ</dd><dd>睡眠</dd><dd>国際単位系</dd><dd>ほか</dd>
         <dt>きらいなもの</dt><dd>ヤードポンド法</dd><dd>京王線</dd><dd>ほか</dd>
         <dt>所有機材</dt><dd>α7 IV</dd><dd>iPhone SE3</dd><dd>VAIO SX14</dd><dd><A href="/about/equipment/">ほか</A></dd>
-        <dt>SNS</dt><dd><A href="https://twitter.com/DG_7d">𝕏</A></dd><dd>ほか</dd>
+        <dt>SNS</dt><dd><A href="https://twitter.com/DG_7D">𝕏</A></dd><dd>ほか</dd>
         <dt><a href="/about/">もっと見る</a></dt><dd>自己紹介</dd>
     </dl>
     <h2>ブログ</h2>
