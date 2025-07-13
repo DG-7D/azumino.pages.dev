@@ -72,7 +72,7 @@ mount -m /dev/sda1 /mnt/boot # -mはmkdir
 
 ```bash
 reflector --save /etc/pacman.d/mirrorlist -p https -c JP -l 5 --sort age # ミラー設定
-pacstrap -K /mnt base linux linux-firmware intel-ucode networkmanager iwd msedit sudo # お好きなように
+pacstrap -K /mnt base linux linux-firmware intel-ucode networkmanager msedit sudo # お好きなように
 ```
 
 もしここでPGP署名のエラーが出た場合は、以下のように更新した後、もう一度`pacstrap`を実行する。
@@ -236,7 +236,7 @@ sudo systemctl enable --now reflector.timer
 
 ## デスクトップ環境の設定
 
-Wayland対応で見た目が「普通」なKDE Plasmaを使う。ディスプレイマネージャは公式推奨らしく一緒に入ってくるSDDMを使う。日本語フォントはNoto CJKを使う。特に好きなわけではないが、英数フォントの選択肢にもNotoがあるので統一感を出すために選ぶ。ついでにWindowsでお馴染みCascadia Mono/Codeも入れておく。
+Wayland対応で見た目が「普通」なKDE Plasmaを使う。ディスプレイマネージャは公式推奨らしく一緒に入ってくるSDDMを使う。日本語フォントはNoto CJKを使う。特に好きなわけではないが、英数フォントの選択肢にもNotoがあるので統一感を出すために選ぶ。意外とヒンティングがまとも。ついでにWindowsでお馴染みCascadia Mono/Codeも入れておく。
 
 ```bash
 sudo pacman -S plasma-meta konsole dolphin noto-fonts-cjk ttf-cascadia-code
