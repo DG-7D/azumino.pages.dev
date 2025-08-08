@@ -1,0 +1,49 @@
+---
+publish: true
+title: "PlatformIO Coreを(グローバルな)Pythonインストールなしでインストールしてみた"
+publishDate: 2025-08-08 20:45:00 +09:00
+description: "PlatformIO Core(pioコマンド)をVSCode IDEからのインストール時同様にグローバルなPythonインストールなしでインストールしてみた話。"
+---
+
+ArduinoやESP32などを開発するための環境として主流なPlatformIOだが、これは通常VSCodeの拡張機能であるPlatformIO IDEを介して使うことが多い。しかし、VSCodeは使わないという人間もこの世界には存在するらしく、その場合はIDEが内部で使っているPlatformIO Coreを単独でインストールし、`pio`コマンドを直接使うことになる。CoreのインストールにはPythonが必要になるが、Windowsにはそんな邪悪なものは標準搭載されていない。そこで、きれいなWindowsを汚さずにPlatformIO Coreをインストールする方法を調べてみた。
+
+## 公式の方法
+
+まず、通常のPlatformIO Coreのインストール方法を確認してみる。[公式ドキュメント](https://docs.platformio.org/en/latest/core/installation/methods/installer-script.html)によれば、`get-platformio.py`なるスクリプトをダウンロードして実行すればよいだけのようだ。しかし、これはPythonスクリプトであり、実行にはPythonが必要である。[システム要件](https://docs.platformio.org/en/latest/core/installation/requirements.html)にもしれっと「Python Interpriter」とか書かれている。
+
+しかし、VSCodeでIDEを使うときには、Pythonのグローバル環境へのインストールは必要なかった。これも内部ではPlatformIO Coreを使っているはずで、Core単品インストールも同じようにPythonのインストールなしで達成できるはずである。
+
+## ポータブル版Pythonを使う
+
+実は、PlatformIO IDEのようなPlatformIO Coreと連携して動作するアプリケーションにおけるCoreのインストール方法も、[公式ドキュメント](https://docs.platformio.org/en/latest/core/installation/integration.html)に記載されている。ここでもPythonが必要とされているが、「ユーザにPythonをインストールするよう要求」のほかに、「ポータブル版Pythonを落としてくる」という選択肢も提示されている。これを手動で行えば、IDEと同じように綺麗にPlatformIO Coreをインストールできるはずである。なお、本当にIDEと同じ状態にするだけなので、すでにPlatformIO IDEを使っている場合はこの手順は飛ばしてよい。
+
+まずは言われた通りにポータブル版Pythonをダウンロードする。公式ドキュメントにある[API](https://api.registry.platformio.org/v3/packages/platformio/tool/python-portable)をブラウザで叩き、`python-portable-windows_amd64-x.y.z.tar.gz`みたいなやつのURLを見つけてダウンロード、展開する。Microsoft EdgeだとJSONの整形出力を有効にすると見やすかった。URL等からも分かる通り、これはPlatformIOがCoreの動作環境用に直々に提供しているもので、Python公式の埋め込み版と異なり、`pip`がそのまま使える(?)ようになっているようである(Python公式の埋め込み用パッケージみたいなのでやったらpipがどうこうで失敗した)。
+
+これを任意の邪魔にならない場所(VSCode拡張に合わせるなら`~\.platformio\python3\`)に展開し、そこでターミナルを開いたら、あとは最初の方法と同じように`get-platformio.py`をダウンロードして実行するだけである。公式ドキュメントではWindowsではGUIをぽちぽちしてダウンロードすることが想定されているが、今時はWindowsにも`curl.exe`があるのでLinuxと同じようにすればよい。なお、`.exe`をつけないとPowerShellのコマンドが呼ばれてしまうので注意。
+
+```powershell
+curl.exe -fsSL -o get-platformio.py https://raw.githubusercontent.com/platformio/platformio-core-installer/master/get-platformio.py
+.\python.exe get-platformio.py
+```
+
+インストール後には`~\.platformio\penv\`にPythonのvenvの仮想環境が作成されるが、ここにある`python.exe`等はインストールに使用した環境に処理を流すだけのラッパーである。つまり、もし万が一グローバルのPythonを使っていたりしたら、このPlatformIOの環境もいつ破壊されるか分からないグローバルのPythonに依存するというおぞましいことになっていたということになる。したがって、もしすでにPythonがインストールされている場合でも、ポータブル版を使ったほうが都合がよい。
+
+以上の手順で、PlatformIO IDEをVSCode上でインストールしたときと同様に`pio.exe`が存在する状態になった。
+
+## パスを通す
+
+あとはインストールスクリプトが最後に表示するように、`~\.platformio\penv\Scripts\`にパスを通せば`pio`コマンドが使えるようになる……のだが、このディレクトリには`python.exe`が存在している。つまり、これに従ってしまうと、グローバルにパスの通ったPythonが存在している状態になってしまう。ひどいトラップである。そもそも仮想環境は都度有効化して使うものであって、グローバルにパスを通すものではない。
+
+しかし、諦めるのはまだ早い。以下のように適当なディレクトリ(ここでは`~\.platformio\penv\bin\`)に`pio.exe`へのリンクを作成し、そのディレクトリのほうだけにパスを通せば、`pio`だけにパスが通るようになる。ちなみに、LinuxやmacOSだとvenvの環境は`(環境名)/bin/`に作成されるらしいのでそれをパクった。なお、PlatformIO IDEをVSCodeで使用しつつ、`pio`コマンドも単独で使えるようにしたいという場合は、この手順だけを実行すればよい。
+
+```powershell
+cd ~\.platformio\penv\
+mkdir bin
+fsutil hardlink create .\bin\pio.exe .\Scripts\pio.exe
+```
+
+……なんなんすかねこれ。
+
+## あとがき
+
+いつもPythonが関わるとロクなことにならない。どうせならポータブル版の用意も含めてPowerShellか何かのスクリプトにしておいてほしかった。ちなみに、PlatformIO IDEでの環境構築は独立した[Node.jsパッケージ](https://www.npmjs.com/package/platformio-node-helpers)に切り出されているが、単独で簡単に利用するようにはできていなさそうである。

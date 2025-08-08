@@ -2,7 +2,7 @@
 publish: true
 title: "CH341A搭載ROM焼き機をUSBシリアル変換器として使ってArduinoに書き込んでみた"
 publishDate: 2025-05-24 16:45:00 +09:00
-description: "ROM焼き器として使われるCH341A搭載基板をUSBからUARTやSPIへの変換器として使い、ATtinyにスケッチやブートローダを書き込んでみた話。"
+description: "ROM焼き器として使われるCH341A搭載基板をUSBからUARTやSPIへの変換器として使い、ATtinyやATmegaにスケッチやブートローダを書き込んでみた話。"
 ---
 
 [前回](/blog/20250002-attiny-platformio/)紹介した通り、Optibootを書き込み「Arduino化」したAVRマイコンはUARTで書き込むことができる。UART接続にはArduino互換機に搭載されているWCHのUSBシリアル変換IC、CH340を用いた。ところで、マザーボードのBIOS等のROM(フラッシュメモリやEEPROM)を読み書きする(ROM焼き)ためによく使われるものとして、CH341Aと呼ばれるものがある。パソコンとUSB接続でき、ROMチップを接続するZIFソケットがついている基板で、特に「CH341A Mini Programmer」と書かれているもの(以下「ROM焼き器」と呼称)がよくアリエク等で出回っている。
@@ -47,7 +47,7 @@ UARTのピンはソケットにこそ出てきていないものの、ソケッ�
 
 Optiboot自体の書き込みに用いられるISPも、フラッシュメモリ同様SPIによる通信で行われるため、CH341から直接行うことができる。SPIはCOMポートのように汎用的には扱えないためアプリケーション側での個別対応が必要であるが、幸い通常AVRマイコンの書き込みに使われる[AVRDUDE](https://github.com/avrdudes/avrdude/releases)はCH341Aにも対応している。PlatformIOに同梱されているものやwingetでインストールできるMSVCビルドではCH341Aに対応していないため、MSYS2 mingwビルドをダウンロードしてくる必要がある。また、CH341Aのドライバも公式ではなく汎用ドライバをZadigで適用する必要がある。WinUSB、libusb-win32、libusbKのいずれかを選択できるが、どれでも動作するようである。
 
-SPIの各ピンもソケットだけでなくピンヘッダにも出てきてくれているため、UARTと同様にジャンパ線で接続できる。ピン配置はほぼArduino as ISPと同じであるが、ATtinyのRESETピンに接続するのがCH341AのCSピンである点のみ異なる。
+SPIの各ピンもソケットだけでなくピンヘッダにも出てきてくれているため、UARTと同様にジャンパ線で接続できる。ピンの印字はほぼArduino as ISPの説明と同じであるが、マイコンのRESETピンに接続するのがCH341AのCSピンである点のみ異なる。
 
 ![ROM焼き器のUSB端子側から見て右側のSPIピンヘッダからATtiny44へ6本のジャンパ線が接続されている。](attiny-spi.jpg "ROM焼き器とATtiny44のSPI接続")
 
@@ -57,10 +57,17 @@ SPIの各ピンもソケットだけでなくピンヘッダにも出てきて�
 .\avrdude.exe -v -p t44 -c ch341a
 ```
 
-例として、前回焼いたのと同じ設定でPlatformIOに同梱されているOptibootを焼く場合は以下のように実行する。速度が速すぎるのか何度かやり直さないとVerifyが通らなかった。内蔵クロックの精度不足なのか電力不足なのか電源ノイズのせいなのか分からないが、ATtinyに与える電源を5 Vにしてみたら失敗しなくなったので、CH341A側の破損リスクを許容できるか、レベル変換ができるなら試してみてもよいかもしれない。
+例として、前回と同じくATtiny44(B.O.D.無効、内蔵クロック8 MHz)でPlatformIOに同梱されているOptibootを焼く場合は以下のように実行する。速度が速すぎるのか何度かやり直さないとVerifyが通らなかった。内蔵クロックの精度不足なのか電力不足なのか電源ノイズのせいなのか分からないが、ATtinyに与える電源を5 Vにしてみたら失敗しなくなったので、CH341A側の破損リスクを許容できるか、レベル変換ができるなら試してみてもよいかもしれない。
 
 ```powershell
 .\avrdude.exe -v -p t44 -c ch341a -e -U efuse:w:0xFE:m -U hfuse:w:0xDF:m -U lfuse:w:0xE2:m -U flash:w:$env:USERPROFILE\.platformio\packages\framework-arduino-avr-attiny\bootloaders\optiboot\optiboot_attiny44_8000000L.hex:i
+```
+
+また、Arduinoボードであってもブートローダを焼くにはISPが必要になり、CH341Aを活用することができる。Arduino IDEから焼くのと同じ設定でArduino UNO(ATmega328P)のブートローダを焼く場合は以下。
+
+```powershell
+.\avrdude.exe -v -p atmega328p -c ch341a -e -U lock:w:0x3F:m -U efuse:w:0xFD:m -U hfuse:w:0xDE:m -U lfuse:w:0xFF:m
+.\avrdude.exe -v -p atmega328p -c ch341a -U flash:w:$env:USERPROFILE\.platformio\packages\framework-arduino-avr\bootloaders\optiboot\optiboot_atmega328.hex:i -U lock:w:0x0F:m
 ```
 
 ## ROM焼き
