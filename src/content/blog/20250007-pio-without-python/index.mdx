@@ -1,7 +1,7 @@
 ---
-publish: false
+publish: true
 title: "PlatformIO Coreを(グローバルな)Pythonインストールなしでインストールしてみた"
-publishDate: 9999-12-31 00:00:00 +09:00
+publishDate: 2025-08-08 20:45:00 +09:00
 description: "PlatformIO Core(pioコマンド)をVSCode IDEからのインストール時同様にグローバルなPythonインストールなしでインストールしてみた話。"
 ---
 
@@ -15,7 +15,7 @@ ArduinoやESP32などを開発するための環境として主流なPlatformIO�
 
 ## ポータブル版Pythonを使う
 
-実は、PlatformIO IDEのようなPlatformIO Coreと連携して動作するアプリケーションにおけるCoreのインストール方法も、[公式ドキュメント](https://docs.platformio.org/en/latest/core/installation/integration.html)に記載されている。ここでもPythonが必要とされているが、「ユーザにPythonをインストールするよう要求」のほかに、「ポータブル版Pythonを落としてくる」という選択肢も提示されている。これを手動で行えば、IDEと同じように綺麗にPlatformIO Coreをインストールできるはずである。
+実は、PlatformIO IDEのようなPlatformIO Coreと連携して動作するアプリケーションにおけるCoreのインストール方法も、[公式ドキュメント](https://docs.platformio.org/en/latest/core/installation/integration.html)に記載されている。ここでもPythonが必要とされているが、「ユーザにPythonをインストールするよう要求」のほかに、「ポータブル版Pythonを落としてくる」という選択肢も提示されている。これを手動で行えば、IDEと同じように綺麗にPlatformIO Coreをインストールできるはずである。なお、本当にIDEと同じ状態にするだけなので、すでにPlatformIO IDEを使っている場合はこの手順は飛ばしてよい。
 
 まずは言われた通りにポータブル版Pythonをダウンロードする。公式ドキュメントにある[API](https://api.registry.platformio.org/v3/packages/platformio/tool/python-portable)をブラウザで叩き、`python-portable-windows_amd64-x.y.z.tar.gz`みたいなやつのURLを見つけてダウンロード、展開する。Microsoft EdgeだとJSONの整形出力を有効にすると見やすかった。URL等からも分かる通り、これはPlatformIOがCoreの動作環境用に直々に提供しているもので、Python公式の埋め込み版と異なり、`pip`がそのまま使える(?)ようになっているようである(Python公式の埋め込み用パッケージみたいなのでやったらpipがどうこうで失敗した)。
 
