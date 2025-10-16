@@ -28,9 +28,7 @@ export default defineConfig({
       ]
     }),
     mdx(),
-    sitemap({
-      filenameBase: "site-map",
-    }),
+    sitemap(),
     robotsTxt(),
   ],
   prefetch: {
