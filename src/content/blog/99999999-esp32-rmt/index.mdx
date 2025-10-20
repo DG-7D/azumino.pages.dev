@@ -37,13 +37,12 @@ ESP32はWi-Fiが利用できるだけでなく、Remote Control Transceiver (RMT
 
 送信するデータが用意できたので、送信側を実装する。
 
-ところで、ESP32ではArduino-ESP32というArduinoと同じようにプログラムを書くことができるフレームワークが公式に提供されている。Arduino互換の機能だけでなく、RMTなどESP32固有の機能も抽象化して簡単に使えるようになっている。
+ところで、ESP32では比較的低レイヤなESP-IDFというフレームワークのほかに、Arduino-ESP32というArduino IDEでArduinoと同じようにプログラムを書いたりボードに書き込んだりできるようにするための[Arduino-ESP32](https://github.com/espressif/arduino-esp32)というArduino core (APIの実装やツールチェーンとその使い方の情報などを含むプラットフォーム?)が公式に提供されている。Arduino API互換の機能だけでなく、RMTなどESP32固有の機能も抽象化して簡単に使えるようになっている。
 
-Arduino-ESP32はより低いレイヤのフレームワークであるESP-IDFをベースにしているが、ESP-IDFにおけるRMTの扱いがv5.5.0で変更されており、Arduino-ESP32もそれに追従している。
+Arduinoを扱うことのできる開発環境として、PlatformIOというものもある。Arduino IDEよりも強力で、VSCodeなどと連携して使うことができるなどの利点がある。PlatformIOにもプラットフォームの概念があり、ArduinoCore-avrやATTinyCoreを参照する[AVRマイコン(を搭載するArduinoボード)向け](https://github.com/platformio/platform-atmelavr)のプラットフォーム定義、およびESP-IDFとArduino-ESP32を参照する[ESP32向け](https://github.com/platformio/platform-espressif32)のプラットフォーム定義が公式から提供されている。しかしながら、PlatformIO公式のESP32向けプラットフォームでは、対応するArduinoCore-avrのほうは古いバージョン(v2.x)で止まってしまっている。これはEspressifとPlatformIOの関係が悪化したことが原因らしく、コミュニティが新しいバージョンに対応した[プラットフォーム定義](https://github.com/pioarduino/platform-espressif32)を提供している。
 
-また、Arduino環境は主にArduino IDEというArduino公式の開発環境で使われることを想定されているが、PlatformIOというより強力な開発環境でも、公式やESP32向けのフレームワークを利用することができる。PlatformIOでArduino向けのフレームワークを利用するためには橋渡しをするための定義ファイルが必要で、かつてはEspressif公式から提供されていたが、関係の悪化から更新が止まってしまっていた。このときのバージョンはESP-IDF v4.4.7ベースのArduino-ESP32 v2.0.17であり、RMTのAPIは古いものになっている。新しいArduino-ESP32を使うためには、コミュニティが提供する定義ファイルを利用する必要がある。
+簡単なことをする分には何も考えずPlatformIO公式のESP32プラットフォームで古いArduino環境を使っても特に困ることはない。しかし、RMTについては、仕様がESP-IDF v5.xで[変更されており](https://docs.espressif.com/projects/esp-idf/en/v5.5/esp32/migration-guides/release-5.x/5.0/peripherals.html#rmt-driver)、Arduino-ESP32もそれに[追従している](https://docs.espressif.com/projects/esp-idf/en/v5.5/esp32/migration-guides/release-5.x/5.0/peripherals.html#rmt-driver)ため、バージョンによって使い心地が異なってくる。Arduino v2.0.17ではESP-IDF v4.4.7ベースなので古いRMTのAPIで、公式のプラットフォームでは新しいRMTのAPIを使うことはできず、コミュニティ版のプラットフォームでなら新しいRMTのAPIを使うことができるという状況になっている。
 
-PlatformIO
 `platform = arduino` → Arduino-ESP32 v2.0.17 (ESP-IDF v4.4.7ベース) → Arduino版旧RMT (旧RMTベース) ドキュメントおしまい
 `platform = espidf` → ESP-IDF v5.5.0 (新RMT)
 `platform = arduino, espidf` → ESP-IDFが3.4に??? → 旧RMT
