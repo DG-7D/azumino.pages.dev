@@ -45,7 +45,7 @@ Arduinoを扱うことのできる開発環境として、PlatformIOというも
 
 最新のArduino-ESP32を使うためにpioarduino版のプラットフォームを使う場合、公式ドキュメントに従って`platformio.ini`の`platform`にGitHubのReleaseのURLを指定すればよい。なお、斜め読みしたり適当なブログ記事を読んだりして「はいはいGitHubのURLね」とか思ってリポジトリのルートのURLを指定すると安定版でないものが使われてしまうので注意。
 
-なお、ESP-IDFをメインとしてArduino-ESP32をコンポーネントとして読み込むような使い方もできるらしい。
+なお、ESP-IDFをメインとしてArduino-ESP32をコンポーネントとして読み込むような使い方もできるらしい。しかし、PlatformIO流の`framework = espidf, arduino`と記述する方法ではArduino-ESP32が???、ESP-IDFが3.4とかなり古いバージョンになってしまう。ESP-IDF流の方法はIDF Component ManagerがPlatformIO環境では使えずよく分からない。いずれも何かがおかしくなりビルドできなかった。
 
 ## RMT
 
