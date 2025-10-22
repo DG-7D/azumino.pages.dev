@@ -43,9 +43,9 @@ Arduinoを扱うことのできる開発環境として、PlatformIOというも
 
 簡単なことをする分には何も考えずPlatformIO公式のESP32プラットフォームで古いArduino-ESP32を使っても特に困ることはない。しかし、RMTについては、仕様がESP-IDF v5.xで[変更されており](https://docs.espressif.com/projects/esp-idf/en/v5.5/esp32/migration-guides/release-5.x/5.0/peripherals.html#rmt-driver)、Arduino-ESP32もそれに[追従している](https://docs.espressif.com/projects/arduino-esp32/en/latest/migration_guides/2.x_to_3.0.html#rmt)ため、バージョンによって使い心地が異なってくる。Arduino v2.0.17ではESP-IDF v4.4.7ベースなので古いRMTのAPIで、公式のプラットフォームでは新しいRMTのAPIを使うことはできず、pioarduino版のプラットフォームでなら新しいRMTのAPIを使うことができるという状況になっている。
 
-最新のArduino-ESP32を使うためにpioarduino版のプラットフォームを使う場合、公式ドキュメントに従って`platformio.ini`の`platform`にGitHubのReleaseのURLを指定すればよい。なお、斜め読みしたり適当なブログ記事を読んだりして「はいはいGitHubのURLね」とか思ってリポジトリのルートのURLを指定すると安定版でないものが使われてしまうので注意。
+最新のArduino-ESP32を使うためにpioarduino版のプラットフォームを使う場合、公式ドキュメントに従って`platformio.ini`の`platform`にGitHubのReleaseのURLを指定すればよい。なお、斜め読みしたり適当なブログ記事を読んだりして「はいはいGitHubのURLね」とか思ってリポジトリのルートのURLを指定すると安定版でないものが使われてしまうので注意。また、一旦pioarduino版を使うとこれが最新版としてキャッシュが残るため、`platform = espressif32`と記述しても公式版には戻らず、公式版を使うためには`platform = espressif32@^6`とバージョン指定するか、`platform = platformio/espressif32`と提供元を明示的に指定する必要がある。
 
-なお、ESP-IDFをメインとしてArduino-ESP32をコンポーネントとして読み込むような使い方もできるらしい。しかし、PlatformIO流の`framework = espidf, arduino`と記述する方法ではArduino-ESP32が???、ESP-IDFが3.4とかなり古いバージョンになってしまう。ESP-IDF流の方法はIDF Component ManagerがPlatformIO環境では使えずよく分からない。いずれも何かがおかしくなりビルドできなかった。
+なお、ESP-IDFをメインとしてArduino-ESP32をESP-IDFのコンポーネントとして読み込むような使い方もできるらしい。PlatformIO流の`framework = espidf, arduino`と記述する方法では、純正プラットフォーム定義ではESP-IDFのほうが古いArduino-ESP32に合わせてv4.4.7になってしまう。pioarduinoのプラットフォーム定義を使うと最新版の組み合わせになるが、依存コンポーネントらしきものが`managed_components`ディレクトリにぶちまけられてカオスになる。`framework = espidf`(純正プラットフォーム定義でも最新版のESP-IDFが使われる)とした上で[ESP-IDF流の方法](https://docs.espressif.com/projects/arduino-esp32/en/latest/esp-idf_component.html)で読み込むこともできるが、IDF Component ManagerがPlatformIO環境では使えないっぽいため、プロジェクト内にArduino-ESP32を`components`ディレクトリを作成して直接配置する方法をとる必要があり、この方法でも`managed_components`は発生する。なお、いずれの方法でも、手動で`CONFIG_FREERTOS_HZ=1000`を設定しないと`pio run -t menuconfig`(設定用のTUIツール)すら動作しないという罠がある。
 
 ## RMT
 
