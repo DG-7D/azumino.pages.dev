@@ -49,14 +49,12 @@ Arduinoを扱うことのできる開発環境として、PlatformIOというも
 
 ## RMT
 
-Arduino-ESP32の公式ドキュメントはバージョンの指定ができず、古いv2系の情報を得ることはできない。GitHubで[過去のコミットにあるソース](https://github.com/espressif/arduino-esp32/blob/2.0.17/docs/source/api/rmt.rst)を参照することはできるが、情報量はゼロである。いくつか[スケッチ例](https://github.com/espressif/arduino-esp32/tree/2.0.17/libraries/ESP32/examples/RMT)もあるが、`esp32-hal.h`をincludeしていたりして、なんだか面倒臭そうということだけが分かる。ベースとなっている[ESP-IDF v4.4.7のドキュメント](https://docs.espressif.com/projects/esp-idf/en/v4.4.7/esp32/api-reference/peripherals/rmt.html)を読んだほうがよい。
+Arduino-ESP32の公式ドキュメントはバージョンの指定ができず、古いv2系の情報を得ることはできない。GitHubで[過去のコミットにあるソース](https://github.com/espressif/arduino-esp32/blob/2.0.17/docs/source/api/rmt.rst)を参照することはできるが、情報量はゼロである。[ソースコード](https://github.com/espressif/arduino-esp32/blob/2.0.17/cores/esp32/esp32-hal-rmt.h)上のコメントを読むしかない。いくつか[スケッチ例](https://github.com/espressif/arduino-esp32/tree/2.0.17/libraries/ESP32/examples/RMT)もあるが、`esp32-hal.h`をincludeしていたりして、なんだか面倒臭そうということだけが分かる。ベースとなっている[ESP-IDF v4.4.7のドキュメント](https://docs.espressif.com/projects/esp-idf/en/v4.4.7/esp32/api-reference/peripherals/rmt.html)を読んだほうがよい。
 
 Arduino-ESP32のv3系であれば[公式ドキュメント](https://docs.espressif.com/projects/arduino-esp32/en/latest/api/rmt.html)をWebで参照することができるが、v2のころと変わらず情報量は皆無である。[スケッチ例](https://github.com/espressif/arduino-esp32/tree/master/libraries/ESP32/examples/RMT)のほうはいくらか増えたり読みやすくなったりしており、特に[RMTWrite_RGB_LED](https://github.com/espressif/arduino-esp32/blob/master/libraries/ESP32/examples/RMT/RMTWrite_RGB_LED/RMTWrite_RGB_LED.ino)などはシンプルで取っ付きやすい。ベースとなっている[ESP-IDF v5のドキュメント](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/rmt.html)も参照できる。
 
-`platform = arduino` → Arduino-ESP32 v2.0.17 (ESP-IDF v4.4.7ベース) → Arduino版旧RMT (旧RMTベース) ドキュメントおしまい
-`platform = espidf` → ESP-IDF v5.5.0 (新RMT)
-`platform = arduino, espidf` → ESP-IDFが3.4に??? → 旧RMT
-
-Arduino版新RMT realTickなし Carrierまとも
+旧Arduino
+realTick 要求したTickと違うものになる可能性がある
+Carrier Tick数で指定する必要がある
 
 https://note.com/ndenki/n/n35bb7a41bbd8
