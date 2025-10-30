@@ -1,0 +1,32 @@
+---
+publish: false
+title: "PlatformIOで最新のArduino-ESP32を使ってみた"
+publishDate: 9999-12-31 00:00:00 +09:00
+description: "せつめい"
+---
+
+手軽にマイコンを開発することのできる環境としてArduinoが有名である。Arduinoは、ハードウェアとしてのArduinoボードだけでなく、抽象的なコードと操作だけでの開発を可能にる様々なソフトウェア要素と組み合わせて構成されている。Arduino IDEはそのようなソフトウェア環境をまとめて提供するものであり、また、ソフトウェア要素のセットであるボードパッケージを追加することで、Arduinoボード以外のボードや単品のマイコンでもArduinoと同様の使用感での開発を可能にする機能もある。一方で、エディタとしての機能は貧弱で、VSCodeなどのちゃんとしたエディタよりも書き心地は劣る。以前はVSCodeでArduino IDEと同等の機能を使える拡張機能が存在したが、現在は廃止されてしまっている。
+
+有名なマイコンの開発環境として、PlatformIOというのもある。PlatformIO自体はエディタを持たず、VSCodeと連携することができ、使い心地はArduino IDEよりも優れている。PlatformIOもArduino IDEと同様にソフトウェア要素のセットである「プラットフォーム」を定義することで、Arduino環境を含む様々な環境向けの開発を可能にしている。しかし、公式のESP32向けのプラットフォーム定義に問題があり、そのままでは古いバージョンのArduino環境を使うことになってしまう。新しいArduino環境の使い方は少し調べれば出てくるが、それをすると何がどうなるのか、というところまで踏み込んだ説明はあまり見当たらなかったので、まとめてみることにした。
+
+## Arduino-ESP32とは
+
+Arduino IDEではボードパッケージとして[Arduino-ESP32](https://github.com/espressif/arduino-esp32)を追加することでESP32向けの開発を行うことができるが、これはEspressifが公式に提供しているものである。ボードパッケージには、`digitalWrite()`のようなArduino APIの実装、`gcc`などのビルドツールや`esptool`のような書き込みツール(の入手先)とその使い方、などが含まれており、抽象化レイヤのようなものを提供している。
+
+実装されているAPIには、Arduino APIだけでなく、ESP32固有の機能を簡単に使うためのAPIも含まれている。たとえば、赤外線リモコン信号の送受信に特化したモジュールであるRMTの操作も簡略化されている。
+
+Arduino-ESP32にはいくつかバージョンがあり、特にESP32固有のAPIについてはバージョンによって仕様が異なっているものもある。また、APIが変わっていないものでも実装が改善されている可能性もある。実装に使われるフレームワークであるESP-IDFのバージョンも変わってくる。たとえば、Arduino-ESP32 v2.0.17ではESP-IDF v4.4.7が使われているが、Arduino-ESP32 v3.x系ではESP-IDF v5.x系が使われている。固有APIについても、ESP-IDFでの仕様が[変更された](https://docs.espressif.com/projects/esp-idf/en/v5.5/esp32/migration-guides/release-5.x/5.0/peripherals.html)ことに伴なってか、Arduino-ESP32 v3.x系でも[変更が加えられている](https://docs.espressif.com/projects/arduino-esp32/en/latest/migration_guides/2.x_to_3.0.html)。
+
+なお、Arduino-ESP32は常に最新版を使うことが想定されているのか、Webの公式ドキュメントではバージョンを指定することができない。GitHubの過去のコミットにあるソースを参照することはできなくもない。
+
+## PlatformIOのプラットフォームとArduinoのボードパッケージの関係
+
+API実装はそのまま使われる
+
+Arduinoを扱うことのできる開発環境として、PlatformIOというものもある。Arduino IDEよりも強力で、VSCodeなどと連携して使うことができるなどの利点がある。PlatformIOにもプラットフォームの概念があり、ArduinoCore-avrやATTinyCoreを参照する[AVRマイコン(を搭載するArduinoボード)向け](https://github.com/platformio/platform-atmelavr)のプラットフォーム定義や、ESP-IDFとArduino-ESP32を参照する[ESP32向け](https://github.com/platformio/platform-espressif32)のプラットフォーム定義などが公式から提供されている。しかしながら、EspressifがPlatformIOのサポートを打ち切ったため(何やら対立があったらしい)、PlatformIO公式のESP32向けプラットフォームでは、Arduino-ESP32が古いバージョン(v2.x)のままとなっている。新しいArduino-ESP32を使うには、pioarduinoなるコミュニティがフォークした新しいバージョンに対応した[プラットフォーム定義](https://github.com/pioarduino/platform-espressif32)を利用する必要がある。なお、pioarduinoはPlatformIO自体もフォークしてEspressifのマイコン向けに特化したIDEを提供しており、本家PlatformIOを差し置いてArduino-ESP32の[公式ドキュメント](https://docs.espressif.com/projects/arduino-esp32/en/latest/third_party/pioarduino.html)で紹介されている。
+
+簡単なことをする分には何も考えずPlatformIO公式のESP32プラットフォームで古いArduino-ESP32を使っても特に困ることはない。しかし、RMTについては、仕様がESP-IDF v5.xで[変更されており](https://docs.espressif.com/projects/esp-idf/en/v5.5/esp32/migration-guides/release-5.x/5.0/peripherals.html#rmt-driver)、Arduino-ESP32もそれに[追従している](https://docs.espressif.com/projects/arduino-esp32/en/latest/migration_guides/2.x_to_3.0.html#rmt)ため、バージョンによって使い心地が異なってくる。Arduino v2.0.17ではESP-IDF v4.4.7ベースなので古いRMTのAPIで、公式のプラットフォームでは新しいRMTのAPIを使うことはできず、pioarduino版のプラットフォームでなら新しいRMTのAPIを使うことができるという状況になっている。
+
+最新のArduino-ESP32を使うためにpioarduino版のプラットフォームを使う場合、公式ドキュメントに従って`platformio.ini`の`platform`にGitHubのReleaseのURLを指定すればよい。なお、斜め読みしたり適当なブログ記事を読んだりして「はいはいGitHubのURLね」とか思ってリポジトリのルートのURLを指定すると安定版でないものが使われてしまうので注意。また、一旦pioarduino版を使うとこれが最新版としてキャッシュが残るため、`platform = espressif32`と記述しても公式版には戻らず、公式版を使うためには`platform = espressif32@^6`とバージョン指定するか、`platform = platformio/espressif32`と提供元を明示的に指定する必要がある。
+
+なお、ESP-IDFをメインとしてArduino-ESP32をESP-IDFのコンポーネントとして読み込むような使い方もできるらしい。PlatformIO流の`framework = espidf, arduino`と記述する方法では、純正プラットフォーム定義ではESP-IDFのほうが古いArduino-ESP32に合わせてv4.4.7になってしまう。pioarduinoのプラットフォーム定義を使うと最新版の組み合わせになるが、依存コンポーネントらしきものが`managed_components`ディレクトリにぶちまけられてカオスになる。`framework = espidf`(純正プラットフォーム定義でも最新版のESP-IDFが使われる)とした上で[ESP-IDF流の方法](https://docs.espressif.com/projects/arduino-esp32/en/latest/esp-idf_component.html)で読み込むこともできるが、IDF Component ManagerがPlatformIO環境では使えないっぽいため、プロジェクト内にArduino-ESP32を`components`ディレクトリを作成して直接配置する方法をとる必要があり、この方法でも`managed_components`は発生する。なお、いずれの方法でも、手動で`CONFIG_FREERTOS_HZ=1000`を設定しないと`pio run -t menuconfig`(設定用のTUIツール)すら動作しないという罠がある。

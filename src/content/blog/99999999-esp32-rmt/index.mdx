@@ -33,21 +33,11 @@ ESP32はWi-Fiが利用できるだけでなく、Remote Control Transceiver (RMT
 リモコン側が状態を保持していて毎度全て送信されているため、
 ランダムに見える部分があったが、どうやら時刻を保持しているらしいことが分かった。リモコンには時刻設定の機能はないのに、しっかり時と分に分かれていて謎である。さらに、タイマの情報も「時間」ではなく「時刻」で送信されている。
 
-## PlatformIOで最新のArduino-ESP32を使う
 
-送信するデータが用意できたので、送信側を実装する。
-
-ところで、ESP32では比較的低レイヤなESP-IDFというフレームワークのほかに、Arduino-ESP32というArduino IDEでArduinoと同じようにプログラムを書いたりボードに書き込んだりできるようにするための[Arduino-ESP32](https://github.com/espressif/arduino-esp32)というArduino core (APIの実装やツールチェーンとその使い方の情報などを含むプラットフォーム?)が公式に提供されている。Arduino API互換の機能だけでなく、RMTなどESP32固有の機能も抽象化して簡単に使えるようになっている。
-
-Arduinoを扱うことのできる開発環境として、PlatformIOというものもある。Arduino IDEよりも強力で、VSCodeなどと連携して使うことができるなどの利点がある。PlatformIOにもプラットフォームの概念があり、ArduinoCore-avrやATTinyCoreを参照する[AVRマイコン(を搭載するArduinoボード)向け](https://github.com/platformio/platform-atmelavr)のプラットフォーム定義や、ESP-IDFとArduino-ESP32を参照する[ESP32向け](https://github.com/platformio/platform-espressif32)のプラットフォーム定義などが公式から提供されている。しかしながら、EspressifがPlatformIOのサポートを打ち切ったため(何やら対立があったらしい)、PlatformIO公式のESP32向けプラットフォームでは、Arduino-ESP32が古いバージョン(v2.x)のままとなっている。新しいArduino-ESP32を使うには、pioarduinoなるコミュニティがフォークした新しいバージョンに対応した[プラットフォーム定義](https://github.com/pioarduino/platform-espressif32)を利用する必要がある。なお、pioarduinoはPlatformIO自体もフォークしてEspressifのマイコン向けに特化したIDEを提供しており、本家PlatformIOを差し置いてArduino-ESP32の[公式ドキュメント](https://docs.espressif.com/projects/arduino-esp32/en/latest/third_party/pioarduino.html)で紹介されている。
-
-簡単なことをする分には何も考えずPlatformIO公式のESP32プラットフォームで古いArduino-ESP32を使っても特に困ることはない。しかし、RMTについては、仕様がESP-IDF v5.xで[変更されており](https://docs.espressif.com/projects/esp-idf/en/v5.5/esp32/migration-guides/release-5.x/5.0/peripherals.html#rmt-driver)、Arduino-ESP32もそれに[追従している](https://docs.espressif.com/projects/arduino-esp32/en/latest/migration_guides/2.x_to_3.0.html#rmt)ため、バージョンによって使い心地が異なってくる。Arduino v2.0.17ではESP-IDF v4.4.7ベースなので古いRMTのAPIで、公式のプラットフォームでは新しいRMTのAPIを使うことはできず、pioarduino版のプラットフォームでなら新しいRMTのAPIを使うことができるという状況になっている。
-
-最新のArduino-ESP32を使うためにpioarduino版のプラットフォームを使う場合、公式ドキュメントに従って`platformio.ini`の`platform`にGitHubのReleaseのURLを指定すればよい。なお、斜め読みしたり適当なブログ記事を読んだりして「はいはいGitHubのURLね」とか思ってリポジトリのルートのURLを指定すると安定版でないものが使われてしまうので注意。また、一旦pioarduino版を使うとこれが最新版としてキャッシュが残るため、`platform = espressif32`と記述しても公式版には戻らず、公式版を使うためには`platform = espressif32@^6`とバージョン指定するか、`platform = platformio/espressif32`と提供元を明示的に指定する必要がある。
-
-なお、ESP-IDFをメインとしてArduino-ESP32をESP-IDFのコンポーネントとして読み込むような使い方もできるらしい。PlatformIO流の`framework = espidf, arduino`と記述する方法では、純正プラットフォーム定義ではESP-IDFのほうが古いArduino-ESP32に合わせてv4.4.7になってしまう。pioarduinoのプラットフォーム定義を使うと最新版の組み合わせになるが、依存コンポーネントらしきものが`managed_components`ディレクトリにぶちまけられてカオスになる。`framework = espidf`(純正プラットフォーム定義でも最新版のESP-IDFが使われる)とした上で[ESP-IDF流の方法](https://docs.espressif.com/projects/arduino-esp32/en/latest/esp-idf_component.html)で読み込むこともできるが、IDF Component ManagerがPlatformIO環境では使えないっぽいため、プロジェクト内にArduino-ESP32を`components`ディレクトリを作成して直接配置する方法をとる必要があり、この方法でも`managed_components`は発生する。なお、いずれの方法でも、手動で`CONFIG_FREERTOS_HZ=1000`を設定しないと`pio run -t menuconfig`(設定用のTUIツール)すら動作しないという罠がある。
 
 ## RMT
+
+送信するデータが用意できたので、送信側を実装する。
 
 Arduino-ESP32の公式ドキュメントはバージョンの指定ができず、古いv2系の情報を得ることはできない。GitHubで[過去のコミットにあるソース](https://github.com/espressif/arduino-esp32/blob/2.0.17/docs/source/api/rmt.rst)を参照することはできるが、情報量はゼロである。[ソースコード](https://github.com/espressif/arduino-esp32/blob/2.0.17/cores/esp32/esp32-hal-rmt.h)上のコメントにはいくらか情報がある。いくつか[スケッチ例](https://github.com/espressif/arduino-esp32/tree/2.0.17/libraries/ESP32/examples/RMT)もあるが、`esp32-hal.h`をincludeしていたりして、なんだか面倒臭そうということだけが分かる。ベースとなっている[ESP-IDF v4.4.7のドキュメント](https://docs.espressif.com/projects/esp-idf/en/v4.4.7/esp32/api-reference/peripherals/rmt.html)も参考になる。
 
