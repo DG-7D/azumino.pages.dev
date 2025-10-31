@@ -25,24 +25,29 @@ ESP32はWi-Fiが利用できるだけでなく、Remote Control Transceiver (RMT
 
 ## リモコン解析
 
-エアコンのリモコンがどのような形式で通信しているのかを調べる必要がある。まずは赤外線受信モジュールの信号をオシロスコープで観測し、
-開始、終了の信号と、0/1とHIGH/LOWの対応はNEC形式と同じであり、ビット長のみ拡張されていることが分かった。
+エアコンのリモコンがどのような形式で通信しているのかを調べる必要がある。[オタク](https://twitter.com/yui__yuuki)が腐らせていた赤外線受信器[OSRB38C9AA](https://akizukidenshi.com/catalog/g/g104659/)を借り、出力をオシロスコープで観測してみたところ、開始、終了の信号と、0/1とHIGH/LOWの対応は[NEC形式](https://elm-chan.org/docs/ir_format.html)と同じであり、データ長のみ拡張されていることが分かった。
 
-さらにデータの形式を調べるため、Arduinoを用いて受信器の信号を0/1のビット列に変換できるようにした。色々な方式に対応しようとすると面倒になるが、NEC形式と決め打ちすればかなり簡単にできる。
+<Tweet id="1950550478145921270" />
 
-リモコン側が状態を保持していて毎度全て送信されているため、
-ランダムに見える部分があったが、どうやら時刻を保持しているらしいことが分かった。リモコンには時刻設定の機能はないのに、しっかり時と分に分かれていて謎である。さらに、タイマの情報も「時間」ではなく「時刻」で送信されている。
+さらにデータの形式を調べるため、Arduinoを用いて受信器の信号を0/1のビット列に変換できるようにした。色々な方式に対応しようとすると面倒になるが、NEC形式と決め打ちすればかなり簡単にできる。終了信号がただのパルスなおかげで立ち上がりエッジの間隔を見るだけで済む。
 
+データの長さから、押したボタンだけを送信しているわけではなく、リモコン側が状態を保持していて毎度全て送信している方式であることが予想される。信号のビット列と設定されている状態をまとめるExcelシートを作成し、設定を網羅するように操作してデータを集めた。ビット列をバイトごとに区切り、設定と対応するバイトを探し出し、当該行を別のシートにコピーして、「重複の削除」を行うことでビット列と設定との対応を得ることができた。
 
+![信号、押下ボタンや運転モードなどの設定状況、信号のバイト番号をヘッダに持つExcelの表。](excel-all.png "リモコンの信号と設定の元データ")
+![設定温度と対応するビット列とビット列を10進数に変換した数値が並んだExcelの表。](excel-temp.png "設定温度と温度っぽいバイトをコピペして重複削除した結果")
+
+途中ランダムに見える部分があったが、どうやら時刻を保持しているらしいことが分かった。リモコンには時刻設定の機能はなく、単に電池を入れてからの分数などかとも思ったが、しっかり時と分に分かれていて謎である。「待つ」以外に変化させる手段がないためサンプル数が限られるが、50台が上限っぽいので「分」だろうと当てをつけることができた。さらに、タイマの情報も「時間」ではなく「時刻」で送信されていた。
+
+また、最終バイトのチェックサムと思われるものについて、変化したバイトと最終バイトの変わり方の対応から、各バイトのビットごとのXORだろうと予測したが、なぜか合わずに一定のずれ方をした。結果から言えば、先頭2バイトは無関係で、3バイト目以降のXORを取ると一致した。もとのNEC形式では先頭2バイトはカスタマコードなので、データ部のみのXORと考えれば説明はつく。
+
+テスト用にすべてのパラメータを直打ちしてビット列を生成できる[WebUI](https://github.com/DG-7D/HAS22CRemote)を作成した。同じリポジトリに解析結果のまとめも置いてある。
 
 ## RMT
 
-送信するデータが用意できたので、送信側を実装する。
+送信するデータが用意できたので、送信側を実装する。ESP32のArduino環境ではRMT向けにも簡略化されたAPIが提供されているが、[以前](../20250008-platformio-pioarduino/)述べたようにv2系とv3系とで使い勝手が異なり、また、PlatformIOそのままでは古いv2系が使われてしまうため、v3系を使うには細工が必要になる。
 
-Arduino-ESP32の公式ドキュメントはバージョンの指定ができず、古いv2系の情報を得ることはできない。GitHubで[過去のコミットにあるソース](https://github.com/espressif/arduino-esp32/blob/2.0.17/docs/source/api/rmt.rst)を参照することはできるが、情報量はゼロである。[ソースコード](https://github.com/espressif/arduino-esp32/blob/2.0.17/cores/esp32/esp32-hal-rmt.h)上のコメントにはいくらか情報がある。いくつか[スケッチ例](https://github.com/espressif/arduino-esp32/tree/2.0.17/libraries/ESP32/examples/RMT)もあるが、`esp32-hal.h`をincludeしていたりして、なんだか面倒臭そうということだけが分かる。ベースとなっている[ESP-IDF v4.4.7のドキュメント](https://docs.espressif.com/projects/esp-idf/en/v4.4.7/esp32/api-reference/peripherals/rmt.html)も参考になる。
+v2, v3問わずArduino-ESP32の公式ドキュメントにはRMTに関する情報はほぼ無いが、スケッチ例はv2ではなんだか取っ付きにくいものしかない一方で、v3ではいくらか増えたり読みやすくなったりしている。どちらも[ソースコード](https://github.com/espressif/arduino-esp32/blob/master/cores/esp32/esp32-hal-rmt.h)上のコメントから情報を得られるほか、基本的な概念については[ESP-IDFのドキュメント](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/rmt.html)が参考になる。
 
-Arduino-ESP32のv3系であれば[公式ドキュメント](https://docs.espressif.com/projects/arduino-esp32/en/latest/api/rmt.html)をWebで参照することができるが、v2のころと変わらず情報量は皆無である。v2と同じく[ソースコード](https://github.com/espressif/arduino-esp32/blob/master/cores/esp32/esp32-hal-rmt.h)上のコメントから情報を得られるほか、[スケッチ例](https://github.com/espressif/arduino-esp32/tree/master/libraries/ESP32/examples/RMT)のほうもいくらか増えたり読みやすくなったりしており、特に[RMTWrite_RGB_LED](https://github.com/espressif/arduino-esp32/blob/master/libraries/ESP32/examples/RMT/RMTWrite_RGB_LED/RMTWrite_RGB_LED.ino)などはシンプルで取っ付きやすい。ベースとなっている[ESP-IDF v5のドキュメント](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/rmt.html)も参照できる。
-
-先ほどv2系とv3系とでは使い勝手が異なると述べたが、具体的には以下のような違いがある。まず、RMTの時間単位であるTickの設定において、1Tickの長さには制約があるが、v2系では要求したTick長が使えない場合は実際のTick長は勝手に決められ、返り値で実際のTickが返されていたのに対し、v3系では要求したTickが使えない場合は初期化に失敗する(falseが返る)ようになった。また、搬送波の設定において、v2系ではHIGHのTick数とLOWのTick数をそれぞれ計算して指定する必要があったのに対し、v3系では周波数とデューティ比を指定できるようになった。このように、明らかにv3系のほうが使いやすくなっているため、上記のような方法で新しいArduino-ESP32を使えるようにする。
+APIの使い心地は全体的にv3のほうが良く、まず、RMTの時間単位であるTickの設定において、1Tickの長さには制約があるが、v2では要求したTick長が使えない場合は実際のTick長は勝手に決められ、返り値で実際のTickが返されていたのに対し、v3では要求したTickが使えない場合は初期化に失敗する(falseが返る)ようになった。また、搬送波の設定において、v2ではHIGHのTick数とLOWのTick数をそれぞれ計算して指定する必要があったのに対し、v3では周波数とデューティ比を指定できるようになった。このように、明らかにv3のほうが使いやすくなっている。
 
 https://note.com/ndenki/n/n35bb7a41bbd8
