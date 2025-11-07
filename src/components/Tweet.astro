@@ -102,11 +102,7 @@ const urlSearchParams = new URLSearchParams({
 const url = new URL("https://cdn.syndication.twimg.com/tweet-result?" + urlSearchParams.toString());
 const tweet = tweetScheme.parse(await (async ()=>{ 
     try {
-        const json = await fetch(url).then(response => response.json());
-        if (json.__typename === "TweetTombstone") {
-            throw new Error("Tweet is unavailable");
-        }
-        return json;
+        return await fetch(url).then(response => response.json())
     } catch (error) {
         console.error(error);
         const cachedTweet = (await getCollection("tweet-cache", tweet => tweet.data.id_str == Astro.props.id)).at(0)?.data;
@@ -115,7 +111,7 @@ const tweet = tweetScheme.parse(await (async ()=>{
         } else {
             throw error;
         }
-   }
+    }
 })());
 
 await Bun.write(`./src/content/tweet-cache/${tweet.id_str}.json`, JSON.stringify(tweet));
