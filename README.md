@@ -1,4 +1,4 @@
-# 🗻[azumino.pages.dev](https://azumino.pages.dev)
+# 🗻[dg7.dev](https://dg7.dev)
 
 あづみのメモ帳
 
