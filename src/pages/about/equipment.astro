@@ -173,7 +173,7 @@ import A from "@/components/A.astro";
     <h2>製作・測定機器(?)</h2>
     <dl>
         <dt>Bambu Lab A1 mini</dt>
-        <dd>積層型3Dプリンタ。ブラックフライデーで3万円だったので衝動買い。下位機種だけどケチられてるのは大きさとエンクロージャだけで、むしろ新しいぶんベッドレベリングが速かったり流量キャリブレーションがあったりでつよい。</dd>
+        <dd>積層型3Dプリンタ。ブラックフライデーで3万円だったので衝動買い。下位機種だけどケチられてるのは大きさとエンクロージャだけで、古い上位機種と比べるとベッドレベリングが速かったり流量キャリブレーションがあったりでむしろつよい。</dd>
         <dt>Brother HL-L2375DW</dt>
         <dd>レーザプリンタ。拾った。2Dプリンタはごくごくまれにしか使わず、家にあるインクジェットが毎回壊れてて嫌になったので導入。トナーが半分くらい残ってるので多分一生使い切らない。</dd>
         <dt>ALIENTEK T65</dt>
@@ -184,10 +184,14 @@ import A from "@/components/A.astro";
         <dd>アナログマルチメータ。多分三和のOEM。部室で出土したのをもらった。TRnではない。しょぼいデジタルテスタよりは使いやすい。</dd>
         <dt>HOZAN DT-110</dt>
         <dd>デジタルマルチメータ。多分三和のOEM。拾った。端子の周りに囲いのあるタイプのテストリードが刺さらない。電源スイッチが別であるのがイケてない。</dd>
+        <dt><A href="https://web.archive.org/web/20090221062106/http://imetex.com/html/product/product_model_detail.asp?idx=16">METEX P-10</A></dt>
+        <dd>デジタルマルチメータ。<A href="https://web.archive.org/web/20120514121111/http://akizukidenshi.com/catalog/g/gM-00137/">秋月</A>で売ってたらしい。ちっちゃくてリードを収納できる。ICからシリアルが生えてて改造すればログが取れるらしい。</dd>
         <dt>Kowsi Type-Cテスタ</dt>
         <dd>Type-Cの電圧、電流を測れるやつ。</dd>
+        <dt>メトロニクス 524B</dt>
+        <dd>いにしえのリニア直流安定化電源。CV/CC対応。</dd>
         <!-- <dt>菊水電子 PMM18-2.5DU</dt>
-        <dd>2出力直流安定化電源。直列運転すれば36 Vまで出る。</dd> -->
+        <dd>2出力直流安定化電源。直列運転すれば36 Vまで出る。クソデカいしCCなくて渋い。</dd> -->
         <dt>菊水電子 COR5501</dt>
         <dd>アナログリアルタイム、デジタルストレージ両用オシロスコープ。工研OBの方が譲ってくれた。最初は電源の冷却ファンが回らなかったが自然治癒した。使いこなせない機能てんこ盛りのデジタルオシロと違い操作が直感的で応答も早く、かなり使いやすい。</dd>
         <!-- <dt>岩崎通信機 FG-350</dt>
@@ -215,6 +219,7 @@ import A from "@/components/A.astro";
     <h3>周辺機器</h3>
     <dl>
         <dt>BLUEDOT BMB-PD101</dt><dd>PD対応10000mAhモバイルバッテリ。Micro-B端子がついちゃったりしてる古めのだけどまあ使える。会社が吹き飛んでるっぽい()</dd>
+        <dt>Zendure SuperTank S4</dt><dd>72.6Whのモバイルバッテリ。電通大生協で推されていたのを親が見つけて買ってきた。特に優れても劣ってもいない。100W出力でPCへの給電にも使える。</dd>
         <dt><A href=" https: www.elecom.co.jp products EC-AC4465BK.html">ELECOM EC-AC4465BK</A></dt><dd>PD充電器(65W or 45W+20W)。Ankerのより小さくて軽い。持ち出し用(1つでPCとスマホ同時に行けるので便利)。Aはおまけ(回路が独立してないのは規格違反らしい)。</dd>
         <dt>Apple MHJA3AM</dt><dd>PD充電器(20W)。iPadの付属品。家でのiPhone充電用。</dd>
         <dt>AUKEY PA-D5</dt><dd>PD充電器(60W or 45W+18W)。家でのもろもろ充電用。ちゃんさぶさんからもらった。でかい。</dd>
@@ -237,11 +242,11 @@ import A from "@/components/A.astro";
             <dl class="inline">
                 <dt>CPU</dt><dd>Core i7-3930K (Sandy Bridge-E)</dd>
                 <dt>RAM</dt><dd>16GB DDR3 (4x4)</dd>
-                <dt>PSU</dt><dd>Delta DPS-1000EB D → FSP FSP500-50ERN</dd>
+                <dt>PSU</dt><dd>Delta DPS-1000EB D (→ FSP FSP500-50ERN)</dd>
             </dl>
         </dd>
         <dt>SONY VAIO Pro 13 (SVP132)</dt>
-        <dd>ふるいノートPC。SONY時代のVAIO。どっかで中古で拾った。スペックは終わってるけど見た目とか物理的な細かい使い心地はSX14よりもよい。使い道がない。一度BIOSを破壊して焼きなおしている。</dd>
+        <dd>ふるいノートPC。SONY時代のVAIO。どっかで中古で拾った。スペックは終わってるけど見た目とか物理的な細かい使い心地はSX14よりもよい。普段は使い道がないけどまれに出番がある。一度BIOSを破壊して焼きなおしている。</dd>
         <dd>
             <dl class="inline">
                 <dt>モニタ</dt><dd>FHD 13×25.4mm IPS 半光沢(ほぼ非光沢)</dd>
@@ -268,25 +273,23 @@ import A from "@/components/A.astro";
         <dt>余ってる部品</dt>
         <dd>
             <ul class="inline">
-                <li>Core 2 Quad Q6600</li><li>Core 2 Duo E6600</li><li>Core 2 Duo E8400</li><li>7600GS</li><li>9600GT (壊れてる)</li><li>GT 330</li><li>GTS 450</li><li>GT 710</li><li>GTX 1050 Ti (グラボはよく壊れるので予備として温存)</li><li>SATA SSD 数枚</li><li>2xMD04ACA200</li><li>SeagateのおしまいHDD</li><li>SATA BDドライブ</li><li>Intel Wireless-AC 9260</li><li>Intel AX200</li><li>Win11Proのライセンス(バグで滅びたかもしれん)</li><li>Win11Educationのライセンス(大学がくれたやつ)</li>
+                <li>Core 2 Quad Q6600</li><li>Core 2 Duo E6600</li><li>Core 2 Duo E8400</li><li>7600GS</li><li>9600GT (壊れてる)</li><li>GTS 450</li><li>GT 710</li><li>GTX 1050 Ti (グラボはよく壊れるので予備として温存)</li><li>SATA SSD 数枚</li><li>2xMD04ACA200</li><li>SATA BDドライブ</li><li>Intel Wireless-AC 9260</li><li>Intel AX200</li><li>Win11Proのライセンス(バグで滅びたかもしれん)</li><li>Win11Educationのライセンス(大学がくれたやつ)</li>
             </ul>
         </dd>
     </dl>
 
     <h3>使ってない周辺機器</h3>
     <dl>
-        <dt>MITSUBISHI RDT234WLM</dt>
-        <dd>FHD 23×25.4mm TN 非光沢。ﾊﾟｯﾊﾟのお下がり。ちょっとでも正面から外れるとおしまいの色になる。とてもメインで使える代物ではない。もう一枚あって押し付けられそうになったけど拒否した。</dd>
         <dt>LG L204WT</dt>
         <dd>WSXGA+ 20×25.4mm TN 非光沢。1680×1050。ﾊﾟｯﾊﾟのおさがりで昔けっこう長いこと使ってた。三菱ほどじゃないけど色が怪しい。脚が壊れているのでそのままは使えないが、一応VESA対応。</dd>
+        <dt><del>MITSUBISHI RDT234WLM</del></dt>
+        <dd>FHD 23×25.4mm TN 非光沢。ﾊﾟｯﾊﾟのお下がり。ちょっとでも正面から外れるとおしまいの色になる。とてもメインで使える代物ではない。二束三文で売り飛ばした。</dd>
         <dt><del>LG W2361VG</del></dt>
         <dd>FHD 23×25.4mm TN 光沢。トレファク三鷹店で拾ってきた。素晴らしくはないがふつうに使えてた。TNにしては視野角が広い説がある。光沢なのが気に入らない。非光沢ならサブに回してた。山に投げた。</dd>
         <dt>Microsoft Designer Bluetooth Mouse</dt>
         <dd>ワイヤレスマウス。VAIO Pro 13で使ってた。ちょっと挙動が怪しい。いらない。</dd>
         <dt><del>Logicool K380, M350</del></dt>
         <dd>Mac向けっぽいワイヤレスキーボード、マウス。なぜか欲しがってる人がいたのであげた。</dd>
-        <dt>BUFFALO LSW3-GT-5NS</dt>
-        <dd>5ポートギガビットスイッチングハブ。トレファクで拾った激安品。ちゃんと実測1Gbps出るし金属筐体だし磁石でくっつけられるしで有能。2.5Gbpsスイッチに置き換えられた。</dd>
         <dt>JBL Quantum TWS</dt>
         <dd>専用ドングルを使う低遅延なTWS。音質はカス。ノイキャンもついてるけど役立たず。ゲーム用に使っていたがバッテリがいかれた。</dd>
     </dl>

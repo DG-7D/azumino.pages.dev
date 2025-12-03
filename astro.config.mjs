@@ -9,7 +9,7 @@ import rehypeUnwrapImages from 'rehype-unwrap-images';
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://azumino.pages.dev/",
+  site: "https://dg7.dev/",
   markdown: {
     shikiConfig: {
       theme: "dark-plus",
