@@ -60,7 +60,7 @@ Bingはサイト側から変更のあったページを通知してインデッ�
 
 具体的には、Email Routingで自動設定されるSPFレコードがSoft Fail(`~all`)になっているのをFail(`-all`)に変更して、DMARC Managementで自動設定されるDMARCレコードのポリシーがなし(`p=none`)なので破棄(`p=reject`)に設定しておく。
 
-これで、Cloudflare以外のサーバからエンベロープFromを偽装して送信した場合にはSPFで弾かれ、SPFが通っても自分のドメインでDKIMを通すことは不可能なため、ヘッダFromを偽装しても整合せずDMARCで弾かれるようになる。
+これで、Cloudflare以外のサーバからエンベロープFromを偽装して送信した場合にはSPFで弾かれ、SPFが通っても(秘密鍵をばら撒かない限り)自分のドメインでDKIMを通すことは不可能なため、ヘッダFromを偽装しても整合せずDMARCで弾かれるようになる、と思われる。
 
 SPFであらゆるサーバを拒否するようにすればDMARCは不要だが、これではEmail Routing(Cloudflareから自分のメールへの転送=送信)が機能しなくなってしまう。なお、そのような不整合があるとEmail Routingの画面で分かるようになっている。
 
